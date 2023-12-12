@@ -1,0 +1,11 @@
+/* svg */
+@function _svg($icon, $color: transparent){
+	@if $icon == logo	{
+		$icon: '';
+	}
+    @else if $icon == ir	{
+        $icon: '';
+    }
+	
+	@return url($icon);
+}
