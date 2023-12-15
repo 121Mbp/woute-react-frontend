@@ -1,0 +1,44 @@
+@import './svg';
+@import './mixin';
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    .inner {
+        position: relative;
+        display: flex;
+        flex-basis: 840px;
+        flex-shrink: 1;
+        flex-grow: 1;
+        max-width: calc(100% - 96px - 96px);
+        min-width: 405px;
+        min-height: 380px;
+        max-height: 780px;        
+        aspect-ratio: 16 / 9;
+        background-color: #ffffff;
+        border-radius: 18px;
+        overflow: hidden;
+        .close {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 72px;
+            height: 62px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            @include _hide;
+            &::after {
+                @include icon(xButton, #3E3A39, 34px, 34px);
+            }
+        }
+    }
+}

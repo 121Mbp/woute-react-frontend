@@ -17,7 +17,8 @@ function Main() {
         }
         scrollListener()
         return () => window.removeEventListener('scroll', handleScroll)
-    })
+    }, [ scrollY ])
+
     return (
         <div className='main'>
             <div className='section'>

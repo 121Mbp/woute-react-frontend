@@ -1,4 +1,4 @@
-$nav-medium-width: 260px;
+$nav-medium-width: 240px;
 
 .navigation {
     position: fixed;
@@ -7,6 +7,19 @@ $nav-medium-width: 260px;
     width: $nav-medium-width;
     height: 100vh;
     padding: 8px 12px 20px 12px;
+    background-color: $primary-white;
+    @include size(lg) {
+        width: auto;
+    }
+    @include size(sm) {
+        top: auto;
+        bottom: 0;
+        right: 0;   
+        min-width: 375px;
+        height: auto;
+        padding: 0;
+        z-index: 99;
+    }
     &::after {
         content: '';
         position: absolute;
@@ -15,11 +28,23 @@ $nav-medium-width: 260px;
         width: 1px;
         bottom: 0;
         background-color: #B5B5B6;
+        @include size(sm) {
+            width: 100%;
+            height: 1px;
+            left: 0;
+            bottom: auto;
+        }
     }
     .logo {
         display: block;
         margin: 26px 12px 36px;
         @include icon(logo, $primary, 96px, 24px);
+        @include size(lg) {
+            width: 30px;
+        }
+        @include size(sm) {
+            display: none;
+        }
         a { 
             display: block;
             width: 100%;
@@ -28,6 +53,16 @@ $nav-medium-width: 260px;
         }
     }
     .gnb {
+        @include size(sm) {            
+            > ul {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                li {
+                    margin: 4px 0;
+                }
+            }
+        }
         li {
             display: flex;            
             margin: 16px 0;
@@ -55,6 +90,13 @@ $nav-medium-width: 260px;
                 &.active {
                     color: $primary-black;
                 }
+                @include size(lg) {
+                    flex-direction: column;
+                    @include _hide;
+                    &::before {
+                        margin-right: 0;
+                    }
+                }
             }
             &.home a {
                 &::before {@include icon(home, $primary);}
@@ -72,7 +114,12 @@ $nav-medium-width: 260px;
                 &::before {@include icon(notice, $primary);}
                 &.active::before {background-image: _svg(notice, $primary-black);}
             }
-            &.profile a i {@include _profile;}
+            &.profile a i {
+                @include _profile;
+                @include size(lg) {
+                    margin-right: 0;
+                }
+            }
         }
     }
     .terms {
@@ -84,6 +131,9 @@ $nav-medium-width: 260px;
         color: #C9CACA;
         font-size: 12px;
         font-weight: 600;
+        @include size(lg) {
+            display: none;
+        }
         li {
             margin-bottom: 4px;
             font-size: 12px;

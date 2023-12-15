@@ -28,7 +28,11 @@ body {
 .App {
     position: relative;
     display: flex;
+    min-width: 375px;
     .container {
         width: calc(100% - $nav-medium-width);
+        @include size(lg) {
+            width: 100%;
+        }
     }
 }

@@ -3,6 +3,9 @@
     padding-left: 64px;
     padding-top: 110px;
     font-weight: 900;
+    @include size(lg) {
+        display: none;
+    }
     h4 {
         margin-bottom: 10px;
         font-size: 14px;
@@ -11,7 +14,7 @@
     ul {
         li {
             width: 228px;
-            margin-bottom: 12px;
+            margin-bottom: 28px;
             .upper {
                 display: flex;
                 align-items: center;
@@ -23,7 +26,7 @@
                 position: relative;
                 height: 124px;
                 margin: 12px 0;
-                border-radius: 8px;
+                border-radius: 14px;
                 overflow: hidden;
                 &::after {
                     content: '';

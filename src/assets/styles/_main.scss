@@ -6,6 +6,12 @@ $feed-sidebar-width: 320px;
     width: 100%;
     flex-direction: row;
     margin-left: $nav-medium-width;
+    @include size(lg) {
+        margin-left: 38px;
+    }
+    @include size(sm) {
+        margin-left: 0;
+    }
     .search {
         position: sticky;
         top: 0;
@@ -96,13 +102,21 @@ $feed-sidebar-width: 320px;
             .middle {
                 width: $thumbSize;
                 height: calc($thumbSize + 68px);
-                margin: 14px 0;
-                border-radius: 8px;
+                padding: 20px 0;
+                border-radius: 14px;
                 overflow: hidden;
-                .swiper {height: 100%;}
+                .swiper {
+                    height: 100%;
+                    overflow: initial;
+                    @include _swiper__navigation;
+                    .swiper-pagination {
+                        bottom: -20px;
+                    }
+                }
                 img {
                     height: 100%;
                     object-fit: cover;
+                    border-radius: 14px;
                 }
             }
             .lower {

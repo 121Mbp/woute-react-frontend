@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 
 function Navigation() {
+
     return (
         <div className='navigation'>
             <div className='inner'>
