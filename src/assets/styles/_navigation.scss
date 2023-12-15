@@ -1,0 +1,104 @@
+$nav-medium-width: 260px;
+
+.navigation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: $nav-medium-width;
+    height: 100vh;
+    padding: 8px 12px 20px 12px;
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 1px;
+        bottom: 0;
+        background-color: #B5B5B6;
+    }
+    .logo {
+        display: block;
+        margin: 26px 12px 36px;
+        @include icon(logo, $primary, 96px, 24px);
+        a { 
+            display: block;
+            width: 100%;
+            height: 100%;
+            @include _hide;
+        }
+    }
+    .gnb {
+        li {
+            display: flex;            
+            margin: 16px 0;
+            a {
+                display: flex;
+                align-items: center;
+                flex-direction: row;
+                width: 100%;
+                padding: 12px;
+                font-weight: bold;
+                transition: background-color .3s;
+                font-weight: 900;
+                color: $primary;
+                &::before, i {
+                    margin-right: 16px;
+                    transition: transform .3s;
+                }
+                &:hover {
+                    background-color: rgba(0, 0, 0, .05);
+                    border-radius: 8px;
+                    &::before, i {
+                        transform: scale(1.1);
+                    }
+                }
+                &.active {
+                    color: $primary-black;
+                }
+            }
+            &.home a {
+                &::before {@include icon(home, $primary);}
+                &.active::before {background-image: _svg(home, $primary-black);}
+            }
+            &.cource a {
+                &::before {@include icon(cource, $primary);}
+                &.active::before {background-image: _svg(cource, $primary-black);}
+            }
+            &.create a {
+                &::before {@include icon(create, $primary);}
+                &.active::before {background-image: _svg(create, $primary-black);}
+            }
+            &.notice a {
+                &::before {@include icon(notice, $primary);}
+                &.active::before {background-image: _svg(notice, $primary-black);}
+            }
+            &.profile a i {@include _profile;}
+        }
+    }
+    .terms {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 26px 20px 20px;
+        color: #C9CACA;
+        font-size: 12px;
+        font-weight: 600;
+        li {
+            margin-bottom: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            &:last-child {
+                margin-bottom: 16px;
+            }
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+        p {
+            color: inherit;
+            font-size: inherit;
+        }
+    }
+}

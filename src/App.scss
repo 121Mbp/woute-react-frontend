@@ -1,7 +1,34 @@
 @import './assets/styles/reset';
-@import './assets/styles/color';
 @import './assets/styles/mixin';
 @import './assets/styles/svg';
-@import './assets/styles/header';
-@import './assets/styles/footer';
 
+/*
+    @see font: pretendard
+    Pretendard Black: font-weight: 900;
+    Pretendard ExtraBold: font-weight: 800;
+    Pretendard Bold: font-weight: 700;
+    Pretendard SemiBold: font-weight: 600;
+    Pretendard Medium: font-weight: 500;
+    Pretendard Regular: normal;
+*/
+
+$primary: #464646;
+$primary-white: #FFFFFF;
+$primary-black: #000000;
+
+@import './assets/styles/navigation';
+@import './assets/styles/main';
+@import './assets/styles/aside';
+
+body {
+    background-color: $primary-white;
+    color: $primary;
+}
+
+.App {
+    position: relative;
+    display: flex;
+    .container {
+        width: calc(100% - $nav-medium-width);
+    }
+}

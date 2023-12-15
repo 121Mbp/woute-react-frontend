@@ -19,3 +19,29 @@ $widths: (
     @content;
   }
 }
+
+@mixin icon($icon, $color, $width: 24px, $height: 24px) {
+  content: '';
+  display: inline-block;
+  width: $width;
+  height: $height;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  background-image: _svg($icon, $color);
+  background-position: center;
+}
+
+@mixin _hide {font-size: 0; line-height: 0;}
+@mixin _profile {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: $primary-black;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  margin-right: 12px;
+  border-radius: 50%;
+  box-shadow: 1px 1px 3px $primary-black;
+  vertical-align: middle;
+}
