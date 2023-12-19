@@ -29,17 +29,16 @@ body {
     position: relative;
     display: flex;
     min-width: 375px;
-    @include size(lg) {
-        margin-left: 38px;
-    }
-    @include size(sm) {
-        margin-left: 0;
-    }
     .container {
         width: calc(100% - $nav-medium-width);
+        max-width: 1028px;
         margin-left: $nav-medium-width;
         @include size(lg) {
+            margin-left: 38px;
             width: 100%;
+        }
+        @include size(sm) {
+            margin-left: 0;
         }
     }
 }
