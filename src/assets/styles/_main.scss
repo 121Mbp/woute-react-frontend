@@ -5,13 +5,6 @@ $feed-sidebar-width: 320px;
     justify-content: center;
     width: 100%;
     flex-direction: row;
-    margin-left: $nav-medium-width;
-    @include size(lg) {
-        margin-left: 38px;
-    }
-    @include size(sm) {
-        margin-left: 0;
-    }
     .search {
         position: sticky;
         top: 0;

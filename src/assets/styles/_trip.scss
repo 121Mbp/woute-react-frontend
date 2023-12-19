@@ -1,0 +1,388 @@
+@import './svg';
+@import './mixin';
+
+.trip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    .placesSearch {
+        $width: 235px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 18px 24px;
+        z-index: 99;
+        input {
+            width: 186px;
+            padding: 10px 32px 8px 34px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 -1px 0px rgba(0,0,0,0.02);
+            background-color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            border: 0;
+            & + button[type='submit'] {
+                position: absolute;
+                top: 28px;
+                left: 35px;
+                @include _hide;
+                @include icon(search, #8A8A8A, 16px, 16px);
+                & + button {
+                    position: absolute;
+                    top: 28px;
+                    right: 36px;
+                    @include _hide;
+                    @include icon(add, #484848, 14px, 14px);
+                    transform: rotate(45deg);
+                }
+            }
+        }
+        & + .placesList {
+            position: absolute;
+            top: 69px;
+            left: 0;
+            bottom: 32px;
+            width: $width;
+            padding: 12px 20px 20px;
+            background-color: #EFEFEF;
+            overflow-y: auto;
+            z-index: 2;
+            opacity: 0;
+            pointer-events: none;
+            li {
+                position: relative;
+                padding: 10px 28px 10px 0;
+                border-bottom: 1px solid #E1E1E1;
+                transform: translateX(-$width);
+                opacity: 0;
+            }
+            & + .placePage {
+                display: none;
+            }
+        }
+        &.active {
+            background-color: #DDDDDD;
+            > input {
+                box-shadow: none;
+            }
+            & + .placesList {
+                opacity: 1;
+                pointer-events: initial;
+                li {
+                    transform: translateX(0);
+                    opacity: .6;
+                    @for $i from 1 through 10 {
+                        &:nth-child(#{$i}) {
+                            transition: transform .4s $i*.2s;
+                        }
+                    }
+                    &.on {
+                        opacity: 1;
+                        > button {
+                            display: block;
+                        }
+                    }
+                    p {
+                        cursor: pointer;
+                        strong {
+                            display: block;
+                            font-weight: 900;
+                            margin-bottom: 4px;
+                        }
+                        span {
+                            display: block;
+                            font-size: 11px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                    }
+                    > button {
+                        position: absolute;
+                        top: 50%;                        
+                        right: -8px;
+                        @include icon(create, #464646);
+                        transform: translateY(-50%);
+                        @include _hide;
+                        display: none;
+                    }
+                }
+                & + .placePage {
+                    display: block;
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    width: $width;
+                    display: flex;
+                    justify-content: center;
+                    background-color: #EFEFEF;
+                    z-index: 5;
+                    li {
+                        width: 20px;
+                        height: 20px;
+                        margin: 6px;
+                        cursor: pointer;
+                        font-size: 14px;
+                        text-align: center;
+                        font-weight: 800;
+                        border-radius: 3px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        &.on {
+                            color: #ffffff;
+                            background-color: rgba(0, 0, 0, .5);
+                        }
+                    }
+                    & + .write {
+                        margin-left: $width;
+                        width: calc(100% - $width);
+                        flex-wrap: initial;
+                        .courseList {
+                            ul {
+                                flex-wrap: initial;
+                                justify-content: initial;
+                                flex-direction: column;
+                                justify-content: flex-start;
+                                li {
+                                    width: 100%;
+                                }
+                            }
+                        }
+                        .publish {
+                            width: 62%;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .write {
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 50%;
+        padding: 20px 0;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        transition: all .3s;
+        box-shadow: 0 1px 2px rgba(60, 64, 67, .3), 0 2px 6px 2px rgba(60, 64, 67, .15);
+        z-index: 1;
+        > div {
+            position: relative;
+            min-width: 0;
+            height: 100%;
+            & + div {
+                width: 50%;
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    width: 1px;
+                    left: 0;
+                    background: rgba(0, 0, 0, .2);
+                }
+            }
+            &.courseList {
+                display: flex;
+                flex-grow: 1;
+                width: 50%;
+                ul {
+                    display: flex;
+                    width: 100%;
+                    padding: 0 2.4em;
+                    overflow-y: auto;
+                    flex-wrap: wrap;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    align-content: flex-start;
+                    $orders: one, two, three, four, five;
+                    li {
+                        position: relative;
+                        width: calc(50% - 8px);
+                        padding: 10px 30px 10px 12px;
+                        border-radius: 8px;
+                        margin-bottom: 12px;
+                        cursor: pointer;
+                        border: 1px solid rgb(221, 221, 221);
+                        box-shadow: rgba(0, 0, 0, 0.12) 0px 6px 16px;
+                        cursor: move;
+                        &::before {
+                            content: '';
+                            position: absolute;
+                            top: 10px;
+                            left: 10px;
+                            vertical-align: middle;
+                        }
+                        $i: 0;
+                        @each $n in $orders {
+                            $i: $i +1;
+                            &:nth-child(#{$i})::before {
+                                @include icon($n, #8C3FF9, 20px, 20px);
+                            }
+                        }
+                        strong {
+                            display: inline-block;
+                            padding-left: 23px;
+                            font-size: 14px;
+                            font-weight: 900;
+                        }
+                        span {
+                            display: block;
+                            padding-left: 23px;
+                            font-size: 11px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+                        button {
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                            width: 30px;
+                            height: 30px;
+                            @include _hide;
+                            z-index: 2;
+                            cursor: pointer;
+                            &::after {
+                                content: '';
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+                                @include icon(xButton, #3E3A39, 14px, 14px);
+                                transform: translate(-50%, -50%);
+                            }
+                        }
+                    }
+                }
+            }
+            &.publish {
+                display: flex;
+                flex-direction: column;
+                padding: 0 2.4em;
+                > input {
+                    width: 100%;
+                    padding: 4px 0 10px;
+                    border: 0;
+                    border-bottom: 1px solid rgba(0, 0, 0, .2);
+                    color: #000000;
+                    font-size: 18px;
+                    font-weight: 900;
+                    &::placeholder {
+                        color: #000000;
+                    }
+                }
+                > textarea {
+                    width: 100%;
+                    height: 100%;
+                    margin: 12px 0;
+                    font-size: 14px;
+                    color: #A0A0A0;
+                    resize: none;
+                }
+                .attach {
+                    display: flex;
+                    flex-direction: row;
+                    li {
+                        position: relative;
+                        width: 72px;
+                        aspect-ratio: 1/1;
+                        margin-right: .8em;
+                        border-radius: 4px;
+                        border: 1px solid rgba(0, 0, 0, .16);
+                        
+                        background-repeat: no-repeat;
+                        background-size: cover;
+                        background-position: center;                        
+                        cursor: pointer;
+                        &::after {
+                            content: '';
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            @include icon(add, #B5B5B6, 34px, 34px);
+                            transform: translate(-50%, -50%);
+                            z-index: -1;
+                        }
+                        button {
+                            position: absolute;
+                            top: -6px;
+                            right: -6px;
+                            width: 20px;
+                            height: 20px;
+                            background-color: #FFFFFF;
+                            border-radius: 50%;
+                            box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+                            @include _hide;
+                            z-index: 2;
+                            cursor: pointer;
+                            &::after {
+                                content: '';
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+                                @include icon(xButton, #000000, 20px, 20px);
+                                transform: translate(-50%, -50%);
+                            }
+                        }
+                    }
+                    & + button {
+                        display: flex;
+                        justify-content: center;
+                        margin: 12px 0 0;
+                        padding: 8px 30px;
+                        color: #FFFFFF;
+                        font-size: 14px;
+                        font-weight: 900;
+                        background-color: #464646;
+                        border-radius: 3px;
+                        margin-left: auto;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.trip .overlay {
+    position: relative;
+    padding: .5em 2em .3em .5em;
+    background-color: #FFFFFF;
+    border-radius: 6px;
+    box-shadow: 3px 3px 12px rgba(0,0,0,.4);
+    transform: translateY(-52px);
+    overflow: hidden;
+    > strong {
+        display: block;
+        margin-bottom: -4px;
+        font-size: 12px;
+        font-weight: 900;
+    }
+    > span {
+        margin-right: 4px;
+        font-size: 10px;
+    }
+    > a {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 26px;
+        border-left: 1px solid rgba(0, 0, 0, .2);
+        @include _hide;
+        &::after {
+            content: '';
+            @include icon(home, #464646, 14px, 14px);
+        }
+    }
+}

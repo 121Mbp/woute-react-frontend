@@ -1,23 +1,29 @@
 import { useState } from 'react'
 import './App.scss'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import Navigation from './components/Navigation'
 import Main from './components/feed/Main'
 import Modal from './components/feed/Modal'
 
 
-function App() {
 
+function App() {
+  const location = useLocation()
+  const state = location.state && location.state.backgroundLocation
   return (
     <div className='App'>
       <Navigation />
       <div className='container'>
-        <Routes>
+        <Routes location={ state || location }>
           <Route path='/' element={ <Main /> } />
-          <Route path='/create' element={ <><Main /><Modal /></> } />
+          <Route path='/cource' element={ <>cource</> } />
         </Routes>
+        {state && (
+          <Routes>
+            <Route path='create' element={ <Modal /> } />
+          </Routes>
+        )}
       </div>
-      
     </div>
   );
 }
