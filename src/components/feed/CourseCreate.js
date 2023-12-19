@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, createRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Map, MapMarker, CustomOverlayMap, Polyline } from 'react-kakao-maps-sdk'
 import '../../assets/styles/_trip.scss'
@@ -15,7 +15,7 @@ function CourseCreate() {
     const mapRef = useRef()
     const placesListRef = useRef()
     const scrollRef = useRef()
-    const courseListRef = useState()
+    const courseListRef = createRef()
     const dragItem = useRef()
     const dropItem = useRef()
     const searchFocusInput = useRef()
@@ -154,7 +154,6 @@ function CourseCreate() {
         const bounds = new kakao.maps.LatLngBounds()
         const marker = new kakao.maps.LatLng(item.y, item.x)
         const position = bounds.extend(marker)
-        
         map.setBounds(position)
     }
 
@@ -171,9 +170,7 @@ function CourseCreate() {
         } 
         if(spot.length === 0) {
             setStyle({ width: '100%', height: '50%'})
-            setTimeout(()=>{
-                handleHover(item)
-            }, 100)
+            setTimeout(()=>{ handleHover(item) }, 100)
         }
         if(spot.length > 4) {
             alert('장소는 최대 5개 까지 등록이 가능합니다.')
@@ -236,6 +233,7 @@ function CourseCreate() {
         if(us === undefined) us = spot
         if(us.length === 0) {
             setStyle({ width: '100%', height: '100%'})
+            setInfo(false)
             searchInit()
             return
         }
@@ -266,13 +264,15 @@ function CourseCreate() {
         for (let i = 0; i < us.length; i++) {
             path.push({ lat: us[i].y, lng: us[i].x })
         }
-        setMarkers(markers)        
+        
         setPath(path)
-        map.setBounds(bounds)
+        setMarkers(markers)
+        setTimeout(()=>{ map.setBounds(bounds) }, 10)
     }
 
     const postSubmit = e => {
         e.preventDefault()
+        console.log(spot)
     }
 
     return (
@@ -283,7 +283,7 @@ function CourseCreate() {
                         <Map 
                             center={ location.center }
                             style={ style }
-                            level={ 5 }
+                            level={ 4 }
                             onCreate={ setMap }
                             ref={ mapRef }
                         >

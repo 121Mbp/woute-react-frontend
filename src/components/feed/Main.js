@@ -29,9 +29,9 @@ function Main() {
                     </div>
                 </div>
                 <div className='feeds'>
-                    <Post />
-                    <Post />
-                    <Post />
+                    <Post type={ 'course' } />
+                    <Post type={ 'feed' } />
+                    <Post type={ 'course' } />
                 </div>
             </div>
             <Aside />

@@ -1,0 +1,94 @@
+@import './svg';
+@import './mixin';
+
+.addFeed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: row;
+
+    .feedTitle {
+        border-bottom: 3px solid rgba(219, 219, 219);
+        width: 90%;
+        margin: 40px 0 10px 0px;
+    }
+
+    .feedTitle textarea {
+        resize: none;
+        width: 100%;
+        height: 40px !important;
+        margin: 10px 0 0 0px;
+        font-size: 25px;
+    }
+
+    .addfeed {
+        display: flex;
+        width: 50%;
+        height: 100%;
+    }
+
+    .feedImg {
+        width: 100%;
+
+        img {
+            height: 780px;
+            width: 100%;
+            object-fit: cover;
+        }
+    }
+
+    .recordImg {
+        img {
+            width: 72px;
+            height: 72px;
+            margin: 10px 10px 0 0;
+        }
+    }
+    .feedRecordinner {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+        margin:  0 40px 0 40px ;
+
+        p {
+            color: rgb(219, 219, 219);
+        }
+    }
+
+    .feedRecord {
+        overflow: hidden;
+        width: 100%;
+        max-width: 50%;
+        object-fit: cover;
+        display: flex;
+        justify-content: center;
+        margin: 5% 1% 2% 1%;
+    }
+}
+
+.addIcon {
+    padding: 20px;
+    border: 1px solid rgb(219, 219, 219);
+    @include icon (add, #DBDBDB, 72px, 72px);
+    margin: 10px 10px 0 0;
+    cursor: pointer;
+}
+
+.feedBtn {
+    color: rgb(219, 219, 219);
+    display: flex;
+    justify-content: center;
+}
+
+.addFeed button {
+    background-color: #3E3A39;
+    color: #ffffff;
+    width: 400px;
+    height: 50px;
+    font-weight: 900;
+}
