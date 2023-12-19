@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -6,18 +7,26 @@ import 'swiper/css/navigation'
 import { Pagination, Navigation } from 'swiper/modules'
 import Hearts from '../Hearts'
 
-function Post() {
+
+function Post({ type }) {
+    const location = useLocation()
+    const [like, setLike] = useState(false)
+    const handleLike = () => {
+        setLike((prev) => !prev)
+    }
     return (
         <div className='post'>
             <div className='upper'>
                 <Link to='/' className='user'><i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>mark_ju</Link>
-                <Link to='/'>코스보기</Link>
+                <Link to='/p' state={{ backgroundLocation: location, type: type }}>코스보기</Link>
             </div>
             <div className='middle'>
                 <Swiper
                     navigation={ true }
                     pagination={{ dynamicBullets: true }}
                     modules={[ Pagination, Navigation ]}
+                    onDoubleClick={ handleLike }
+                    toggle={ like }
                 >
                     <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19038_1129.jpg' alt='' /></SwiperSlide>
                     <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19039_1133.jpg' alt='' /></SwiperSlide>
@@ -27,8 +36,8 @@ function Post() {
             </div>
             <div className='lower'>
                 <div className='likes'>
-                    <div className='heart'>
-                        <Hearts />
+                    <div className='heart' onClick={ handleLike } toggle={ like }>
+                        { like && <Hearts /> }
                     </div>
                     <div>좋아요 999개</div>
                 </div>
@@ -47,6 +56,7 @@ function Post() {
                     <span>댓글쓰기</span>
                 </Link>
             </div>
+            <Outlet />
         </div>
     )
 }

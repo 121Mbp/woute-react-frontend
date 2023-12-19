@@ -1,0 +1,128 @@
+@import './_svg';
+@import './_mixin';
+
+.myFiid {
+    display: flex;
+    width: 100%;
+}
+
+.fiidImg {
+    width: 100%;
+    display: flex;
+    min-width: 50%;
+    .swiper {
+        @include _swiper__navigation;
+    }
+    img {
+        height: 780px;
+        object-fit: cover;
+        width: 100%;
+    }
+}
+
+.fiidArea {
+    width: 100%;
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    margin: 10px 20px 40px 20px;
+}
+    .fiidAreaInner{
+        margin: 30px;
+    } 
+
+
+.myName {
+    display: flex;
+    align-items: center;
+    margin: 0 0 10px;
+
+    p {
+        font-size: 20px;
+        font-weight: 900;
+        margin: 0 0 0 10px;
+        color: black;
+    }
+}
+
+.fiidProfile {
+    i {
+        display: flex;
+        background: no-repeat;
+        width: 34px;
+        height: 34px;
+        background-size: cover;
+        border-radius: 50%;
+        background-position: center;
+    }
+}
+
+.myFiidTitle p {
+    font-size: 30px;
+    font-weight: 900;
+    margin: 0 0 30px 0;
+}
+
+.myFiidContent {
+    margin: 0 0 20px 0;
+}
+
+.myMent {
+    display: flex;
+    align-items: center;
+    margin: 50px 0 0 0;
+    input {
+        border-radius: 20px;
+        width: 100%;
+        height: 34px;
+        margin: 0 0 0 10px;
+        background-image: url('data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 16\" fill=\"none\"%3E%3Cpath d=\"M13.1692 8.9303C12.5692 8.9303 12.0892 8.45028 12.0892 7.85028C12.0892 7.25028 12.5692 6.77032 13.1692 6.77032C13.7692 6.77032 14.2492 7.25028 14.2492 7.85028C14.2592 8.45028 13.7692 8.9303 13.1692 8.9303ZM8.84918 8.9303C8.24918 8.9303 7.76923 8.45028 7.76923 7.85028C7.76923 7.25028 8.24918 6.77032 8.84918 6.77032C9.44918 6.77032 9.9292 7.25028 9.9292 7.85028C9.9292 8.45028 9.44918 8.9303 8.84918 8.9303ZM4.51923 8.9303C3.91923 8.9303 3.43921 8.45028 3.43921 7.85028C3.43921 7.25028 3.91923 6.77032 4.51923 6.77032C5.11923 6.77032 5.59918 7.25028 5.59918 7.85028C5.59918 8.45028 5.11923 8.9303 4.51923 8.9303ZM8.84918 0.820312C4.06918 0.820312 0.199219 3.97028 0.199219 7.85028C0.199219 9.53028 0.919211 11.0603 2.12921 12.2703C1.70921 13.9703 0.289236 15.4903 0.279236 15.5103C0.209236 15.5903 0.189187 15.7003 0.229187 15.8003C0.269187 15.9003 0.369187 15.9603 0.479187 15.9603C2.71919 15.9603 4.39919 14.8903 5.22919 14.2203C6.33919 14.6403 7.55919 14.8803 8.85919 14.8803C13.6392 14.8803 17.5092 11.7303 17.5092 7.85028C17.4992 3.97028 13.6292 0.820312 8.84918 0.820312Z\" fill=\"%239FA0A0\"/%3E%3C/svg%3E');
+        background-repeat: no-repeat;
+        background-position: 10px;
+        border-color: #b3b4b4;
+        &::placeholder {
+            padding: 0 0 0 30px;
+        }
+    }
+}
+
+.likeHeart {
+    @include icon(heart, #3E3A39, 20px, 20px);
+}
+
+.userComment {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px 0 0 0;
+    align-items: center;
+
+    .fiidProfile {
+        display: flex;
+        align-items: center;
+
+        p {
+            margin: 0 0 0 10px;
+            font-weight: 900;
+            color: black;
+        }
+    }
+}
+
+.userMent {
+    width: 100%;
+    border-bottom: solid 1px #b3b4b4;
+    margin: 10px 0 0 0;
+    p{
+        margin: 0 0 10px 0;
+    }
+}
+
+.userComments{
+    overflow-y: auto ;
+    height: 100%;
+}
+
+.userComments::-webkit-scrollbar{
+    display:none;
+}
+
