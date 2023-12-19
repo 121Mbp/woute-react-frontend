@@ -19,10 +19,10 @@ function Post() {
                     pagination={{ dynamicBullets: true }}
                     modules={[ Pagination, Navigation ]}
                 >
-                    <SwiperSlide><img src='https://scontent-ssn1-1.xx.fbcdn.net/v/t39.30808-6/294403150_7844086842331965_1581287340140642271_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=3635dc&_nc_ohc=zhI9ixwvdkAAX-U_LbJ&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB2CwNh8lAx8cc3tCuDTNc-33IFxcxWdPUfgnfybwMpyA&oe=65808F4D' alt='' /></SwiperSlide>
-                    <SwiperSlide><img src='https://scontent-ssn1-1.xx.fbcdn.net/v/t39.30808-6/294403150_7844086842331965_1581287340140642271_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=3635dc&_nc_ohc=zhI9ixwvdkAAX-U_LbJ&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB2CwNh8lAx8cc3tCuDTNc-33IFxcxWdPUfgnfybwMpyA&oe=65808F4D' alt='' /></SwiperSlide>
-                    <SwiperSlide><img src='https://scontent-ssn1-1.xx.fbcdn.net/v/t39.30808-6/294403150_7844086842331965_1581287340140642271_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=3635dc&_nc_ohc=zhI9ixwvdkAAX-U_LbJ&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB2CwNh8lAx8cc3tCuDTNc-33IFxcxWdPUfgnfybwMpyA&oe=65808F4D' alt='' /></SwiperSlide>
-                    <SwiperSlide><img src='https://scontent-ssn1-1.xx.fbcdn.net/v/t39.30808-6/294403150_7844086842331965_1581287340140642271_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=3635dc&_nc_ohc=zhI9ixwvdkAAX-U_LbJ&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB2CwNh8lAx8cc3tCuDTNc-33IFxcxWdPUfgnfybwMpyA&oe=65808F4D' alt='' /></SwiperSlide>
+                    <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19038_1129.jpg' alt='' /></SwiperSlide>
+                    <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19039_1133.jpg' alt='' /></SwiperSlide>
+                    <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19040_1138.jpg' alt='' /></SwiperSlide>
+                    <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19041_1142.jpg' alt='' /></SwiperSlide>
                 </Swiper>
             </div>
             <div className='lower'>

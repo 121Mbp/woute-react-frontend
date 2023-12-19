@@ -7,6 +7,7 @@
     left: 0;
     right: 0;
     bottom: 0;
+    padding: 96px;
     background-color: rgba(0, 0, 0, .7);
     display: flex;
     justify-content: center;
@@ -18,7 +19,7 @@
         flex-basis: 840px;
         flex-shrink: 1;
         flex-grow: 1;
-        max-width: calc(100% - 96px - 96px);
+        max-width: 1200px;
         min-width: 405px;
         min-height: 380px;
         max-height: 780px;        
@@ -35,9 +36,76 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 100;
             @include _hide;
             &::after {
                 @include icon(xButton, #3E3A39, 34px, 34px);
+            }
+        }
+    }
+}
+
+.between {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 2.6em .5em;
+    &:hover > div:not(:hover) {
+        opacity: .5;
+        transform: scale(0.86);
+    }
+    > div {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 50%;
+        height: 100%;
+        text-align: center;
+        transition: all .8s;
+        cursor: pointer;
+        &:hover {
+            width: 82%;
+        }
+        &::before {
+            content: '';
+            display: block;
+            @include icon(addCos, #464646, 5em, 5em);
+        }
+        & + div {
+            &::before {
+                @include icon(addFeed, #464646, 4em, 4em);
+            }
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                width: 1px;
+                background-color: #B5B5B6;
+            }
+        }
+        > p {
+            margin-top: 1.6em;
+            &:first-child {
+                font-weight: 900;
+                font-size: 18px;
+                & + p {
+                    font-size: 14px;
+                    strong {font-size: inherit;}
+                    & + p {
+                        width: 10.3em;
+                        margin-top: 2.1em;
+                        padding: 9px 26px;
+                        font-weight: 600;
+                        font-size: 18px;
+                        background-color: #464646;
+                        border-radius: 8px;
+                        color: #ffffff;
+                    }
+                }
             }
         }
     }
