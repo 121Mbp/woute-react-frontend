@@ -117,7 +117,7 @@ $nav-medium-width: 240px;
                 &::before {@include icon(home, $primary);}
                 &.active::before {background-image: _svg(home, $primary-black);}
             }
-            &.cource a {
+            &.course a {
                 &::before {@include icon(cource, $primary);}
                 &.active::before {background-image: _svg(cource, $primary-black);}
             }
