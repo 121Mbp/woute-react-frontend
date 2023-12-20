@@ -91,6 +91,15 @@
 	@else if $icon == chat{
 		$icon: 'data:image/svg+xml,%3C%3Fxml version="1.0" standalone="no"%3F%3E%3C!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"%3E%3Csvg version="1.0" xmlns="http://www.w3.org/2000/svg" width="142.000000pt" height="108.000000pt" viewBox="0 0 142.000000 108.000000" preserveAspectRatio="xMidYMid meet"%3E%3Cg transform="translate(0.000000,108.000000) scale(0.100000,-0.100000)"%0Afill="#{$color}" stroke="none"%3E%3Cpath d="M42 1036 l-37 -34 -3 -259 c-4 -279 1 -318 45 -352 21 -17 40 -21 99%0A-21 l74 0 0 -44 c0 -73 14 -74 123 -11 l96 55 206 0 207 0 29 29 29 29 0 277%0Ac0 227 -3 281 -15 305 -31 59 -38 60 -445 60 l-370 0 -38 -34z"/%3E%3Cpath d="M978 601 l-3 -221 -38 -37 -37 -38 -165 -3 -165 -3 0 -51 c0 -57 20%0A-98 60 -122 23 -13 58 -16 185 -16 l156 0 86 -51 c47 -27 93 -49 102 -47 11 2%0A17 16 19 51 l3 47 72 0 c83 0 113 12 144 59 22 33 23 40 23 288 0 367 8 356%0A-261 361 l-178 4 -3 -221z"/%3E%3C/g%3E%3C/svg%3E%0A';
 	}
+	@else if $icon == posts    {
+        $icon: 'data:image/svg+xml,%3C%3Fxml version="1.0" %3F%3E%3C!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"%3E%3Csvg enable-background="new 0 0 24 24" height="24px" id="Layer_1" version="1.1" viewBox="0 0 24 24" width="24px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"%3E%3Cg%3E%3Cpath d="M23,0H1C0.4,0,0,0.4,0,1v22c0,0.6,0.4,1,1,1h22c0.6,0,1-0.4,1-1V1C24,0.4,23.6,0,23,0z M22,22H2V2h20V22z"/%3E%3Cpath d="M20,4h-5v5h5V4z M19,8h-3V5h3V8z"/%3E%3Crect height="1" width="10" x="4" y="15"/%3E%3Crect height="1" width="10" x="4" y="18"/%3E%3Crect height="1" width="10" x="4" y="12"/%3E%3C/g%3E%3C/svg%3E'; 
+    }
+    @else if $icon == like    {
+        $icon: 'data:image/svg+xml,%3Csvg style="enable-background:new 0 0 24 24;" fill="#{$color}" version="1.1" viewBox="0 0 24 24" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"%3E%3Cg id="info"/%3E%3Cg id="icons"%3E%3Cpath d="M22.2,4.1c2.7,2.7,2.4,6.9-0.4,9.5l-8.4,7.9c-0.8,0.7-2.1,0.7-2.9,0l-8.4-7.9c-2.7-2.6-3-6.8-0.4-9.5 C4.6,1.4,9.2,1.3,12,4C14.8,1.3,19.4,1.4,22.2,4.1z" id="like"/%3E%3C/g%3E%3C/svg%3E';
+    }
+    @else if $icon == comments    {
+        $icon: 'data:image/svg+xml,%3Csvg viewBox="0 0 512 512" fill="#{$color}" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32z"/%3E%3C/svg%3E';
+    }
 	@else if $icon == cource	{
 		$icon: '';
 	}

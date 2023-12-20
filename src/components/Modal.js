@@ -26,10 +26,12 @@ function Modal() {
                         <><PostType type={ setType } />
                         { type === 'course' ? <CourseCreate /> : type === 'feed' ? <ModalAddFeed /> : '' }</>
                     ) : (
-                        location.pathname === '/p' && (
+                        location.pathname === '/p' ? (
                             location.state.type === 'course' ? <CourseView /> : (
                                 location.state.type === 'feed' ? <ModalFeed /> : ''
-                            )
+                            ) 
+                        ) : (
+                            location.pathname === '/chat' && (<>chat</>)
                         )
                     )
                 }
