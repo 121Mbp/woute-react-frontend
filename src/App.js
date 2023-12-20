@@ -30,7 +30,7 @@ function App() {
       <div className='container'>
         <Routes location={ state || location }>
           <Route path='/' element={ <Main /> } />
-          <Route path='/cource' element={ <>cource</> } />
+          <Route path='/course' element={ <>course</> } />
         </Routes>
         {state && (
           <Routes>

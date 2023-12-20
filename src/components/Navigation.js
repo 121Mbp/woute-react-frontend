@@ -10,7 +10,7 @@ function Navigation() {
                 <div className='gnb'>
                     <ul>
                         <li className='home'><NavLink to='/'>홈</NavLink></li>
-                        <li className='cource'><NavLink to='/cource'>코스</NavLink></li>
+                        <li className='course'><NavLink to='/course'>코스</NavLink></li>
                         <li className='create'><NavLink to='/create' state={{ backgroundLocation: location }}>만들기</NavLink></li>
                         <li className='notice'><NavLink to='/notice'>알림</NavLink></li>
                         <li className='chat'><NavLink to='/chat'>채팅</NavLink></li>
