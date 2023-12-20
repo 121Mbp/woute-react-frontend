@@ -40,10 +40,25 @@ $nav-medium-width: 240px;
         margin: 26px 12px 36px;
         @include icon(logo, $primary, 96px, 24px);
         @include size(lg) {
-            width: 30px;
+            margin: 26px 8px 36px;
+            @include icon(wicon, $primary, 30px, 30px);
         }
         @include size(sm) {
-            display: none;
+            @include icon(logo, $primary, 96px, 24px);
+            position: fixed;
+            top: 0;
+            left: 12px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            margin: 0;
+            width: 56px;
+            transform: translateY(0);
+            transition: transform .5s;
+            z-index: 10;
+            .__active & {
+                transform: translateY(-60px);
+            }
         }
         a { 
             display: block;
@@ -114,10 +129,35 @@ $nav-medium-width: 240px;
                 &::before {@include icon(notice, $primary);}
                 &.active::before {background-image: _svg(notice, $primary-black);}
             }
+            &.chat a {
+                &::before {@include icon(chat, $primary);}
+                &.active::before {background-image: _svg(chat, $primary-black);}
+            }
             &.profile a i {
                 @include _profile;
                 @include size(lg) {
                     margin-right: 0;
+                }
+            }
+            @include size(sm) {
+                &.chat {
+                    position: fixed;
+                    top: 0;
+                    right: 8px;
+                    height: 60px;
+                    display: flex;
+                    align-items: center;
+                    margin: 0;
+                    transform: translateY(0);
+                    transition: transform .5s;
+                    z-index: 10;
+                    .__active & {
+                        transform: translateY(-60px);
+                    }
+                    a:hover {
+                        background-color: transparent;
+                        
+                    }
                 }
             }
         }

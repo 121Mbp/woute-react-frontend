@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, createRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Map, MapMarker, CustomOverlayMap, Polyline } from 'react-kakao-maps-sdk'
-import '../../assets/styles/_trip.scss'
+import './../../assets/styles/_trip.scss'
 import Loader from '../Loader'
 import pin from './../../assets/images/marker.png'
 import one from './../../assets/images/one.png'
@@ -12,6 +12,7 @@ import five from './../../assets/images/five.png'
 
 const { kakao } = window
 function CourseCreate() {
+    const widthSize = useWindowSize()
     const mapRef = useRef()
     const placesListRef = useRef()
     const scrollRef = useRef()
@@ -110,6 +111,10 @@ function CourseCreate() {
             }
             setMarkers(markers)
             map.setBounds(bounds)
+            console.log(widthSize)
+            if(widthSize < 992) {
+                setStyle({ width: '100%', height: '50%'})
+            }
             setTimeout(()=>{
                 setActive(true)
                 placesListRef.current.scrollTo({ top: 0, hefavior: 'smooth' })
@@ -130,6 +135,9 @@ function CourseCreate() {
         setMarkers([])
         setStore([])
         if(spot.length === 0) {
+            if(widthSize < 992) {
+                setStyle({ width: '100%', height: '100%'})
+            }
             return
         }
         spotMarker()
@@ -308,6 +316,7 @@ function CourseCreate() {
                                         ))
                                     }
                                 </ul>
+                                <button type='button' className='close' onClick={ searchInit }>닫기</button>
                             </div>
                             <ul className='placePage'>
                                 {
@@ -404,6 +413,19 @@ function CourseCreate() {
             
         </>
     )
+}
+
+function useWindowSize() {
+    const [windowSize, setWindowSize] = useState()
+    useEffect(() => {
+      function handleResize() {
+        setWindowSize(window.innerWidth)
+      }
+      window.addEventListener('resize', handleResize)
+      handleResize()
+      return () => window.removeEventListener('resize', handleResize)
+    }, [])
+    return windowSize
 }
 
 export default CourseCreate

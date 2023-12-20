@@ -12,6 +12,9 @@ $orders: one, two, three, four, five;
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
+    @include size(lg) {
+        padding-top: 42px;
+    }
     .placesSearch {
         $width: 235px;
         position: absolute;
@@ -19,6 +22,12 @@ $orders: one, two, three, four, five;
         left: 0;
         padding: 18px 24px;
         z-index: 99;
+        @include size(lg) {
+            padding: 4px 32px;
+            background: #FFFFFF;
+            right: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 -1px 0px rgba(0,0,0,0.02);
+        }
         input {
             width: 186px;
             padding: 10px 32px 8px 34px;
@@ -28,12 +37,22 @@ $orders: one, two, three, four, five;
             font-size: 14px;
             font-weight: 600;
             border: 0;
+            @include size(lg) {
+                width: 100%;
+                padding-right: 42px;
+                box-shadow: none;
+            }
             & + button[type='submit'] {
                 position: absolute;
                 top: 28px;
                 left: 35px;
                 @include _hide;
                 @include icon(search, #8A8A8A, 16px, 16px);
+                @include size(lg) {
+                    left: auto;
+                    top: 14px;
+                    right: 32px;
+                }
                 & + button {
                     position: absolute;
                     top: 28px;
@@ -41,6 +60,10 @@ $orders: one, two, three, four, five;
                     @include _hide;
                     @include icon(add, #484848, 14px, 14px);
                     transform: rotate(45deg);
+                    @include size(lg) {
+                        top: 16px;
+                        right: 58px;
+                    }
                 }
             }
         }
@@ -56,12 +79,27 @@ $orders: one, two, three, four, five;
             z-index: 2;
             opacity: 0;
             pointer-events: none;
+            @include size(lg) {
+                position: fixed;
+                bottom: 0;
+                top: auto;
+                height: 46.8%;
+                width: 100%;
+                padding-bottom: 32px;
+                background-color: #FFFFFF;
+                box-shadow: 0 1px 2px rgba(60, 64, 67, .3), 0 2px 6px 2px rgba(60, 64, 67, .15);
+            }
             li {
                 position: relative;
                 padding: 10px 28px 10px 0;
                 border-bottom: 1px solid #E1E1E1;
                 transform: translateX(-$width);
                 opacity: 0;
+                @include size(lg) {
+                    padding: 8px 28px 6px 0;
+                    transform: translateX(0);
+                    transform: translateY($width);
+                }
             }
             & + .placePage {
                 display: none;
@@ -69,12 +107,41 @@ $orders: one, two, three, four, five;
         }
         &.active {
             background-color: #DDDDDD;
+            @include size(lg) {
+                background-color: #FFFFFF;
+            }
             > input {
                 box-shadow: none;
             }
             & + .placesList {
                 opacity: 1;
                 pointer-events: initial;
+                .close {
+                    display: none;
+                    position: fixed;
+                    left: 50%;
+                    top: auto;
+                    bottom: 43.6%;
+                    right: auto;
+                    width: auto;
+                    height: auto;
+                    margin: 0;
+                    opacity: .8;
+                    transform: translateX(-50%);
+                    background-color: transparent;
+                    &::after {
+                        margin: .6em 1em;
+                        padding: 0;
+                        width: 72px;
+                        height: 4px;
+                        background-image: none;
+                        background-color: #3E3A39;
+                        border-radius: 14px;
+                    }
+                    @include size(lg) {
+                        display: block;
+                    }
+                }
                 li {
                     transform: translateX(0);
                     opacity: .6;
@@ -82,6 +149,9 @@ $orders: one, two, three, four, five;
                         &:nth-child(#{$i}) {
                             transition: transform .4s $i*.2s;
                         }
+                    }
+                    @include size(lg) {
+                        transform: translateY(0);
                     }
                     &.on {
                         opacity: 1;
@@ -95,6 +165,9 @@ $orders: one, two, three, four, five;
                             display: block;
                             font-weight: 900;
                             margin-bottom: 4px;
+                            @include size(lg) {
+                                font-size: 14px;
+                            }
                         }
                         span {
                             display: block;
@@ -124,6 +197,10 @@ $orders: one, two, three, four, five;
                     justify-content: center;
                     background-color: #EFEFEF;
                     z-index: 5;
+                    @include size(lg) {
+                        width: 100%;
+                        background-color: #FFFFFF;
+                    }
                     li {
                         width: 20px;
                         height: 20px;
@@ -145,19 +222,33 @@ $orders: one, two, three, four, five;
                         margin-left: $width;
                         width: calc(100% - $width);
                         flex-wrap: initial;
+                        @include size(lg) {
+                            margin: 0;
+                            width: 100%;
+                        }
                         .courseList {
                             ul {
                                 flex-wrap: initial;
                                 justify-content: initial;
                                 flex-direction: column;
                                 justify-content: flex-start;
+                                @include size(lg) {
+                                    flex-direction: initial;
+                                    justify-content: initial;
+                                }
                                 li {
                                     width: 100%;
+                                    @include size(lg) {
+                                        width: auto;
+                                    }
                                 }
                             }
                         }
                         .publish {
                             width: 62%;
+                            @include size(lg) {
+                                display: none;
+                            }
                         }
                     }
                 }
@@ -176,6 +267,11 @@ $orders: one, two, three, four, five;
         transition: all .3s;
         box-shadow: 0 1px 2px rgba(60, 64, 67, .3), 0 2px 6px 2px rgba(60, 64, 67, .15);
         z-index: 1;
+        @include size(lg) {
+            box-shadow: none;
+            border-radius: 10px 10px 0 0;
+            background-color: #FFFFFF;
+        }
         > div {
             position: relative;
             min-width: 0;
@@ -196,6 +292,15 @@ $orders: one, two, three, four, five;
                 display: flex;
                 flex-grow: 1;
                 width: 50%;
+                @include size(lg) {
+                    position: absolute;
+                    top: -38px;
+                    left: 0;
+                    right: 0;
+                    width: auto;
+                    height: auto;
+                    display: block;
+                }
                 ul {
                     display: flex;
                     width: 100%;
@@ -205,6 +310,21 @@ $orders: one, two, three, four, five;
                     justify-content: space-between;
                     align-items: flex-start;
                     align-content: flex-start;
+                    @include size(lg) {
+                        display: block;
+                        padding: .2em 1.4rem;
+                        overflow-x: auto;
+                        overflow-y: hidden;
+                        flex-wrap: initial;
+                        justify-content: initial;
+                        align-items: initial;
+                        align-content: initial;
+                        white-space: nowrap;
+                        -webkit-overflow-scrolling: touch;
+                        &::-webkit-scrollbar {
+                            display: none;
+                        }
+                    }
                     li {
                         position: relative;
                         width: calc(50% - 8px);
@@ -259,6 +379,31 @@ $orders: one, two, three, four, five;
                                 left: 50%;
                                 @include icon(xButton, #3E3A39, 14px, 14px);
                                 transform: translate(-50%, -50%);
+                            }
+                        }
+                        @include size(lg) {
+                            display: inline-block;
+                            width: auto;
+                            margin: 0 .3em;
+                            padding: 2px 24px 2px 0;
+                            border-radius: 14px;
+                            background-color: #FFFFFF;
+                            box-shadow: 0 1px 2px rgba(60, 64, 67, .3), 0 2px 6px 2px rgba(60, 64, 67, .15);
+                            &::before {
+                                top: 2px;
+                                left: 2px;
+                                transform: scale(0.8);
+                            }
+                            strong {
+                                font-size: 11px;
+                            }
+                            span {
+                                display: none;
+                            }
+                            button {
+                                top: -3px;
+                                right: -3px;
+                                transform: scale(0.8);
                             }
                         }
                     }
@@ -345,6 +490,14 @@ $orders: one, two, three, four, five;
                         background-color: #464646;
                         border-radius: 3px;
                         margin-left: auto;
+                    }
+                }
+                @include size(lg) {
+                    width: 100%;
+                    .attach {
+                        & + button {
+                            width: 100%;
+                        }
                     }
                 }
             }

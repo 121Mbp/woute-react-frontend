@@ -13,6 +13,7 @@ function Navigation() {
                         <li className='cource'><NavLink to='/cource'>코스</NavLink></li>
                         <li className='create'><NavLink to='/create' state={{ backgroundLocation: location }}>만들기</NavLink></li>
                         <li className='notice'><NavLink to='/notice'>알림</NavLink></li>
+                        <li className='chat'><NavLink to='/chat'>채팅</NavLink></li>
                         <li className='profile'><NavLink to='/profile'>
                             <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>프로필</NavLink>
                         </li>

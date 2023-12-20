@@ -1,16 +1,22 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation, Outlet } from 'react-router-dom'
-import '../../assets/styles/_modal.scss'
-import PostType from './PostType'
-import CourseCreate from './CourseCreate'
-import CourseView from './CourseView'
-import ModalAddFeed from './ModalAddFeed'
-import ModalFeed from './ModalFeed'
+import './../assets/styles/_modal.scss'
+import PostType from './feed/PostType'
+import CourseCreate from './feed/CourseCreate'
+import CourseView from './feed/CourseView'
+import ModalAddFeed from './feed/ModalAddFeed'
+import ModalFeed from './feed/ModalFeed'
 
 function Modal() {
     const location = useLocation()
     const state = location.state && location.state?.backgroundLocation
     const [type, setType] = useState('')
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => {
+          document.body.style.overflow = 'unset';
+        };
+      }, []);
     console.log(location)
     return (
         <div className='modal'>
