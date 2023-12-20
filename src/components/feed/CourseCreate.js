@@ -113,7 +113,7 @@ function CourseCreate() {
             map.setBounds(bounds)
             console.log(widthSize)
             if(widthSize < 992) {
-                setStyle({ width: '100%', height: '50%'})
+                setStyle({ width: '100%', height: '52%'})
             }
             setTimeout(()=>{
                 setActive(true)
