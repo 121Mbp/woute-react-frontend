@@ -92,7 +92,7 @@ $orders: one, two, three, four, five;
             }
             @include size(sm) {
                 bottom: 56px;
-                height: 44%;
+                height: 42.6%;
                 box-shadow: none;
             }
             li {
@@ -453,12 +453,7 @@ $orders: one, two, three, four, five;
                         aspect-ratio: 1/1;
                         margin-right: .8em;
                         border-radius: 4px;
-                        border: 1px solid rgba(0, 0, 0, .16);
-                        
-                        background-repeat: no-repeat;
-                        background-size: cover;
-                        background-position: center;                        
-                        cursor: pointer;
+                        border: 1px solid rgba(0, 0, 0, .16);       
                         &::after {
                             content: '';
                             position: absolute;
@@ -467,6 +462,25 @@ $orders: one, two, three, four, five;
                             @include icon(add, #B5B5B6, 34px, 34px);
                             transform: translate(-50%, -50%);
                             z-index: -1;
+                        }
+                        > img {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            border-radius: 4px;
+                            object-fit: cover;   
+                            aspect-ratio: 1 / 1;
+                        }
+                        input {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            opacity: 0;
+                            cursor: pointer;
                         }
                         button {
                             position: absolute;

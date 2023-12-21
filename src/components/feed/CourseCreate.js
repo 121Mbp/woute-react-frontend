@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, createRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Map, MapMarker, CustomOverlayMap, Polyline } from 'react-kakao-maps-sdk'
+import imageCompression from 'browser-image-compression'
 import './../../assets/styles/_trip.scss'
 import Loader from '../Loader'
 import pin from './../../assets/images/marker.png'
@@ -105,7 +106,6 @@ function CourseCreate() {
                     place_url: data[i].place_url,
                     src: `${ pin }`,
                     size: { width: 24, height: 35 }
-
                 })
                 bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x))
             }
@@ -176,8 +176,8 @@ function CourseCreate() {
             return 
         } 
         if(spot.length === 0) {
-            setStyle({ width: '100%', height: '50%'})
             setTimeout(()=>{ handleHover(item) }, 100)
+            setStyle({ width: '100%', height: '50%'})
         }
         if(spot.length > 4) {
             alert('장소는 최대 5개 까지 등록이 가능합니다.')
@@ -212,16 +212,21 @@ function CourseCreate() {
         if(map) map.relayout()
         if(active) {
             scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
-            if(widthSize > 992 && spot.length === 0) {
-                setStyle({ width: '100%', height: '100%'})
-            } else {
-                setStyle({ width: '100%', height: '50%'})
-            }
         } else {
             courseListRef.current?.scrollTo({ top: 0, hefavior: 'smooth' })
         }
         
     }, [ style, spot, path ])
+
+    useEffect(()=>{
+        if(active) {
+            if(widthSize > 992 && spot.length === 0) {
+                setStyle({ width: '100%', height: '100%'})
+            } else {
+                setStyle({ width: '100%', height: '50%'})
+            }
+        }
+    }, [ widthSize ])
 
     const dragStart = (e, position) => {
         dragItem.current = position
@@ -283,15 +288,84 @@ function CourseCreate() {
         setTimeout(()=>{ map.setBounds(bounds) }, 10)
     }
 
+    const [files, setFiles] = useState([])
+    const [previews, setPreviews] = useState([])
+
+    const handleFile = async e => {
+        const imageFiles = e.target.files
+        
+        if(imageFiles.length > 0) {   
+            setFiles([ ...files, ...imageFiles ])
+        } else {
+            setFiles([])
+        }
+    }
+
+    useEffect(()=>{
+        const generatePreviews = async () => {
+            const imagePreviews = await Promise.all(
+                files.map(async imageFile => {
+                    return new Promise((resolve, reject)=>{
+                        try {
+                            const file = new FileReader()
+                            file.readAsDataURL(imageFile)
+                            file.onload = e => resolve({
+                                src: e.target.result,
+                                name: imageFile.name
+                            })
+                        } catch (error) {
+                            reject(error)
+                        }
+                    })
+                })
+            )
+            setPreviews(imagePreviews)
+        }
+
+        if (files.length > -1) {
+            generatePreviews()
+        }
+    }, [ files ])
+
+    const handleImgDelete = (idx) => {
+        setFiles((prev) => {
+            const update = prev.filter((item, i) => i !== idx)        
+            return update
+        })
+    }
+
+    const actionImagesCompress = async (fileObj) => {
+        console.log('압축 시작')
+        
+        const options = {
+            maxSizeMB: 0.2,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+        }
+
+        try {
+            const compressdFile = await imageCompression(fileObj, options)
+            console.log(compressdFile)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const postSubmit = e => {
         e.preventDefault()
-        console.log(spot)
+        
+        // const formData = new FormData()
+        for (let file of files) {
+            console.log(file)
+            actionImagesCompress(file)
+        }
+
     }
 
     return (
         <>
             {
-                !location.isLoading ? (
+                !location?.isLoading ? (
                     <div className='trip'>
                         <Map 
                             center={ location.center }
@@ -399,13 +473,27 @@ function CourseCreate() {
                                         <input type='text' name='title' placeholder='타이틀을 입력하세요.' />
                                         <textarea name='content' placeholder='#을 이용하여 태그를 사용해 보세요.'></textarea>
                                         <ul className='attach'>
-                                            <li style={{ backgroundImage: 'url(https://scontent-ssn1-1.xx.fbcdn.net/v/t39.30808-6/294403150_7844086842331965_1581287340140642271_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=3635dc&_nc_ohc=zhI9ixwvdkAAX-U_LbJ&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB2CwNh8lAx8cc3tCuDTNc-33IFxcxWdPUfgnfybwMpyA&oe=65808F4D)'}}>
-                                                <button>삭제</button>
-                                            </li>
-                                            <li></li>
-                                            <li></li>
-                                            <li></li>
-                                            <li></li>
+                                            {   
+                                                previews.map((item, i)=>(
+                                                    <li key={ i } className={ i }>
+                                                        <img src={ item.src } alt='' />
+                                                        <button onClick={ ()=>handleImgDelete(i) }>삭제</button>
+                                                    </li>
+                                                ))
+                                            }
+                                            {
+                                                previews.length < 5 && (
+                                                    <li>
+                                                        <input 
+                                                            type='file' 
+                                                            name='image'
+                                                            accept='image/*'
+                                                            multiple
+                                                            onChange={ handleFile }
+                                                        />
+                                                    </li>
+                                                )
+                                            }
                                         </ul>
                                         <button type='submit' onClick={ postSubmit }>코스 기록하기</button>
                                     </div>
