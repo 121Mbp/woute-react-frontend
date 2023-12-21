@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react'
-import { Map, MapMarker, Polyline } from 'react-kakao-maps-sdk'
+import { Link } from 'react-router-dom'
+import { Map, MapMarker, Polyline, CustomOverlayMap } from 'react-kakao-maps-sdk'
 import './../../assets/styles/_trip.scss'
 import one from './../../assets/images/one.png'
 import two from './../../assets/images/two.png'
 import three from './../../assets/images/three.png'
 import four from './../../assets/images/four.png'
 import five from './../../assets/images/five.png'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/css'
+import 'swiper/css/pagination'
+import 'swiper/css/navigation'
+import { Pagination, Navigation } from 'swiper/modules'
 
 const spot = [
     {
@@ -90,6 +96,8 @@ function CourseView() {
     const [markers, setMarkers] = useState([])
     const [map, setMap] = useState()
     const [data, setData] = useState()
+    const [info, setInfo] = useState()
+    const [active, setActive] = useState(false)
 
     useEffect(() => {
         if (!map) return
@@ -114,12 +122,20 @@ function CourseView() {
         setTimeout(()=>{ map.setBounds(bounds) }, 10)
     }, [ map ])
 
+    const handleHover = item => {
+        setInfo(true)
+        const bounds = new kakao.maps.LatLngBounds()
+        const marker = new kakao.maps.LatLng(item.y, item.x)
+        const position = bounds.extend(marker)
+        map.setBounds(position)
+    }
+
     return (
-        <>
         <div className='trip'>
             <div className='view'>
                 <div className='service'>
                     <div className='courseRoot'>
+                        <button className='tab' onClick={()=>setActive(true)}>사진 보기</button>
                         <div className='maps'>
                             <Map 
                                 center={{ lat: 33.450701, lng: 126.570667 }}
@@ -136,6 +152,7 @@ function CourseView() {
                                 />
                                 { 
                                     data?.map((item, i) => (
+                                        <>
                                         <MapMarker
                                             key={`${item.id}-${item.position}`}
                                             position={ item.position }
@@ -145,6 +162,21 @@ function CourseView() {
                                             }}
                                             title={ item.place_name }
                                         />
+                                        {info && (
+                                        <CustomOverlayMap 
+                                            key={ `${item.position.lat},${item.position.lng}` }
+                                            position={ item.position }
+                                            yAnchor={ 0.5 }
+                                            >
+                                            <div className='overlay'>
+                                                <strong>{ item.place_name }</strong>
+                                                <span>{ item.category_group_name }</span>
+                                                <span>{ item.phone }</span>
+                                                <Link to={ item.place_url } target='_blank'>홈페이지</Link>
+                                            </div>
+                                        </CustomOverlayMap>
+                                        )}
+                                        </>
                                     ))
                                 }
                             </Map>
@@ -154,18 +186,32 @@ function CourseView() {
                                 {
                                     data?.map((item, i) => (
                                         <li key={ item.id }>
-                                            <strong>{ item.place_name }</strong>
+                                            <strong 
+                                                onClick={()=>handleHover(item)}
+                                                onMouseLeave={()=>setInfo(false)}
+                                            >
+                                                { item.place_name }
+                                            </strong>
                                             <span>{ item.category_group_name }</span>
                                             <span>{ item.road_address_name }</span>
-                                            
                                         </li>
                                     ))
                                 }
                             </ul>
                         </div>
                     </div>
-                    <div className=''>
-
+                    <div className={`coursePhoto ${ active ? 'active' : '' }`}>
+                        <button className='tab' onClick={()=>setActive(false)}>코스 보기</button>
+                        <Swiper
+                            navigation={ true }
+                            pagination={{ dynamicBullets: true }}
+                            modules={[ Pagination, Navigation ]}
+                        >
+                            <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19038_1129.jpg' alt='' /></SwiperSlide>
+                            <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19039_1133.jpg' alt='' /></SwiperSlide>
+                            <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19040_1138.jpg' alt='' /></SwiperSlide>
+                            <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19041_1142.jpg' alt='' /></SwiperSlide>
+                        </Swiper>
                     </div>
                 </div>
                 <div className='inform'>
@@ -173,8 +219,6 @@ function CourseView() {
                 </div>
             </div>
         </div>
-            
-        </>
     )
 }
 

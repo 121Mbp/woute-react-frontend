@@ -111,9 +111,8 @@ function CourseCreate() {
             }
             setMarkers(markers)
             map.setBounds(bounds)
-            console.log(widthSize)
             if(widthSize < 992) {
-                setStyle({ width: '100%', height: '52%'})
+                setStyle({ width: '100%', height: '50%'})
             }
             setTimeout(()=>{
                 setActive(true)
@@ -213,9 +212,15 @@ function CourseCreate() {
         if(map) map.relayout()
         if(active) {
             scrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+            if(widthSize > 992 && spot.length === 0) {
+                setStyle({ width: '100%', height: '100%'})
+            } else {
+                setStyle({ width: '100%', height: '50%'})
+            }
         } else {
             courseListRef.current?.scrollTo({ top: 0, hefavior: 'smooth' })
         }
+        
     }, [ style, spot, path ])
 
     const dragStart = (e, position) => {

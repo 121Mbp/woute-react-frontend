@@ -11,13 +11,14 @@ function Modal() {
     const location = useLocation()
     const state = location.state && location.state?.backgroundLocation
     const [type, setType] = useState('')
+
     useEffect(() => {
         document.body.style.overflow = 'hidden';
         return () => {
           document.body.style.overflow = 'unset';
         };
-      }, []);
-    console.log(location)
+    }, []);
+    
     return (
         <div className='modal'>
             <div className='inner'>
