@@ -37,6 +37,7 @@ function App() {
             <Route path='create' element={ <Modal /> } />
             <Route path='p' element={ <Modal /> } />
             <Route path='chat' element={ <Modal /> } />
+            <Route path='notice' element={ <></> } />
           </Routes>
         )}
       </div>

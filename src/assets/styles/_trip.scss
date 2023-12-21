@@ -14,6 +14,7 @@ $orders: one, two, three, four, five;
     flex-direction: column;
     @include size(lg) {
         padding-top: 42px;
+        overflow-y: auto;
     }
     .placesSearch {
         $width: 235px;
@@ -83,11 +84,16 @@ $orders: one, two, three, four, five;
                 position: fixed;
                 bottom: 0;
                 top: auto;
-                height: 46.8%;
+                height: 47.2%;
                 width: 100%;
                 padding-bottom: 32px;
                 background-color: #FFFFFF;
                 box-shadow: 0 1px 2px rgba(60, 64, 67, .3), 0 2px 6px 2px rgba(60, 64, 67, .15);
+            }
+            @include size(sm) {
+                bottom: 56px;
+                height: 44%;
+                box-shadow: none;
             }
             li {
                 position: relative;
@@ -140,6 +146,9 @@ $orders: one, two, three, four, five;
                     }
                     @include size(lg) {
                         display: block;
+                    }
+                    @include size(sm) {
+                        bottom: 48%;
                     }
                 }
                 li {
@@ -200,6 +209,9 @@ $orders: one, two, three, four, five;
                     @include size(lg) {
                         width: 100%;
                         background-color: #FFFFFF;
+                    }
+                    @include size(sm) {
+                        bottom: 0;
                     }
                     li {
                         width: 20px;
@@ -269,7 +281,6 @@ $orders: one, two, three, four, five;
         z-index: 1;
         @include size(lg) {
             box-shadow: none;
-            border-radius: 10px 10px 0 0;
             background-color: #FFFFFF;
         }
         > div {
@@ -542,16 +553,45 @@ $orders: one, two, three, four, five;
         display: flex;
         flex-direction: row;
         height: 100%;
+        @include size(lg) {
+            flex-direction: column;
+            height: auto;
+        }
         > div {
             width: 50%;
+            @include size(lg) {
+                width: 100%;
+            }
         }
         .service {
+            position: relative;
+            .tab {
+                position: relative;
+                margin-left: auto;
+                font-size: 12px;
+                font-weight: 600;
+                &::after {
+                    content: '';
+                    display: inline-block;
+                    margin-top: -2px;
+                    margin-left: 8px;
+                    @include icon(cource-arrow, #464646, 6px, 11px);
+                    vertical-align: middle;
+                }
+                @include size(lg) {
+                    display: none;
+                }
+            }
             .courseRoot {
                 position: relative;
                 height: 100%;
-                padding: 2rem;
+                padding: 1.8rem;
                 display: flex;
                 flex-direction: column;
+                @include size(lg) {
+                    padding-top: 0;
+                    height: auto;
+                }
                 &::after {
                     content: '';
                     position: absolute;
@@ -564,14 +604,22 @@ $orders: one, two, three, four, five;
                 .maps {
                     width: 100%;
                     height: 40%;
-                    margin: 1em 0 0;
+                    margin: .6em 0 0;
                     border-radius: 14px;
                     overflow: hidden;
+                    @include size(lg) {
+                        aspect-ratio: 16 / 10;
+                        height: auto;
+                    }
                 }
                 .orderList {
                     height: 60%;
                     margin: 1em .4em 0;
                     overflow-y: auto;
+                    @include size(lg) {
+                        height: auto;
+                        overflow: initial;
+                    }
                     ul {
                         padding: .6em 0 0;
                         > li {
@@ -609,12 +657,74 @@ $orders: one, two, three, four, five;
                                 font-weight: 900;
                                 font-size: 16px;
                                 color: #464646;
+                                cursor: pointer;
                             }
                             > span {
                                 display: block;
                                 font-size: 12px;
                                 opacity: .7;
                             }
+                        }
+                    }
+                }
+            }
+            .coursePhoto {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                opacity: 0;
+                z-index: -1;
+                &.active {
+                    opacity: 1;
+                    z-index: 1;
+                }
+                @include size(lg) {
+                    position: relative;
+                    top: auto;
+                    left: auto;
+                    bottom: auto;
+                    right: auto;
+                    padding: 1.8rem 1.8rem 4.6rem;
+                    opacity: 1;
+                    z-index: 1;
+                }
+                .tab {
+                    position: absolute;
+                    top: 12px;
+                    left: 12px;
+                    font-size: 0;
+                    line-height: 0;
+                    margin: 0;
+                    padding: 9px 9px 9px 2px;
+                    border-radius: 14px;
+                    background-color: rgba(255, 255, 255, .8);
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 -1px 0px rgba(0,0,0,0.02);
+                    z-index: 10;
+                    &::after {
+                        @include icon(arrow-right, #3E3A39, 26px, 26px);
+                        transform: rotate(180deg);
+                    }
+                }
+                .swiper {
+                    top: 50%;
+                    transform: translateY(-50%);
+                    @include _swiper__navigation;
+                    @include size(lg) {
+                        top: 0;
+                        transform: translateY(0);
+                        padding-bottom: 24px;
+                        z-index: 1;
+                    }
+                    img {
+                        border-radius: 14px;
+                        object-fit: cover;
+                    }
+                    .swiper-pagination {
+                        bottom: 8%;
+                        @include size(lg) {
+                            bottom: 0;
                         }
                     }
                 }

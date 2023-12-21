@@ -16,6 +16,9 @@
     @include size(lg) {
         padding: 0;
     }
+    @include size(sm) {
+        bottom: 56px;
+    }
     .inner {
         position: relative;
         display: flex;
@@ -156,6 +159,11 @@
                     width: 100%;
                 }
             }
+        }
+    }
+    & + .close {
+        @include size(sm) {
+            display: none !important;
         }
     }
 }
