@@ -8,9 +8,9 @@ function Main() {
             <div className='section'>
                 <Search />
                 <div className='feeds'>
-                    <Post type={ 'course' } />
-                    <Post type={ 'feed' } />
-                    <Post type={ 'course' } />
+                    <Post id={ 1 } type={ 'course' } />
+                    <Post id={ 2 } type={ 'feed' } />
+                    <Post id={ 3 } type={ 'course' } />
                 </div>
             </div>
             <Aside />

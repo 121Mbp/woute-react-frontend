@@ -35,7 +35,7 @@ function App() {
         {state && (
           <Routes>
             <Route path='create' element={ <Modal /> } />
-            <Route path='p' element={ <Modal /> } />
+            <Route path='p/:id' element={ <Modal /> } />
             <Route path='chat' element={ <Modal /> } />
             <Route path='notice' element={ <></> } />
           </Routes>

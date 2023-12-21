@@ -8,7 +8,8 @@ import { Pagination, Navigation } from 'swiper/modules'
 import Hearts from './Hearts'
 
 
-function Post({ type }) {
+function Post({ id, type }) {
+    const path = `/p/${ id }`
     const location = useLocation()
     const [like, setLike] = useState(false)
     const handleLike = () => {
@@ -18,7 +19,7 @@ function Post({ type }) {
         <div className='post'>
             <div className='upper'>
                 <Link to='/' className='user'><i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>mark_ju</Link>
-                <Link to='/p' state={{ backgroundLocation: location, type: type }}>코스보기</Link>
+                <Link to={ path } state={{ backgroundLocation: location, type: type }}>코스보기</Link>
             </div>
             <div className='middle'>
                 <Swiper
