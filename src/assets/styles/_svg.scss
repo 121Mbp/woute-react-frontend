@@ -100,6 +100,12 @@
     @else if $icon == comments    {
         $icon: 'data:image/svg+xml,%3Csvg viewBox="0 0 512 512" fill="#{$color}" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32z"/%3E%3C/svg%3E';
     }
+    @else if $icon == userPlus    {
+		$icon: 'data:image/svg+xml,%3Csvg class="feather feather-user-plus" fill="#{$color}"  height="24" stroke="rgb(115,115,115)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/%3E%3Ccircle cx="8.5" cy="7" r="4"/%3E%3Cline x1="20" x2="20" y1="8" y2="14"/%3E%3Cline x1="23" x2="17" y1="11" y2="11"/%3E%3C/svg%3E';
+    }
+    @else if $icon == submitArrow    {
+		$icon: 'data:image/svg+xml,%3Csvg fill="#{$color}" height="24" viewBox="0 0 24 24" width="24" stroke="rgb(115,115,115)" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M12,23 C5.92486775,23 1,18.0751322 1,12 C1,5.92486775 5.92486775,1 12,1 C18.0751322,1 23,5.92486775 23,12 C23,18.0751322 18.0751322,23 12,23 Z M12,21 C16.9705627,21 21,16.9705627 21,12 C21,7.02943725 16.9705627,3 12,3 C7.02943725,3 3,7.02943725 3,12 C3,16.9705627 7.02943725,21 12,21 Z M13.7071068,15.2928932 L12.2928932,16.7071068 L7.58578644,12 L12.2928932,7.29289322 L13.7071068,8.70710678 L10.4142136,12 L13.7071068,15.2928932 Z" fill-rule="evenodd"/%3E%3C/svg%3E';
+    }
 	@else if $icon == cource	{
 		$icon: '';
 	}
