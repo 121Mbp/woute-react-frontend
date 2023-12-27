@@ -1,30 +1,128 @@
-import './../../assets/styles/_modalAddFeed.scss'
+import React, { useState, useEffect } from "react";
+import "./../../assets/styles/_modalAddFeed.scss";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import { Pagination, Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import imageCompression from "browser-image-compression";
 
 function ModalAddFeed() {
-    return (
-        <div className='addFeed'>
-            <div className='feedImg'>
-                <img src='https://mblogthumb-phinf.pstatic.net/MjAyMjEyMDJfMTAw/MDAxNjY5OTU3MjcwNjEy.QoEE0nDGXuXvNiHaouDC1n77DqXoqXSyiiBiu1fCQbgg.gOTLKvlfynfliHXYjkOfFFSC_OZ9m6yMPEsMrFcDFlYg.JPEG.neweunha/SE-79b660f6-d36d-4cc1-82f7-00f15911e49f.jpg?type=w800' alt='' />
-            </div>
-            <div className='feedRecord'>
-                <div className='feedRecordinner'>
-                    <div className='recordImg'>
-                        <img src='https://mblogthumb-phinf.pstatic.net/MjAyMjEyMDJfMTI1/MDAxNjY5OTU3MjcyMzI4.epC1KUIijRNriuTqh5T5GrpC-scvglmnQQTFP3_ruGwg.4y_QKRfrC6MkegXwfBlyr-c9sQsOPBHMPHCf4CrL7t4g.JPEG.neweunha/SE-f1763170-ee15-4033-b588-58a8ccb15643.jpg?type=w800' alt='' />
-                        <img src='https://mblogthumb-phinf.pstatic.net/MjAyMjEyMDJfMTI1/MDAxNjY5OTU3MjcyMzI4.epC1KUIijRNriuTqh5T5GrpC-scvglmnQQTFP3_ruGwg.4y_QKRfrC6MkegXwfBlyr-c9sQsOPBHMPHCf4CrL7t4g.JPEG.neweunha/SE-f1763170-ee15-4033-b588-58a8ccb15643.jpg?type=w800' alt='' />
-                        <img src='https://mblogthumb-phinf.pstatic.net/MjAyMjEyMDJfMTI1/MDAxNjY5OTU3MjcyMzI4.epC1KUIijRNriuTqh5T5GrpC-scvglmnQQTFP3_ruGwg.4y_QKRfrC6MkegXwfBlyr-c9sQsOPBHMPHCf4CrL7t4g.JPEG.neweunha/SE-f1763170-ee15-4033-b588-58a8ccb15643.jpg?type=w800' alt='' />
-                        <div className='addIcon'></div>
-                        <div className='feedTitle'>
-                            <textarea aria-label='타이틀을입력하세요' placeholder='타이틀을입력하세요' ></textarea>
-                        </div>
-                        <p>#을 이용하여 태그를 사용해보세요 </p>
-                    </div>
-                    <div className='feedBtn'>
-                        <button>피드기록하기</button>
-                    </div>
-                </div>
-            </div>
+  const [files, setFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
+
+  const handleFileChange = (e) => {
+    const imageFiles = e.target.files;
+    if (imageFiles.length === 0) return;
+
+    const newFiles = [...files, ...imageFiles];
+    setFiles(newFiles);
+    generatePreviews(imageFiles);
+  };
+
+  const generatePreviews = (imageFiles) => {
+    const newPreviews = Array.from(imageFiles).map((imageFile) =>
+      URL.createObjectURL(imageFile)
+    );
+    setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
+  };
+
+  const compressImages = async () => {
+    const options = {
+      maxSizeMB: 0.2,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+
+    try {
+      const compressedImages = await Promise.all(
+        files.map((file) => imageCompression(file, options))
+      );
+      console.log("Compressed Images:", compressedImages);
+    } catch (error) {
+      console.error("Error compressing images:", error);
+    }
+  };
+
+  const handleImgDelete = (idx) => {
+    setPreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== idx));
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== idx));
+    URL.revokeObjectURL(previews[idx]);
+  };
+
+  const handlePostSubmit = async () => {
+    await compressImages();
+    alert("이미지가 압축되었습니다!");
+  };
+
+  const isMaxImagesReached = previews.length >= 5;
+  return (
+    <div className="addFeed">
+      <div className="feedImg">
+        <Swiper
+          navigation={true}
+          pagination={{ dynamicBullets: true }}
+          modules={[Pagination, Navigation]}
+        >
+          {previews.map((src, i) => (
+            <SwiperSlide key={i}>
+              <img
+                src={src}
+                alt={`Slide Preview ${i}`}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+      <div className="feedRecord">
+        <div className="feedRecordinner">
+          <div className="recordImg">
+            {previews.length > 0 && (
+              <ul style={{ display: "flex" }}>
+                {previews.map((src, i) => (
+                  <li key={i}>
+                    <img src={src} alt={`Preview ${i}`} />
+                    <i onClick={() => handleImgDelete(i)}></i>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {!isMaxImagesReached && (
+              <div
+                className="addIcon"
+                onClick={() => document.getElementById("fileInput").click()}
+              >
+                <input
+                  id="fileInput"
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileChange}
+                  style={{ display: "none" }}
+                />
+              </div>
+            )}
+          </div>
+          <div className="feedTitle">
+            <input placeholder="타이틀을 입력하세요"></input>
+          </div>
+          <div className="feedContent">
+            <textarea placeholder="#을이용하여태그를이용해보세요"></textarea>
+          </div>
+
+          <div className="feedBtn">
+            <button onClick={handlePostSubmit}>피드기록하기</button>
+          </div>
         </div>
-    )
+      </div>
+    </div>
+  );
 }
 
-export default ModalAddFeed
+export default ModalAddFeed;

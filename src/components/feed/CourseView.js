@@ -12,6 +12,7 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import { Pagination, Navigation } from 'swiper/modules'
+import Reply from './Reply'
 
 const spot = [
     {
@@ -215,7 +216,7 @@ function CourseView() {
                     </div>
                 </div>
                 <div className='inform'>
-
+                    <Reply />
                 </div>
             </div>
         </div>
