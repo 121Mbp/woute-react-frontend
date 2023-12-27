@@ -63,7 +63,7 @@ export default function MyFeedMain() {
                                     <button className='following-btn'>팔로잉</button>
                                     <button className='msg-btn'>메시지 보내기</button>
                                 </div> */}
-                                <div className='modifyPage'><a href="#1">프로필 편집</a></div>
+                                <div className='modifyPage'><Link to="/modifyProfile">프로필 편집</Link></div>
                             </div>
                             <ul className='fol-amount mb20'>
                                 <li>게시글<span>200</span></li>

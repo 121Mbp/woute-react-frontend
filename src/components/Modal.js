@@ -6,6 +6,7 @@ import CourseCreate from './feed/CourseCreate'
 import CourseView from './feed/CourseView'
 import ModalAddFeed from './feed/ModalAddFeed'
 import ModalFeed from './feed/ModalFeed'
+import ChatModal from './chatting/ChatModal'
 
 function Modal() {
     const location = useLocation()
@@ -33,7 +34,7 @@ function Modal() {
                                 location.state.type === 'feed' ? <ModalFeed /> : ''
                             ) 
                         ) : (
-                            location.pathname === `/chat` && (<>chat</>)
+                            location.pathname === `/chat` && (<ChatModal />)
                         )
                     )
                 }
