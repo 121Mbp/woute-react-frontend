@@ -55,7 +55,14 @@ export default function MyFeedMain() {
                         <div className='profile-main'>
                             <div className='profile-edit mb20'>
                                 <h2 className='nick'>mark_ju</h2>
-                                <div className='modifyPage'><Link to="/modifyProfile">프로필 편집</Link></div>
+                                <div className='com-btn'>
+                                    <button className='follow-btn'>팔로우</button>
+                                    <button className='msg-btn'>메시지 보내기</button>
+                                </div>
+                                {/* <div className='com-btn'>
+                                    <button className='following-btn'>팔로잉</button>
+                                    <button className='msg-btn'>메시지 보내기</button>
+                                </div> */}
                             </div>
                             <ul className='fol-amount mb20'>
                                 <li>게시글<span>200</span></li>
@@ -71,7 +78,7 @@ export default function MyFeedMain() {
                         </div>
                     </div>
                     <div className='feed-cate'>
-                        <Link to='/1' className={`cate-btn ${feeds ? 'active' : ''}`} id='feeds' onClick={tabClick}>
+                        <Link to='/userfeed' className={`cate-btn ${feeds ? 'active' : ''}`} id='feeds' onClick={tabClick}>
                             <div>게시물</div>
                         </Link>
                         <Link to='courses' className={`cate-btn ${courses ? 'active' : ''}`} id='courses' onClick={tabClick}>
