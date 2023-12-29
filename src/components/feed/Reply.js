@@ -1,6 +1,37 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import axios from "axios";
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
+import { wouteAPI } from "./../../api"
 
-function Reply() {
+function Reply(props) {
+  const [content, setContent] = useState("");
+  const feedId = props.id;
+  const handleOnClick = async () => {
+    console.log("props   " + feedId);
+    if (!feedId) {
+      console.error("FeedID가없어요");
+      return;
+    }
+
+    try {
+      const response = await wouteAPI(`/p/${feedId}/reply`, 'POST', content);
+      console.log("서버 응답:", response.data);
+      setContent("");
+    } catch (error) {
+      console.error("에러 발생:", error.message);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setContent(e.target.value);
+  };
+
+  const handleOnKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleOnClick();
+    }
+  };
   const [comments, setComments] = useState([
     { id: 1, content: "첫 번째 댓글입니다." },
     { id: 2, content: "두 번째 댓글입니다." },
@@ -10,6 +41,8 @@ function Reply() {
     { id: 6, content: "두 번째 댓글입니다." },
     { id: 7, content: "두 번째 댓글입니다." },
     { id: 8, content: "두 번째 댓글입니다." },
+    { id: 9, content: "두 번째 댓글입니다." },
+    { id: 10, content: "두 번째 댓글입니다." },
   ]);
   const [isActive, setIsActive] = useState(false);
   const [likes, setLikes] = useState(
@@ -109,7 +142,17 @@ function Reply() {
             }}
           />
         </div>
-        <input placeholder="댓글을 입력하세요" onFocus={handleFocus} />
+        <input
+          placeholder="댓글을 입력하세요"
+          onFocus={handleFocus}
+          onKeyPress={handleOnKeyPress}
+          value={content}
+          onChange={handleInputChange}
+        />
+        <input type="hidden" value={feedId} name="feedId" />
+        <div className="submitBtn">
+          <button type="button" onClick={handleOnClick}></button>
+        </div>
       </div>
     </div>
   );

@@ -1,59 +1,68 @@
 import { useState } from 'react'
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { Link, Routes, Route, Outlet, useLocation } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import { Pagination, Navigation } from 'swiper/modules'
 import Hearts from './Hearts'
+import FeedLike from './feed/FeedLike'
 
-
-function Post({ id, type }) {
-    const path = `/p/${ id }`
+function Post({ data }) {
+    const path = `/p/${ data.id }`
     const location = useLocation()
     const [like, setLike] = useState(false)
     const handleLike = () => {
         setLike((prev) => !prev)
     }
+    
     return (
         <div className='post'>
             <div className='upper'>
-                <Link to='/' className='user'><i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>mark_ju</Link>
-                <Link to={ path } state={{ backgroundLocation: location, type: type }}>코스보기</Link>
+                <Link to='/' className='user'><i style={{backgroundImage: `url(${ data.profileImage })`}}></i>{ data.nickname }</Link>
+                { data.type === 'courses' && <Link to={ path } state={{ backgroundLocation: location, type: data.type }}>코스보기</Link> }
             </div>
             <div className='middle'>
-                <Swiper
-                    navigation={ true }
-                    pagination={{ dynamicBullets: true }}
-                    modules={[ Pagination, Navigation ]}
-                    onDoubleClick={ handleLike }
-                    toggle={ like }
-                >
-                    <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19038_1129.jpg' alt='' /></SwiperSlide>
-                    <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19039_1133.jpg' alt='' /></SwiperSlide>
-                    <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19040_1138.jpg' alt='' /></SwiperSlide>
-                    <SwiperSlide><img src='https://cdn.tourtoctoc.com/news/photo/202311/2999_19041_1142.jpg' alt='' /></SwiperSlide>
-                </Swiper>
+                {
+                    data?.attaches?.length > 1 ? (
+                        <Swiper
+                            navigation={ true }
+                            pagination={{ dynamicBullets: true }}
+                            modules={[ Pagination, Navigation ]}
+                            onDoubleClick={ handleLike }
+                            toggle={ like }
+                        >   
+                            {
+                                data.attaches?.map(item => (
+                                    <SwiperSlide key={ item.uuid }><img src={ `http://localhost:8081/file/${item.uuid}` } alt='' /></SwiperSlide>
+                                ))
+                            }
+                        </Swiper>
+                    ) : (
+                        <img src={ `http://localhost:8081/file/${data?.attaches[0].uuid}` } alt='' />
+                    )
+                }
             </div>
             <div className='lower'>
                 <div className='likes'>
                     <div className='heart' onClick={ handleLike } toggle={ like }>
                         { like && <Hearts /> }
                     </div>
-                    <div>좋아요 999개</div>
+                    <Routes>
+                        <Route path='/like' element={<FeedLike />}/>
+                    </Routes>
+                    <Link to='like'>좋아요 { data.heartCount }개</Link>
                 </div>
                 <div className='description'>
-                    <p>일상비일상의틈 ...</p>
-                    <span>#hash</span>
-                    <span>#hashtagme</span>
-                    <span>#hashlongtag</span>
-                    <span>#hashshorttagyou</span>
-                    <span>#hashliketag</span>
-                    <span>#hashtag</span>
-                    <span>#hash</span>
+                    <p>{ data.content }</p>
+                    {
+                        data?.tags.map(item => (
+                            <span>{ item.words }</span>    
+                        ))
+                    }
                 </div>
-                <Link to='/' className='comment'>
-                    <span className='user'><i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i></span>
+                <Link to={ path } className='comment' state={{ backgroundLocation: location, type: data.type }}>
+                    <span className='user'><i style={{backgroundImage: `url(${ data.profileImage })`}}></i></span>
                     <span>댓글쓰기</span>
                 </Link>
             </div>
