@@ -50,7 +50,7 @@ function App() {
             <Navigation />
             <div className='container'>
               <Routes location={ state || location }>
-                <Route path='/' element={ <Main /> } />
+                <Route path='/*' element={ <Main /> } />
                 <Route path='/course' element={ <CourseList /> } />
                 <Route path='/profile/*' element={ <MyFeedMain /> } />
                 <Route path='/modifyProfile' element={ <Modifyprofile /> } />

@@ -217,6 +217,7 @@
     background: white;
     display: block;
     transition: height 0.7s ease !important;
+    bottom: 52px;
   }
 }
 @media screen and (max-width: 994px) {
@@ -235,4 +236,11 @@
 .feedAreaInner.closed {
   height: 0;
   overflow: hidden;
+}
+.submitBtn {
+  button {
+    padding: 0px 20px 0 0;
+    @include icon(submitArrow, rgb(115, 115, 115), 30px, 30px);
+    margin: 0 20px;
+  }
 }
