@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef, createRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Map, MapMarker, CustomOverlayMap, Polyline } from 'react-kakao-maps-sdk'
 import imageCompression from 'browser-image-compression'
 import './../../assets/styles/_trip.scss'
 import Loader from '../Loader'
+import { wouteAPI } from './../../api'
 import pin from './../../assets/images/marker.png'
 import one from './../../assets/images/one.png'
 import two from './../../assets/images/two.png'
@@ -12,7 +13,8 @@ import four from './../../assets/images/four.png'
 import five from './../../assets/images/five.png'
 
 const { kakao } = window
-function CourseCreate() {
+function CourseCreate({ type }) {
+    const navigate = useNavigate()
     const widthSize = useWindowSize()
     const mapRef = useRef()
     const placesListRef = useRef()
@@ -21,6 +23,8 @@ function CourseCreate() {
     const dragItem = useRef()
     const dropItem = useRef()
     const searchFocusInput = useRef()
+    const [title, setTitle] = useState('')
+    const [content, setContent] = useState('')
     const [active, setActive] = useState(false)
     const [idCode, setIdCode] = useState('')
     const [init, setInit] =useState(false)
@@ -162,6 +166,7 @@ function CourseCreate() {
         const marker = new kakao.maps.LatLng(item.y, item.x)
         const position = bounds.extend(marker)
         map.setBounds(position)
+        setTimeout(()=>{ setInfo(false) }, 3000)
     }
 
     const handleKeyEvent = (e) => {
@@ -299,6 +304,20 @@ function CourseCreate() {
         } else {
             setFiles([])
         }
+
+        const options = {
+            maxSizeMB: 0.2,
+            maxWidthOrHeight: 800,
+            useWebWorker: true,
+        }
+    
+        try {
+            console.log(imageFiles)
+            const compressdFile = await imageCompression(imageFiles, options)
+            console.log(compressdFile)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     useEffect(()=>{
@@ -334,32 +353,59 @@ function CourseCreate() {
         })
     }
 
-    const actionImagesCompress = async (fileObj) => {
-        console.log('압축 시작')
-        
-        const options = {
-            maxSizeMB: 0.2,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true,
-        }
-
-        try {
-            const compressdFile = await imageCompression(fileObj, options)
-            console.log(compressdFile)
-        } catch (error) {
-            console.log(error)
-        }
+    const handleContent = e => {
+        let value = e.target.value
+        setContent(value)
     }
 
-    const postSubmit = e => {
+    const postSubmit = async (e) => {
         e.preventDefault()
-        
-        // const formData = new FormData()
-        for (let file of files) {
-            console.log(file)
-            actionImagesCompress(file)
+
+        const formData = new FormData()
+        let reg = /#([\S]+)/igm
+        let matches = (content.match(reg) || []).map(e => e.replace(content, '$1'))
+
+        let feed = {
+            nickname: 'dominic',
+            profileImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg',
+            type: type,
+            title: title,
+            content: content,
+            hashtag: '',
+            heartCount: 0,
         }
 
+        for (let file of files) {
+            formData.append('attaches', file)
+        }
+
+        formData.append('feed', new Blob([JSON.stringify(feed)], {type: 'application/json'}))
+        formData.append('tags', new Blob([JSON.stringify(matches)], {type: 'application/json'}))
+
+        let coursesData = []
+        for(let s of spot) {
+            coursesData.push({
+                code: s.id,
+                store: s.place_name,
+                address: s.road_address_name,
+                phone: s.phone,
+                homepage: s.place_url,
+                category: s.category_group_name,
+                latitude: s.y,
+                longitude: s.x
+            })
+        }
+
+        formData.append('courses', new Blob([JSON.stringify(coursesData)], {type: 'application/json'}))
+        
+
+        try {
+            await wouteAPI('/p', 'POST', formData)
+            
+            navigate('/');
+        } catch(error) {
+            
+        }
     }
 
     return (
@@ -385,7 +431,7 @@ function CourseCreate() {
                                     {
                                         store.map((item, i) => (
                                             <li key={ item.id } className={ idCode === item.id ? 'on' : '' }>
-                                                <p onClick={()=>handleHover(item)} onMouseLeave={()=>setInfo(false)}>
+                                                <p onClick={()=>handleHover(item)}>
                                                     <strong>{ item.place_name }</strong>
                                                     <span> { item.category_name } </span>
                                                     <span> { item.road_address_name } </span>
@@ -457,7 +503,7 @@ function CourseCreate() {
                                                         onDragEnd={ drop }
                                                         onDragOver={(e)=>e.preventDefault()}
                                                         onClick={()=>handleHover(item)} 
-                                                        onMouseLeave={()=>setInfo(false)}
+                                                        // onMouseLeave={()=>setInfo(false)}
                                                         ref={ scrollRef }
                                                     >
                                                         <strong>{ item.place_name }</strong>
@@ -470,8 +516,8 @@ function CourseCreate() {
                                         </ul>
                                     </div>
                                     <div className='publish'>
-                                        <input type='text' name='title' placeholder='타이틀을 입력하세요.' />
-                                        <textarea name='content' placeholder='#을 이용하여 태그를 사용해 보세요.'></textarea>
+                                        <input type='text' name='title' placeholder='타이틀을 입력하세요.' onChange={e=>setTitle(e.target.value)}/>
+                                        <textarea name='content' placeholder='#을 이용하여 태그를 사용해 보세요.' onChange={ handleContent }></textarea>
                                         <ul className='attach'>
                                             {   
                                                 previews.map((item, i)=>(
