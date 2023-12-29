@@ -47,7 +47,7 @@ export default function _searchResult() {
                                 </div>
                             </div>
                         </div>
-                        <div className='courseList'>
+                        <div className='searchList'>
                             <h2>
                                 <div>인기 게시물</div>
                             </h2>
