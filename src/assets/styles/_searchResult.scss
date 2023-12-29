@@ -2,8 +2,8 @@
 @import './mixin';
 
 
-.searchResult {
-
+.srMain {
+    margin-left: 250px;
     .rsHead {
         display: flex;
         margin: 30px auto 44px auto;
@@ -42,7 +42,7 @@
             }
         }
     }
-    .courseList {
+    .searchList {
         display: flex;
         flex-direction: column;
 
@@ -51,6 +51,8 @@
             color: #737373;
         }
         article {
+            display: flex;
+            gap: 5px;
             max-width: 958px;
             margin-bottom: 4px;
             a {
@@ -116,5 +118,13 @@
         }
     }
 }
+@media (max-width:1200px) {
+    .srMain{
+        margin-left: 0;
+    }
+}
 @media (max-width:994px) {
+    .srMain {
+        margin-left: 0;
+    }
 }

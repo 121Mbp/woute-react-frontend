@@ -2,10 +2,9 @@
 @import './_mixin';
 
 .MyFeed {
-    // display: flex;
-    // justify-content: center;
     max-width: 935px;
-    margin: 0 auto 30px;
+    margin-left: 100px;
+    margin-bottom: 100px;
     padding: 30px 20px 0;
 }
 
@@ -18,7 +17,7 @@
                 height: 150px;
             }
             flex-grow: 1;
-            flex-basis: 0;
+            // flex-basis: 0;
             margin-right: 30px;
             img {
                 border-radius: 50%;
@@ -68,7 +67,7 @@
                     }
                 }
                 .modifyPage {
-                    margin-left: 330px;
+                    margin-left: auto;
                     display: flex;
                     align-items: center;
                     font-weight: 600;
