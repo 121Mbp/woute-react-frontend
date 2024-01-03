@@ -1,7 +1,9 @@
 .main {
+    position: relative;
     display: flex;
     justify-content: center;
     width: 100%;
+    min-height: 100vh;
     flex-direction: row;
     .search {
         position: sticky;
@@ -76,12 +78,15 @@
             &::after {
                 content: '';
                 position: absolute;
-                bottom: -1px;
+                top: 0;
                 left: 0;
                 right: 0;
                 height: 1px;
                 background-color: #9FA0A0;
                 opacity: .2;
+            }
+            &:first-child::after {
+                display: none;
             }
             .user i {@include _profile;}
             .upper {
@@ -154,7 +159,7 @@
                         cursor: pointer;
                         z-index: 2;
                         @include icon(heart, $primary, 24px, 24px);
-                        & + div {
+                        & + a {
                             font-size: 14px;
                             font-weight: 900;
                             cursor: pointer;

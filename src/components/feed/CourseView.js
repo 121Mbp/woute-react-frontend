@@ -30,7 +30,7 @@ function CourseView() {
         const feedData = async () => {
             try {
                 const feedList = await wouteAPI(`/p/${ id }`, 'GET', null)
-                setFeed(feedList.data.attaches)
+                setFeed(feedList.data)
                 const spot = feedList.data.courses
                 const bounds = new kakao.maps.LatLngBounds()
                 let markers = []
@@ -47,7 +47,6 @@ function CourseView() {
                     spot[i].src = orders
                     bounds.extend(new kakao.maps.LatLng(spot[i].latitude, spot[i].longitude))
                 }
-                console.log(spot)
                 setData(spot)
                 setMarkers(markers)
                 setTimeout(()=>{ map.setBounds(bounds) }, 100)
@@ -75,6 +74,7 @@ function CourseView() {
                         <button className='tab' onClick={()=>setActive(true)}>사진 보기</button>
                         <div className='maps'>
                             <Map 
+                                key={ id }
                                 center={{ lat: 33.450701, lng: 126.570667 }}
                                 style={{ width: '100%', height: '100%' }}
                                 level={ 4 }
@@ -91,7 +91,7 @@ function CourseView() {
                                     data?.map((item, i) => (
                                         <>
                                         <MapMarker
-                                            key={`${item.id}-${item.position}`}
+                                            key={`${ item.id }-${ item.position }`}
                                             position={ item.position }
                                             image={{
                                                 src: `${ item.src }`,
@@ -101,7 +101,7 @@ function CourseView() {
                                         />
                                         {info && (
                                         <CustomOverlayMap 
-                                            key={ `${item.position.lat},${item.position.lng}` }
+                                            key={ `${ item.position.lat }-${ item.position.lng }` }
                                             position={ item.position }
                                             yAnchor={ 0.5 }
                                             >
@@ -146,7 +146,7 @@ function CourseView() {
                                 modules={[ Pagination, Navigation ]}
                             >
                                 {
-                                    feed?.map(item => (
+                                    feed?.attaches?.map(item => (
                                         <SwiperSlide key={ item.uuid }><img src={ `http://localhost:8081/file/${item.uuid}` } alt='' /></SwiperSlide>
                                     ))
                                 }
@@ -155,7 +155,7 @@ function CourseView() {
                     </div>
                 </div>
                 <div className='inform'>
-                    <Reply />
+                    <Reply feedData={ feed } />
                 </div>
             </div>
         </div>

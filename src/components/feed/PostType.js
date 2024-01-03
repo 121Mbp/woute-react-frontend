@@ -11,7 +11,7 @@ function PostType({ type }) {
             <div onClick={()=>type('feed')}>
                 <p>피드에 게시글 남기기</p>
                 <p><strong>wouter</strong>님의 즐거운 여정을 <br />사진으로 기록합니다.</p>
-                <p>코스 기록하기</p>
+                <p>게시물 기록하기</p>
             </div>
         </div>
     )

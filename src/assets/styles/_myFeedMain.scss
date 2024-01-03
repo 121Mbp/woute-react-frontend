@@ -2,21 +2,23 @@
 @import './_mixin';
 
 .MyFeed {
-    max-width: 935px;
-    margin-left: 100px;
+    margin-left: 80px;
+    margin-right: 80px;
     margin-bottom: 100px;
-    padding: 30px 20px 0;
+    padding: 68px 20px 0;
 }
 
  .header-profile {
         display: flex;
         margin-bottom: 44px;
+        justify-content: space-between;
         .profile-img {
+            width: 32%;
             .a {
                 width: 150px;
                 height: 150px;
             }
-            flex-grow: 1;
+            // flex-grow: 1;
             // flex-basis: 0;
             margin-right: 30px;
             img {
@@ -35,7 +37,7 @@
                 align-items: center;
                 .nick {
                     font-size: 20px;
-                    font-weight: 400;
+                    font-weight: 800;
                 }
                 .com-btn {
                     margin-left: 20px;
@@ -152,9 +154,8 @@
         gap: 5px;
         justify-content: space-between;
         display: flex;
-        margin-bottom: 4px;
         a {
-            min-width: 295px;
+            width: 100%;
             height: 100%;
             position: relative;
             img {
@@ -226,11 +227,10 @@
 
 @media (max-width: 994px) {
     .container {
-        margin-left: 0 !important;
-        width: 100%;
         .MyFeed {
-            width: 100%;
-            margin: auto;
+            @include size(sm) {
+                margin: 0;
+            }
             .MfWrap {
                 width: 100%;
                 .header-profile {
@@ -247,7 +247,6 @@
                 }
                 article {
                     a {
-                        min-width: 210px;
                         .prevInfo {
                             flex-direction: column;
                             justify-content: center;

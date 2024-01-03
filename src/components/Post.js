@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Routes, Route, Outlet, useLocation } from 'react-router-dom'
+import { wouteAPI } from '../api'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -8,12 +9,40 @@ import { Pagination, Navigation } from 'swiper/modules'
 import Hearts from './Hearts'
 import FeedLike from './feed/FeedLike'
 
-function Post({ data }) {
+function Post({ data, feedData }) {
     const path = `/p/${ data.id }`
     const location = useLocation()
     const [like, setLike] = useState(false)
-    const handleLike = () => {
-        setLike((prev) => !prev)
+    const [likeId, setLikeId] = useState()
+    const userId = 'dominic'
+
+    useEffect(() => {
+        const likedUsers = data.likes?.filter(user => user.nickname === userId)
+        setLike(likedUsers.length > 0)
+        if (likedUsers.length > 0) setLikeId(likedUsers[0].id) 
+    }, [ data.likes, userId ])
+
+    const handleLike = async () => {
+        if(like) {
+            try {
+                await wouteAPI(`${ path }/like/${ likeId }`, 'DELETE', null)
+                setLike(false)
+            } catch(err) {
+                console.log('에러: ' + err)
+            }
+        } else {
+            const params = {
+                nickname: data.nickname,
+                profileImage: data.profileImage,
+            }
+            try {
+                await wouteAPI(`${ path }/like`, 'PUT', params)
+                setLike(true)
+            } catch(err) {
+                console.log('에러: ' + err)
+            }
+        }
+        feedData()
     }
     
     return (
@@ -30,7 +59,6 @@ function Post({ data }) {
                             pagination={{ dynamicBullets: true }}
                             modules={[ Pagination, Navigation ]}
                             onDoubleClick={ handleLike }
-                            toggle={ like }
                         >   
                             {
                                 data.attaches?.map(item => (
@@ -45,19 +73,19 @@ function Post({ data }) {
             </div>
             <div className='lower'>
                 <div className='likes'>
-                    <div className='heart' onClick={ handleLike } toggle={ like }>
-                        { like && <Hearts /> }
+                    <div className='heart' onClick={ handleLike }>
+                        { like ? <Hearts /> : '' }
                     </div>
                     <Routes>
-                        <Route path='/like' element={<FeedLike />}/>
+                        <Route path={ `${ path }/like` } element={<FeedLike likes={ data.likes } />} />
                     </Routes>
-                    <Link to='like'>좋아요 { data.heartCount }개</Link>
+                    <Link to={ `p/${ data.id }/like` }>좋아요 { data.likes.length }개</Link>
                 </div>
                 <div className='description'>
-                    <p>{ data.content }</p>
+                    <p>{ data.title }</p>
                     {
                         data?.tags.map(item => (
-                            <span>{ item.words }</span>    
+                            <span key={ item.id }>{ item.words }</span>    
                         ))
                     }
                 </div>

@@ -1,13 +1,35 @@
 import "../../assets/styles/_modalFeed.scss";
-import { Link, NavLink } from "react-router-dom";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Reply from "./Reply";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { wouteAPI } from "../../api";
 
 function ModalFeed() {
+  const { id } = useParams();
+  const [feedData, setFeedData] = useState([]);
+
+  useEffect(() => {
+    const fetchFeedData = async () => {
+      try {
+        const response = await wouteAPI(`/p/${id}`, "GET");
+        // feedData가 배열이라고 가정하고 새 데이터를 추가
+        setFeedData(response.data);
+      } catch (error) {
+        console.error("피드 데이터 불러오기 실패:", error);
+      }
+    };
+    fetchFeedData();
+  }, [id]); // id가 변경될 때마다 호출
+
+  useEffect(() => {
+    // feedData 상태가 변경될 때마다 로그를 찍어 확인
+    console.log(feedData);
+  }, [feedData]);
   return (
     <div className="myfeed">
       <div className="feedImg">
@@ -16,19 +38,14 @@ function ModalFeed() {
           pagination={{ dynamicBullets: true }}
           modules={[Pagination, Navigation]}
         >
-          <SwiperSlide>
-            <img
-              src="https://mblogthumb-phinf.pstatic.net/MjAyMjEyMDJfMTAw/MDAxNjY5OTU3MjcwNjEy.QoEE0nDGXuXvNiHaouDC1n77DqXoqXSyiiBiu1fCQbgg.gOTLKvlfynfliHXYjkOfFFSC_OZ9m6yMPEsMrFcDFlYg.JPEG.neweunha/SE-79b660f6-d36d-4cc1-82f7-00f15911e49f.jpg?type=w800"
-              alt=""
-            />
-          </SwiperSlide>
-          <SwiperSlide></SwiperSlide>
-          <SwiperSlide></SwiperSlide>
-          <SwiperSlide></SwiperSlide>
-          <SwiperSlide></SwiperSlide>
+          {feedData?.attaches?.map((item) => (
+            <SwiperSlide key={item.uuid}>
+              <img src={ `http://localhost:8081/file/${item.uuid}` } alt='' />
+            </SwiperSlide>
+          ))}
         </Swiper>
       </div>
-      <Reply />
+      <Reply feedData={feedData} />
     </div>
   );
 }
