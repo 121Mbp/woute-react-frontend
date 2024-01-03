@@ -2,8 +2,8 @@
 @import './mixin';
 
 .clMain {
-    margin-left: 250px;
-    margin-right: auto;
+    margin-left: 100px;
+    margin-right: 100px;
     .section {
         // width: 100%;
         .courseList {
@@ -82,7 +82,11 @@
 }
 @media (max-width:994px) {
     .clMain {
-        margin-left: 0;
+        margin-right: 40px;
+        @include size(sm) {
+            margin-left: 0;
+            margin-right: 0;
+        }
         .courseList {
             width: 100%;
 

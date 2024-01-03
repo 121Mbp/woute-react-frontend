@@ -5,12 +5,21 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { wouteAPI } from "./../../api";
 import imageCompression from "browser-image-compression";
+import { useNavigate } from "react-router-dom";
 
-function ModalAddFeed() {
+function ModalAddFeed({ type }) {
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
-
+  const navigate = useNavigate();
+  const [content, setContent] = useState("");
+  const [title, setTitle] = useState("");
+  const [spot, setSpot] = useState([]);
+  const handleContent = (e) => {
+    let value = e.target.value;
+    setContent(value);
+  };
   const handleFileChange = (e) => {
     const imageFiles = e.target.files;
     if (imageFiles.length === 0) return;
@@ -56,6 +65,66 @@ function ModalAddFeed() {
   };
 
   const isMaxImagesReached = previews.length >= 5;
+
+  const postSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    let reg = /#([\S]+)/gim;
+    let matches = (content.match(reg) || []).map((e) =>
+      e.replace(content, "$1")
+    );
+
+    let feed = {
+      nickname: "dominic",
+      profileImage:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg",
+      type: type,
+      title: title,
+      content: content,
+      hashtag: "",
+      heartCount: 0,
+    };
+
+    for (let file of files) {
+      formData.append("attaches", file);
+    }
+
+    formData.append(
+      "feed",
+      new Blob([JSON.stringify(feed)], { type: "application/json" })
+    );
+    formData.append(
+      "tags",
+      new Blob([JSON.stringify(matches)], { type: "application/json" })
+    );
+
+    let coursesData = [];
+    for (let s of spot) {
+      coursesData.push({
+        code: s.id,
+        store: s.place_name,
+        address: s.road_address_name,
+        phone: s.phone,
+        homepage: s.place_url,
+        category: s.category_group_name,
+        latitude: s.y,
+        longitude: s.x,
+      });
+    }
+
+    formData.append(
+      "courses",
+      new Blob([JSON.stringify(coursesData)], { type: "application/json" })
+    );
+
+    try {
+      await wouteAPI("/p", "POST", formData);
+
+      navigate("/");
+    } catch (error) {}
+  };
+
   return (
     <div className="addFeed">
       <div className="feedImg">
@@ -110,14 +179,24 @@ function ModalAddFeed() {
             )}
           </div>
           <div className="feedTitle">
-            <input placeholder="타이틀을 입력하세요"></input>
+            <input
+              name="title"
+              placeholder="타이틀을 입력하세요"
+              onChange={(e) => setTitle(e.target.value)}
+            ></input>
           </div>
           <div className="feedContent">
-            <textarea placeholder="#을이용하여태그를이용해보세요"></textarea>
+            <textarea
+              name="content"
+              placeholder="#을이용하여태그를이용해보세요"
+              onChange={handleContent}
+            ></textarea>
           </div>
 
           <div className="feedBtn">
-            <button onClick={handlePostSubmit}>피드기록하기</button>
+            <button type="submit" onClick={postSubmit}>
+              피드기록하기
+            </button>
           </div>
         </div>
       </div>
