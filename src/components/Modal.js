@@ -8,7 +8,7 @@ import ModalAddFeed from './feed/ModalAddFeed'
 import ModalFeed from './feed/ModalFeed'
 import ChatModal from './chatting/ChatModal'
 
-function Modal() {
+function Modal({ feedData, setLoading }) {
     const location = useLocation()
     const { id } = useParams()
     const state = location.state && location.state?.backgroundLocation
@@ -27,7 +27,8 @@ function Modal() {
                 {
                     location.pathname === '/create' ? (
                         <><PostType type={ setType } />
-                        { type === 'course' ? <CourseCreate type={'courses'} /> : type === 'feed' ? <ModalAddFeed type={'feeds'} /> : '' }</>
+                        { type === 'course' ? <CourseCreate type={'courses'} feedData={ feedData } setLoading={ setLoading } /> 
+                        : type === 'feed' ? <ModalAddFeed type={'feeds'} feedData={ feedData } setLoading={ setLoading } /> : '' }</>
                     ) : (
                         location.pathname === `/p/${ id }` ? (
                             location.state.type === 'courses' ? <CourseView /> : (

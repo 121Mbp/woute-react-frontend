@@ -36,9 +36,11 @@
         @include size(lg) {
             width: 100%;
             height: 100%;
+            min-width: 100%;
+            min-height: 100%;
             border-radius: 0;
-            min-height: 100%;
-            min-height: 100%;
+            max-width: 1200px;
+            max-height: 100%;
         }
         .close {
             position: absolute;
@@ -59,7 +61,7 @@
                 right: auto;
                 width: 34px;
                 height: 34px;
-                margin: 4px 24px;
+                margin: 12px 16px;
                 border-radius: 6px;
                 background-color: #ffffff;            
                 &::after {

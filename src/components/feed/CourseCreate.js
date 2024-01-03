@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef, createRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Map, MapMarker, CustomOverlayMap, Polyline } from 'react-kakao-maps-sdk'
-import imageCompression from 'browser-image-compression'
 import './../../assets/styles/_trip.scss'
 import Loader from '../Loader'
 import { wouteAPI } from './../../api'
@@ -11,9 +10,10 @@ import two from './../../assets/images/two.png'
 import three from './../../assets/images/three.png'
 import four from './../../assets/images/four.png'
 import five from './../../assets/images/five.png'
+import { toast } from 'react-toastify'
 
 const { kakao } = window
-function CourseCreate({ type }) {
+function CourseCreate({ type, feedData, setLoading }) {
     const navigate = useNavigate()
     const widthSize = useWindowSize()
     const mapRef = useRef()
@@ -86,7 +86,8 @@ function CourseCreate({ type }) {
 
     const searchPlaces = () => {
         if(!keyword.replace(/^\s+|\s+$/g, '')) {
-            alert('키워드를 입력해주세요.')
+            // alert('키워드를 입력해주세요.')
+            toast.warn('키워드를 입력해주세요.')
             return false
         } 
         ps.keywordSearch(keyword, placesSearchCB)
@@ -123,10 +124,12 @@ function CourseCreate({ type }) {
                 placesListRef.current.scrollTo({ top: 0, hefavior: 'smooth' })
             }, 10)
         } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-            alert('검색 결과가 존재하지 않습니다.')
+            // alert('검색 결과가 존재하지 않습니다.')
+            toast.warn('검색 결과가 존재하지 않습니다.')
             return
         } else if (status === kakao.maps.services.Status.ERROR) {
-            alert('검색 결과 중 오류가 발생했습니다.')
+            // alert('검색 결과 중 오류가 발생했습니다.')
+            toast.warn('검색 결과 중 오류가 발생했습니다.')
             return
         }
     }
@@ -177,7 +180,8 @@ function CourseCreate({ type }) {
 
     const handleSave = item => {
         if(spot.filter((e) => { return e.id === item.id }).length > 0) {
-            alert('이미 등록된 장소 입니다.')
+            //alert('이미 등록된 장소 입니다.')
+            toast.warn('이미 등록된 장소 입니다.')
             return 
         } 
         if(spot.length === 0) {
@@ -185,7 +189,8 @@ function CourseCreate({ type }) {
             setStyle({ width: '100%', height: '50%'})
         }
         if(spot.length > 4) {
-            alert('장소는 최대 5개 까지 등록이 가능합니다.')
+            // alert('장소는 최대 5개 까지 등록이 가능합니다.')
+            toast.warn('장소는 최대 5개 까지 등록이 가능합니다.')
             return
         }
         setSpot((prevSpot) => [
@@ -305,19 +310,19 @@ function CourseCreate({ type }) {
             setFiles([])
         }
 
-        const options = {
-            maxSizeMB: 0.2,
-            maxWidthOrHeight: 800,
-            useWebWorker: true,
-        }
+        // const options = {
+        //     maxSizeMB: 0.2,
+        //     maxWidthOrHeight: 800,
+        //     useWebWorker: true,
+        // }
     
-        try {
-            console.log(imageFiles)
-            const compressdFile = await imageCompression(imageFiles, options)
-            console.log(compressdFile)
-        } catch (error) {
-            console.log(error)
-        }
+        // try {
+        //     console.log(imageFiles)
+        //     const compressdFile = await imageCompression(imageFiles, options)
+        //     console.log(compressdFile)
+        // } catch (error) {
+        //     console.log(error)
+        // }
     }
 
     useEffect(()=>{
@@ -360,11 +365,18 @@ function CourseCreate({ type }) {
 
     const postSubmit = async (e) => {
         e.preventDefault()
-
+        if(title === '') {
+            toast.warn('제목을 입력해 주세요.')
+            return
+        }
+        if(content === '') {
+            toast.warn('내용을 입력해 주세요.')
+            return
+        }
         const formData = new FormData()
         let reg = /#([\S]+)/igm
         let matches = (content.match(reg) || []).map(e => e.replace(content, '$1'))
-
+        
         let feed = {
             nickname: 'dominic',
             profileImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg',
@@ -375,12 +387,22 @@ function CourseCreate({ type }) {
             heartCount: 0,
         }
 
+        if(files.length === 0) {
+            toast.warn('이미지를 첨부해 주세요.')
+            return
+        }
+
         for (let file of files) {
             formData.append('attaches', file)
         }
 
         formData.append('feed', new Blob([JSON.stringify(feed)], {type: 'application/json'}))
         formData.append('tags', new Blob([JSON.stringify(matches)], {type: 'application/json'}))
+
+        if(spot.length === 0) {
+            toast.warn('장소를 추가해 주세요.')
+            return
+        }
 
         let coursesData = []
         for(let s of spot) {
@@ -390,7 +412,7 @@ function CourseCreate({ type }) {
                 address: s.road_address_name,
                 phone: s.phone,
                 homepage: s.place_url,
-                category: s.category_group_name,
+                category: s.category_name,
                 latitude: s.y,
                 longitude: s.x
             })
@@ -398,13 +420,14 @@ function CourseCreate({ type }) {
 
         formData.append('courses', new Blob([JSON.stringify(coursesData)], {type: 'application/json'}))
         
-
         try {
             await wouteAPI('/p', 'POST', formData)
-            
-            navigate('/');
-        } catch(error) {
-            
+            toast.success('피드 등록 완료')
+            setLoading(false)
+            feedData()
+            navigate('/')
+        } catch(err) {
+            console.log('에러: ' + err)
         }
     }
 
@@ -507,7 +530,7 @@ function CourseCreate({ type }) {
                                                         ref={ scrollRef }
                                                     >
                                                         <strong>{ item.place_name }</strong>
-                                                        <span>{ item.category_group_name }</span>
+                                                        <span>{ item.category_name }</span>
                                                         <span>{ item.road_address_name }</span>
                                                         <button onClick={()=>handleDelete(item)}>삭제</button>
                                                     </li>

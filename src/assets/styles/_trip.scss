@@ -12,10 +12,6 @@ $orders: one, two, three, four, five;
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
-    @include size(lg) {
-        padding-top: 42px;
-        overflow-y: auto;
-    }
     .placesSearch {
         $width: 235px;
         position: absolute;
@@ -24,14 +20,14 @@ $orders: one, two, three, four, five;
         padding: 18px 24px;
         z-index: 99;
         @include size(lg) {
-            padding: 4px 32px;
+            padding: 9px 32px;
             background: #FFFFFF;
             right: 0;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 -1px 0px rgba(0,0,0,0.02);
         }
         input {
             width: 186px;
-            padding: 10px 32px 8px 34px;
+            padding: 12px 32px 8px 34px;
             border-radius: 6px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 -1px 0px rgba(0,0,0,0.02);
             background-color: #ffffff;
@@ -51,8 +47,8 @@ $orders: one, two, three, four, five;
                 @include icon(search, #8A8A8A, 16px, 16px);
                 @include size(lg) {
                     left: auto;
-                    top: 14px;
-                    right: 32px;
+                    top: 20px;
+                    right: 30px;
                 }
                 & + button {
                     position: absolute;
@@ -62,7 +58,7 @@ $orders: one, two, three, four, five;
                     @include icon(add, #484848, 14px, 14px);
                     transform: rotate(45deg);
                     @include size(lg) {
-                        top: 16px;
+                        top: 20px;
                         right: 58px;
                     }
                 }
@@ -84,7 +80,7 @@ $orders: one, two, three, four, five;
                 position: fixed;
                 bottom: 0;
                 top: auto;
-                height: 47.2%;
+                height: 50%;
                 width: 100%;
                 padding-bottom: 32px;
                 background-color: #FFFFFF;
@@ -92,7 +88,7 @@ $orders: one, two, three, four, five;
             }
             @include size(sm) {
                 bottom: 56px;
-                height: 42.6%;
+                height: calc(50% - 28px);
                 box-shadow: none;
             }
             li {
@@ -146,9 +142,10 @@ $orders: one, two, three, four, five;
                     }
                     @include size(lg) {
                         display: block;
+                        bottom: 47.4%;
                     }
                     @include size(sm) {
-                        bottom: 48%;
+                        bottom: 50.4%;
                     }
                 }
                 li {
@@ -569,12 +566,21 @@ $orders: one, two, three, four, five;
         height: 100%;
         @include size(lg) {
             flex-direction: column;
-            height: auto;
+            .service {
+                height: 100%;
+                padding-top: 42px;
+                overflow-y: auto;
+            }
+            .inform {
+
+            
+            }
         }
         > div {
             width: 50%;
             @include size(lg) {
                 width: 100%;
+                
             }
         }
         .service {
@@ -605,6 +611,9 @@ $orders: one, two, three, four, five;
                 @include size(lg) {
                     padding-top: 0;
                     height: auto;
+                    &::after {
+                        display: none;
+                    }
                 }
                 &::after {
                     content: '';
