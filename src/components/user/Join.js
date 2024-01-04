@@ -1,17 +1,20 @@
 import { useState } from "react";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 function Join() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordMatchError, setPasswordMatchError] = useState("");
-  const [email] = useState("");
+  const [email, setEmail] = useState("");
   const [showVerification, setShowVerification] = useState(false);
-
+  const [nickname, setNickname] = useState("");
+  const navigate = useNavigate();
   const verfiyHandle = (e) => {
     e.preventDefault();
     alert("인증되었습니다.");
     setShowVerification(false);
   };
+
   // const [verificationText, setVerificationText] = useState("");
 
   // const handleConfirmationButtonClick = () => {
@@ -49,17 +52,64 @@ function Join() {
       setPasswordMatchError("비밀번호가 일치하지 않습니다.");
     }
   };
+
+  // 이메일 입력값 변경 시 호출되는 함수
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+  const handleNickChange = (e) => {
+    setNickname(e.target.value);
+  };
+
+  // 폼 제출 시 호출되는 함수
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Email:", email);
+    console.log("Nickname:", nickname);
+    console.log("password :", password);
+    console.log("password2:", confirmPassword);
+    if (password !== confirmPassword) {
+      alert("패스워드가 다릅니다.");
+      // 패스워드가 다를때 작동하지 않음
+    } else {
+      const user = {
+        nickname: nickname,
+        password: password,
+        email: email,
+        provider: "woute",
+      };
+      console.log("객체선언");
+      console.log("user" + user.email);
+
+      axios
+        .post("/join", user, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          console.log("서버 응답:", response.data);
+        })
+        .catch((error) => {
+          console.error("에러 발생:", error.message);
+        });
+      alert(nickname + "님의 가입이 완료되었습니다.");
+      navigate("/login");
+    }
+  };
+
   return (
     <>
       <div className="logform-position">
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="signup-input">
             <div className="email-position">
               <input
                 className="signup-input-email"
                 type="text"
                 placeholder="이메일"
-                defaultValue={email}
+                value={email}
+                onChange={handleEmailChange}
               />
               <button
                 className="email-veri-button"
@@ -87,6 +137,8 @@ function Join() {
               type="text"
               placeholder="닉네임"
               autoComplete="off"
+              value={nickname}
+              onChange={handleNickChange}
             />
             <button className="nick-button"></button>
           </div>
@@ -113,7 +165,7 @@ function Join() {
             />
             <button className="pw-button2"></button>
           </div>
-          <span style={{ color: "red", marginLeft: "20px", paddingTop: "5px" }}>
+          <span style={{ color: "red", marginLeft: "20px", paddingTop: "3px" }}>
             {passwordMatchError}
           </span>
           <div className="btn-position">
