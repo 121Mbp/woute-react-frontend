@@ -6,20 +6,40 @@ import SockJS from "sockjs-client";
 
 
 export default function ChatModal() {
-    // 채팅대상 검색
-    const [searchListVisible, setSearchListVisible] = useState(false);
-    const [searchValue, setSearchValue] = useState('')
-    const [msgValue, setMsgValue] = useState('')
+  const [connected, setConnected] = useState(false)
+  
+  const socket = new SockJS('http://localhost:8081/ws')
+  const stompClient = Stomp.over(socket)  
 
-    const showSearchList = () => {
-        setSearchListVisible(!searchListVisible)
-    }
-    
-    const searchResult = e => {
-        if(e.key === 'Enter') {
-            setSearchListVisible(true)
-        }
-    }
+  stompClient.connect({}, () => {
+    console.log('connect 성공');
+    setConnected(true)
+    stompClient.subscibe('/sub/rooms/1', (greeting) => {
+      console.log(greeting.body);
+    })
+  })
+  // stompClient.send("/pub/messages", {}, JSON.stringify({
+  //   'message': $("#name").val(),
+  //   'senderId': 7,
+  //   'receiverId': 14,
+  //   'roomId': 5
+  // }));
+  
+  
+  // 채팅대상 검색
+  const [searchListVisible, setSearchListVisible] = useState(false);
+  const [searchValue, setSearchValue] = useState('')
+  const [msgValue, setMsgValue] = useState('')
+
+  const showSearchList = () => {
+      setSearchListVisible(!searchListVisible)
+  }
+  
+  const searchResult = e => {
+      if(e.key === 'Enter') {
+          setSearchListVisible(true)
+      }
+  }
 
 
   return (

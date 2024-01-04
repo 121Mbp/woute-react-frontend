@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect,  useState } from 'react';
 import '../../assets/styles/_myFeedMain.scss';
-import { Link, NavLink, useMatch } from 'react-router-dom';
+import { Link  } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom'
-import Abb from './Abb';
-import Cbb from './Cbb';
-import FeedList from './FeedList';
 import Follower from '../follow/Follower';
 import Following from '../follow/Following';
+import MyFeeds from './MyFeeds';
+import MyCourses from './MyCourses';
+import MyLikes from './MyLikes';
 
 export default function MyFeedMain() {
     const [feeds, setFeeds] = useState(true)
@@ -83,9 +83,9 @@ export default function MyFeedMain() {
                     </div>
                     <div className="myFeed-list">
                         <Routes>
-                            <Route path={`/`} element={<Abb/>} ></Route>
-                            <Route path={`/courses`} element={<Cbb/>}></Route>
-                            <Route path={`/likes`} element={<FeedList/>}></Route>
+                            <Route path={`/`} element={<MyFeeds/>} ></Route>
+                            <Route path={`/courses`} element={<MyCourses/>}></Route>
+                            <Route path={`/likes`} element={<MyLikes/>}></Route>
                         </Routes>
                     </div>
                     
