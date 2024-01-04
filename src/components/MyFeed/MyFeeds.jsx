@@ -15,6 +15,14 @@ export default function MyFeeds() {
             id:3,
             feedImg :'https://img.sportsworldi.com/content/image/2023/06/08/20230608510214.jpg'
         },
+        {
+            id:4,
+            feedImg :'https://img.sportsworldi.com/content/image/2023/06/08/20230608510214.jpg'
+        },
+        {
+            id:5,
+            feedImg :'https://img.sportsworldi.com/content/image/2023/06/08/20230608510214.jpg'
+        },
     ])
     
     // const getFeeds =  async () => {

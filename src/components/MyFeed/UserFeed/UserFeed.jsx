@@ -4,11 +4,11 @@ import { Link  } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom'
 import Follower from '../follow/Follower';
 import Following from '../follow/Following';
-import MyFeeds from './MyFeeds';
-import MyCourses from './MyCourses';
-import MyLikes from './MyLikes';
+import MyFeeds from '../MyFeed/MyFeeds';
+import MyCourses from '../MyFeed/MyCourses';
+import MyLikes from '../MyFeed/MyLikes';
 
-export default function MyFeedMain() {
+export default function UserFeed() {
     const [feeds, setFeeds] = useState(true)
     const [courses, setCourses] = useState(false)
     const [likes, setLikes] = useState(false)
@@ -57,7 +57,14 @@ export default function MyFeedMain() {
                             <div className='profile-edit mb20'>
                                 {/* 닉네임 */}
                                 <h2 className='nick'>mark_ju</h2>
-                                <div className='modifyPage'><Link to="/modifyProfile">프로필 편집</Link></div>
+                                <div className='com-btn'>
+                                    <button className='follow-btn'>팔로우</button>
+                                    <button className='msg-btn'>메시지 보내기</button>
+                                </div>
+                                {/* <div className='com-btn'>
+                                    <button className='following-btn'>팔로잉</button>
+                                    <button className='msg-btn'>메시지 보내기</button>
+                                </div> */}
                             </div>
                             <ul className='fol-amount mb20'>
                                 {/* 게시글, 팔로우 카운트 */}
@@ -75,7 +82,7 @@ export default function MyFeedMain() {
                         </div>
                     </div>
                     <div className='feed-cate'>
-                        <Link to='/1' className={`cate-btn ${feeds ? 'active' : ''}`} id='feeds' onClick={tabClick}>
+                        <Link to='/' className={`cate-btn ${feeds ? 'active' : ''}`} id='feeds' onClick={tabClick}>
                             <div>게시물</div>
                         </Link>
                         <Link to='courses' className={`cate-btn ${courses ? 'active' : ''}`} id='courses' onClick={tabClick}>
