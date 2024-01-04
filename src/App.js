@@ -1,3 +1,27 @@
+<<<<<<< HEAD
+import { useState, useEffect } from "react";
+import "./App.scss";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import Navigation from "./components/Navigation";
+import Main from "./components/Main";
+import MyFeedMain from "./components/MyFeed/MyFeedMain";
+import CourseList from "./components/courseList/CourseList";
+import Modal from "./components/Modal";
+import Modifyprofile from "./components/user/ModifyProfile";
+import Loghead from "./components/user/LogHead";
+import Loginform from "./components/user/LoginForm";
+import Join from "./components/user/Join";
+import Logfooter from "./components/user/LogFooter";
+import "./assets/styles/_login.scss";
+
+function App() {
+  const location = useLocation();
+  const state = location.state && location.state.backgroundLocation;
+  const [scrollY, setScrollY] = useState(0);
+  const [scrollActive, setScrollActive] = useState(false);
+  const [token, setToken] = useState(false);
+  const navigate = useNavigate();
+=======
 import { useState, useEffect } from 'react'
 import './App.scss'
 import { Routes, Route, useLocation } from 'react-router-dom'
@@ -25,6 +49,7 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [scrollActive, setScrollActive] = useState(false)
   const [token, setToken] = useState(true)
+>>>>>>> 2911c2f2e698a95e8400605972eafdcfcaf0722b
 
   const feedData = async () => {
     try {
@@ -39,7 +64,24 @@ function App() {
       }
   }
 
+  const handleLogin = () => {
+    setToken(!token);
+    console.log("Token is set to true");
+    navigate("/", { replace: true });
+    console.log(token);
+  };
+
   useEffect(() => {
+<<<<<<< HEAD
+    if (token) {
+      const scrollListener = () => {
+        window.addEventListener("scroll", handleScroll);
+      };
+      scrollListener();
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+  }, [scrollY, token]);
+=======
       feedData()
   }, [])
 
@@ -55,6 +97,7 @@ function App() {
       scrollListener()
       return () => window.removeEventListener('scroll', handleScroll)
   }, [ scrollY ])
+>>>>>>> 2911c2f2e698a95e8400605972eafdcfcaf0722b
 
   const LogLayout = ({ children }) => (
     <>
@@ -100,7 +143,7 @@ function App() {
             <Route path='/login'
             element={
               <LogLayout>
-                <Loginform />
+                <Loginform onLogin={handleLogin} />
               </LogLayout>
             }
           ></Route>
