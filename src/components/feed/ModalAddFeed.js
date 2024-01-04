@@ -8,8 +8,9 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { wouteAPI } from "./../../api";
 import imageCompression from "browser-image-compression";
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify'
 
-function ModalAddFeed({ type }) {
+function ModalAddFeed({ type, wouteFeeds, setLoading }) {
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
   const navigate = useNavigate();
@@ -68,7 +69,18 @@ function ModalAddFeed({ type }) {
 
   const postSubmit = async (e) => {
     e.preventDefault();
-
+    if (files.length === 0) {
+      toast.warn("사진을올려주세요.");
+      return;
+    }
+    if (!title.trim()) {
+      toast.warn("제목을입력해주세요.");
+      return;
+    }
+    if (!content.trim()) {
+      toast.warn("내용을입력해주세요.");
+      return;
+    }
     const formData = new FormData();
     let reg = /#([\S]+)/gim;
     let matches = (content.match(reg) || []).map((e) =>
@@ -120,7 +132,9 @@ function ModalAddFeed({ type }) {
 
     try {
       await wouteAPI("/p", "POST", formData);
-
+      toast.success('피드 등록 완료')
+      setLoading(false)
+      wouteFeeds()
       navigate("/");
     } catch (error) {}
   };

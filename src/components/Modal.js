@@ -8,7 +8,7 @@ import ModalAddFeed from './feed/ModalAddFeed'
 import ModalFeed from './feed/ModalFeed'
 import ChatModal from './chatting/ChatModal'
 
-function Modal({ feedData, setLoading }) {
+function Modal({ wouteFeeds, setLoading }) {
     const location = useLocation()
     const { id } = useParams()
     const state = location.state && location.state?.backgroundLocation
@@ -27,12 +27,12 @@ function Modal({ feedData, setLoading }) {
                 {
                     location.pathname === '/create' ? (
                         <><PostType type={ setType } />
-                        { type === 'course' ? <CourseCreate type={'courses'} feedData={ feedData } setLoading={ setLoading } /> 
-                        : type === 'feed' ? <ModalAddFeed type={'feeds'} feedData={ feedData } setLoading={ setLoading } /> : '' }</>
+                        { type === 'course' ? <CourseCreate type={'courses'} wouteFeeds={ wouteFeeds } setLoading={ setLoading } /> 
+                        : type === 'feed' ? <ModalAddFeed type={'feeds'} wouteFeeds={ wouteFeeds } setLoading={ setLoading } /> : '' }</>
                     ) : (
                         location.pathname === `/p/${ id }` ? (
-                            location.state.type === 'courses' ? <CourseView /> : (
-                                location.state.type === 'feeds' ? <ModalFeed /> : ''
+                            location.state.type === 'courses' ? <CourseView wouteFeeds={ wouteFeeds } setLoading={ setLoading } /> : (
+                                location.state.type === 'feeds' ? <ModalFeed wouteFeeds={ wouteFeeds } setLoading={ setLoading } /> : ''
                             ) 
                         ) : (
                             location.pathname === `/chat` && (<ChatModal />)

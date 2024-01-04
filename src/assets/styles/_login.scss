@@ -75,14 +75,14 @@
   border-radius: 100px;
   display: flex;
   flex-direction: column;
-  padding-top: 1rem;
+  padding-top: 1.5rem;
   .email-button {
     position: absolute;
     top: 55%;
     left: 20px;
     @include icon(email, #898989, 18px, 18px);
     @include _hide;
-    transform: translateY(20%) translateX(-5%);
+    transform: translateY(36%) translateX(-5%);
   }
   .nick-button {
     position: absolute;
@@ -110,7 +110,7 @@
     left: 20px;
     @include icon(pw, #898989, 18px, 18px);
     @include _hide;
-    transform: translateY(-25%);
+    transform: translateY(-5%);
   }
   .log-input-pw {
     border: 1px solid #c9caca;
@@ -250,7 +250,7 @@
   display: flex;
   .verify-input-email {
     border: 1px solid #c9caca;
-    padding: 15px 45px;
+    padding: 15px 20px;
     border-radius: 30px;
     height: 50px;
     width: 350px;
@@ -289,12 +289,12 @@
   border-radius: 100px;
   display: flex;
   flex-direction: column;
-  padding-top: 1rem;
+  padding-top: 1.3rem;
   transition: 0.2s ease-in-out;
   .email-button {
     position: absolute;
     top: 55%;
-    left: 20px;
+    left: 19px;
     @include icon(email, #898989, 18px, 18px);
     @include _hide;
     transform: translateY(20%);
@@ -317,7 +317,7 @@
     left: 20px;
     @include icon(user, #898989, 18px, 18px);
     @include _hide;
-    transform: translateY(-20%);
+    transform: translateY(-45%);
   }
   .pw-button {
     position: absolute;
@@ -325,7 +325,7 @@
     left: 20px;
     @include icon(pw, #898989, 18px, 18px);
     @include _hide;
-    transform: translateY(-25%);
+    transform: translateY(-8%);
   }
   .pw-button2 {
     position: absolute;
@@ -333,7 +333,7 @@
     left: 20px;
     @include icon(pw, #898989, 18px, 18px);
     @include _hide;
-    transform: translateY(-55%);
+    transform: translateY(-35%);
   }
   .signup-input-pw {
     border: 1px solid #c9caca;

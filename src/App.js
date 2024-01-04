@@ -26,7 +26,7 @@ function App() {
   const [scrollActive, setScrollActive] = useState(false)
   const [token, setToken] = useState(true)
 
-  const feedData = async () => {
+  const wouteFeeds = async () => {
     try {
         const feedList = await wouteAPI('/p', 'GET', null)
         setData(feedList.data.reverse())
@@ -40,7 +40,7 @@ function App() {
   }
 
   useEffect(() => {
-      feedData()
+    wouteFeeds()
   }, [])
 
   const handleScroll = () => {
@@ -74,15 +74,15 @@ function App() {
             <Navigation />
             <div className='container'>
               <Routes location={ state || location }>
-                <Route path='/*' element={ <Main data={ data } limits={ limits } total={ total } feedData={ feedData } loading={ loading } /> } />
+                <Route path='/*' element={ <Main data={ data } limits={ limits } total={ total } wouteFeeds={ wouteFeeds } loading={ loading } /> } />
                 <Route path='/course' element={ <CourseList /> } />
                 <Route path='/profile/*' element={ <MyFeedMain /> } />
                 <Route path='/modifyProfile' element={ <Modifyprofile /> } />
               </Routes>
               {state && (
                 <Routes>
-                  <Route path='create' element={ <Modal feedData={ feedData } setLoading={ setLoading }/> } />
-                  <Route path='p/:id' element={ <Modal /> } />
+                  <Route path='create' element={ <Modal wouteFeeds={ wouteFeeds } setLoading={ setLoading } /> } />
+                  <Route path='p/:id' element={ <Modal wouteFeeds={ wouteFeeds } setLoading={ setLoading } /> } />
                   <Route path='chat' element={ <Modal /> } />
                   <Route path='notice' element={ <></> } />
                 </Routes>
