@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { wouteAPI } from "../../api";
 
 export default function MyLikes() {
@@ -18,19 +19,23 @@ export default function MyLikes() {
             id:4,
             likeImg :'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcLINDNYhIBBa5PN91341XLTOcXlMRoFO6ZA&usqp=CAU'
         },
+        {
+            id:5,
+            likeImg :'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcLINDNYhIBBa5PN91341XLTOcXlMRoFO6ZA&usqp=CAU'
+        },
     ])
     
 
 
-    const getLikes =  async () => {
-        const response = await wouteAPI('/users/{id}/likes', 'GET')
-        console.log(response);
-        setLikes(response.data)
-    }
+    // const getLikes =  async () => {
+    //     const response = await wouteAPI('/users/{id}/likes', 'GET')
+    //     console.log(response);
+    //     setLikes(response.data)
+    // }
 
-    useEffect(() => {
-        getLikes()
-    },[])
+    // useEffect(() => {
+    //     getLikes()
+    // },[])
 
     const devidePosts = (data) => {
         const arr = [...data];
