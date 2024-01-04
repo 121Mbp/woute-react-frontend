@@ -91,7 +91,7 @@ function Join() {
     console.log("Nickname:", nickname);
     console.log("Password:", password);
     console.log("Confirm Password:", confirmPassword);
-    if (emailError != null) {
+    if (emailError == null) {
       alert("유효한 이메일이 아닙니다.");
       return;
     }
