@@ -1,39 +1,33 @@
-import '../../App.scss';
-import '../../assets/styles/_login.scss';
-import { Link } from 'react-router-dom';
-import React, { useState } from 'react';
-function Loghead() {
-  const [isLogClick, setIsLogClick] = useState(true);
-  const [isSignClick, setIsSignClick] = useState(false);
+import { NavLink, useLocation } from "react-router-dom";
 
-  const handleLog = () => {
-    setIsLogClick(true);
-    setIsSignClick(false);
-  }
-  const handleSign = () => {
-    setIsSignClick(true);
-    setIsLogClick(false);
-  }
+function Loghead() {
+  const location = useLocation();
 
   return (
-   <>
-    
-        <div className='log-logo-position'>
-          <div className='log-logo'></div>
-        </div>
-        
-        <div className='log-sign-position'>
-          <ul className='log-sign'>
-            <li className={`log-title ${isLogClick ? 'active' : ''}`}>
-              <Link to="/login" onClick={handleLog}>Login</Link>
-            </li>
-            <li className={`sign-title ${isSignClick ? 'active' : ''}`}>
-              <Link to="/join"  onClick={handleSign}>Sign up</Link>
-            </li>
-          </ul>
-        </div>
-        
-   </>
+    <>
+      <div className="log-logo-position">
+        <div className="log-logo"></div>
+      </div>
+
+      <div className="log-sign-position">
+        <ul className="log-sign">
+          <li
+            className={`log-title ${
+              location.pathname === "/login" ? "active" : ""
+            }`}
+          >
+            <NavLink to="/login">Login</NavLink>
+          </li>
+          <li
+            className={`sign-title ${
+              location.pathname === "/join" ? "active" : ""
+            }`}
+          >
+            <NavLink to="/join">Sign up</NavLink>
+          </li>
+        </ul>
+      </div>
+    </>
   );
 }
 

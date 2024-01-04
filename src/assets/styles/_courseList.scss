@@ -6,16 +6,22 @@
     margin-right: 100px;
     .section {
         // width: 100%;
-        .courseList {
+         article {
             margin: 10px auto;
             display: flex;
             flex-direction: column;
-            article {
+            .courseList {
                 max-width: 958px;
                 gap: 5px;
                 justify-content: space-between;
                 display: flex;
                 margin-bottom: 4px;
+                .none_image {
+                    // min-width: 295px;
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                }
                 a {
                     width: 100%;
                     height: 100%;

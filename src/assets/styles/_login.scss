@@ -33,7 +33,6 @@
     padding-bottom: 10px;
     transition: 0.2s ease-in-out;
     a {
-      transition: 0.2s ease-in-out;
       color: #c9caca;
       font-size: 30px;
       font-weight: 600;
@@ -44,23 +43,22 @@
     font-weight: bolder;
     margin-left: 3rem;
     padding-bottom: 10px;
-    transition: 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
     a {
-      transition: 0.2s ease-in-out;
       color: #c9caca;
       font-size: 30px;
       font-weight: 600;
-    }
-  }
-  .sign-title.active {
-    a {
-      color: #222;
     }
   }
   .log-title.active {
     a {
       color: #222;
     }
+  }
+}
+.sign-title.active {
+  a {
+    color: #222;
   }
 }
 
@@ -223,7 +221,7 @@
 }
 
 .log-footer {
-  margin-bottom: 40px;
+  margin-bottom: 60px;
   margin-top: 60px;
   display: flex;
   justify-content: center;
@@ -264,7 +262,7 @@
   }
   .email-confirm {
     margin-left: 15px;
-    padding: 15px 30px;
+    padding: 15px 25px;
     background-color: #898989;
     color: #fff;
     border-radius: 50px;
@@ -275,7 +273,7 @@
   }
   .email-veri-button {
     margin-top: 1rem;
-    margin-left: 15px;
+    margin-left: 10px;
     padding: 15px 15px;
     background-color: #898989;
     color: #fff;
@@ -306,7 +304,7 @@
     border: 1px solid #c9caca;
     padding: 15px 45px;
     border-radius: 30px;
-    width: 350px;
+    width: 345px;
     transition: 0.2s ease-in-out;
     &::placeholder {
       font-size: 15px;
