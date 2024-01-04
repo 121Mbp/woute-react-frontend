@@ -1,45 +1,72 @@
 import { Link, useNavigate } from 'react-router-dom';
 import '../../assets/styles/_follow.scss';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { wouteAPI } from '../../api';
-import axios from 'axios';
 
 export default function Follower() {
     const navigate = useNavigate();
-
+    
     const [follower, setFollower] = useState([]);
-    const [usersId, setUsersId] = useState()
+    const searchInput = useRef();
+
     const back = () => {
         navigate(-1)
     }
-    const getFollower = async ()=>{
-        const response = await wouteAPI("/1/follower", "GET");
-        setFollower(response.data)
-      }
-    useEffect(() => {
-        getFollower();
-    },[])
-
-        
-        const follow = async (id) => {
-            console.log("id : " + id);
-            setUsersId({
-                followingId : 1,
-                followerId : id
-            })
-            console.log(usersId);
-            try {
-                await wouteAPI("/follow","POST", usersId)
-                console.log("성공");
-            } catch (error) {
-                console.error("실패");
-            }
-
-        }
 
     
-    const unFollow = () => {
-        wouteAPI("/follow/:id","DELETE", )
+    useEffect(() => {
+        search()
+    },[])
+
+    const follow = async (e) => {
+        const id = e.target.value
+        const btn = e.target.classList
+        console.log("id : " +id);
+        console.log(btn);
+        btn.add('d-none')
+        
+        try {
+            await wouteAPI("/follow","POST", {followingId : 1,followerId : id})
+            console.log("팔로우 성공");
+            btn.add('d-none')
+        } catch (error) {
+            console.error("팔로우 실패");
+        }
+    }
+
+    
+    const unFollow = async (e) => {
+        const id = e.target.value
+        console.log(id);
+        e.target.setAttribute('disabled','true')
+        try {
+            await wouteAPI(`/follow/${id}`,"DELETE")
+            console.log("삭제 성공");
+        } catch (error) {
+            console.error("삭제 실패");
+            
+        }
+    }
+
+
+    
+    const search = async () => {
+        console.log(searchInput.current.selectionStart);
+        console.log('c : '+ searchInput.current.value);
+        try {
+            if(searchInput.current.selectionStart == 0) {
+                const response = await wouteAPI("/1/follower", "GET");
+                setFollower(response.data)
+                console.log('첫 목록');
+            } else {
+                const response = await wouteAPI('/1/follower/search','POST', {nickname:searchInput.current.value})
+                setFollower(response.data)
+                console.log('검색성공');
+            }
+        } catch (error) {
+            console.log('검색실패');
+            
+        }
     }
     
     return(
@@ -52,7 +79,11 @@ export default function Follower() {
                     </div>
                     <div className='search-wrap'>
                         <div className='search-input'>
-                            <input type="text" placeholder='검색'/>
+                            <input type="text" 
+                            onChange={search}
+                            ref={searchInput}
+                            placeholder='검색'
+                            />
                         </div>
                     </div>
                     <div className="fol-wrap">
@@ -77,8 +108,9 @@ export default function Follower() {
                                                 </Link>
                                                 <input readOnly type="text" hidden className='followerId' value={item.followerId}/>
                                                 <button 
-                                                className={`${item.followState? 'd-none' : ''}`}
-                                                onClick={()=>{follow(`${item.followerId}`)}}
+                                                className={`${item.followState? 'd-none' : '' }`}
+                                                    value={item.followerId}
+                                                    onClick={follow}
                                                 >
                                                     팔로우
                                                 </button>
@@ -86,7 +118,7 @@ export default function Follower() {
                                         </div>
                                         <div className="btn-wrap">
                                             <div className="del-btn">
-                                                <button>삭제</button>
+                                                <button onClick={unFollow} value={item.id}>삭제</button>
                                             </div>
                                         </div>
                                     </div>

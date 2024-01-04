@@ -154,6 +154,11 @@
         gap: 5px;
         justify-content: space-between;
         display: flex;
+        .none_image {
+            min-width: 295px;
+            height: 100%;
+            display: block;
+        }
         a {
             width: 100%;
             height: 100%;
