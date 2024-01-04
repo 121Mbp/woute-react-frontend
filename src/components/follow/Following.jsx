@@ -1,32 +1,80 @@
 import { Link, useNavigate } from 'react-router-dom';
 import '../../assets/styles/_follow.scss';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
+import { wouteAPI } from '../../api';
 
 export default function Following() {
     const navigate = useNavigate();
 
-    const [following, setFollowing] = useState([]);
-    
+    const [following, setfollowing] = useState([]);
+    const searchInput = useRef();
+
     const back = () => {
         navigate(-1)
     }
 
-    const callApi = async ()=>{
-        try {
-          const request = await axios.get("http://localhost:8081/1/following")
-          console.log(request.data);
-          setFollowing(request.data)
-        } catch (error) {
-          console.error("error : " + error);
-        }
-      }
     useEffect(() => {
-        callApi();
-        // const response = wouteAPI("/1/follower", "GET");
-        // console.log(response);
+        search()
     },[])
+
+
+    const follow = async (e) => {
+        const id = e.target.value
+        const btn = e.target.classList
+        const unFolBtn = e.target.nextSibling.classList
+        console.log("id : " +id);
+        console.log(btn);
+        console.log(unFolBtn);
+        
+        try {
+            await wouteAPI("/follow","POST", {followingId : 1,followerId : id})
+            console.log("팔로우 성공");
+            btn.add('d-none')
+            unFolBtn.remove('d-none')
+        } catch (error) {
+            console.error("팔로우 실패");
+        }
+    }
+
     
+    const unFollow = async (e) => {
+        const id = e.target.value
+        console.log("id : " +id);
+        const btn = e.target.classList
+        console.log(btn);
+        const folBtn = e.target.previousSibling.classList
+        console.log(folBtn);
+        try {
+            await wouteAPI(`/follow/${id}`,"DELETE")
+            console.log("삭제 성공");
+            btn.add('d-none')
+            folBtn.remove('d-none')
+        } catch (error) {
+            console.error("삭제 실패");
+            
+        }
+    }
+    
+
+    const search = async () => {
+        console.log(searchInput.current.selectionStart);
+        console.log('c : '+ searchInput.current.value);
+        try {
+            if(searchInput.current.selectionStart == 0) {
+                const response = await wouteAPI("/1/following", "GET");
+                setfollowing(response.data)
+                console.log('첫 목록');
+            } else {
+                const response = await wouteAPI('/1/following/search','POST', {nickname:searchInput.current.value})
+                setfollowing(response.data)
+                console.log('검색성공');
+            }
+        } catch (error) {
+            console.log('검색실패');
+            
+        }
+    }
+
     return(
         <div className="minModal">
             <div className="inner">
@@ -37,7 +85,12 @@ export default function Following() {
                     </div>
                     <div className='search-wrap'>
                         <div className='search-input'>
-                            <input type="text" placeholder='검색'/>
+                            <input 
+                            type="text" 
+                            onChange={search}
+                            ref={searchInput}
+                            placeholder='검색'
+                            />
                         </div>
                     </div>
                     <div className="fol-wrap">
@@ -62,8 +115,20 @@ export default function Following() {
                                         </div>
                                         <div className="btn-wrap">
                                             <div className="btn-box">
-                                                {/* <button className='follow-btn'>팔로우</button> */}
-                                                <button className='following-btn'>팔로잉</button>
+                                                <button 
+                                                className='follow-btn d-none'
+                                                value={item.followingId}
+                                                onClick={follow}
+                                                >
+                                                팔로우
+                                                </button>
+                                                <button 
+                                                className='following-btn' 
+                                                value={item.id}
+                                                onClick={unFollow}
+                                                >
+                                                팔로잉
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
