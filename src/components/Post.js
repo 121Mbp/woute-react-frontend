@@ -9,7 +9,7 @@ import { Pagination, Navigation } from 'swiper/modules'
 import Hearts from './Hearts'
 import FeedLike from './feed/FeedLike'
 
-function Post({ data, feedData }) {
+function Post({ data, wouteFeeds }) {
     const path = `/p/${ data.id }`
     const location = useLocation()
     const [like, setLike] = useState(false)
@@ -42,7 +42,7 @@ function Post({ data, feedData }) {
                 console.log('에러: ' + err)
             }
         }
-        feedData()
+        wouteFeeds()
     }
     
     return (
