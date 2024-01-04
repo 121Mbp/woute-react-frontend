@@ -5,9 +5,12 @@ function Join() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordMatchError, setPasswordMatchError] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [email, setEmail] = useState("");
   const [showVerification, setShowVerification] = useState(false);
   const [nickname, setNickname] = useState("");
+  const [isValidEmail, setIsValidEmail] = useState(true);
+  const [isValidPassword, setIsValidPassword] = useState(true);
   const navigate = useNavigate();
   const verfiyHandle = (e) => {
     e.preventDefault();
@@ -35,16 +38,41 @@ function Join() {
 
   const handlePasswordChange = (e) => {
     const newPassword = e.target.value;
+    passwordRuleCheck(newPassword);
     setPassword(newPassword);
     checkPasswordMatch(newPassword, confirmPassword);
   };
-
+  //비밀번호 유효성 검사
+  const passwordRuleCheck = (password) => {
+    //영문,숫자,특문 1개씩, 6글자이상
+    const PasswwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
+    const isValid = PasswwordRegex.test(password);
+    setIsValidPassword(isValid);
+  };
   const handleConfirmPasswordChange = (e) => {
     const newConfirmPassword = e.target.value;
     setConfirmPassword(newConfirmPassword);
     checkPasswordMatch(password, newConfirmPassword);
   };
+  // 이메일 입력값 변경 시 호출되는 함수
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    emailErrorcheck(e.target.value);
+  };
 
+  const emailErrorcheck = (email) => {
+    // 이메일 유효성 검사를 위한 정규표현식
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValid = emailRegex.test(email);
+    setIsValidEmail(isValid);
+
+    if (!isValid) {
+      setEmailError("유효한 이메일이 아닙니다.");
+    } else {
+      setEmailError("");
+    }
+  };
   const checkPasswordMatch = (pw, confirmPw) => {
     if (pw === confirmPw || pw === "" || confirmPw === "") {
       setPasswordMatchError("");
@@ -53,48 +81,46 @@ function Join() {
     }
   };
 
-  // 이메일 입력값 변경 시 호출되는 함수
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
   const handleNickChange = (e) => {
     setNickname(e.target.value);
   };
 
   // 폼 제출 시 호출되는 함수
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
     console.log("Email:", email);
     console.log("Nickname:", nickname);
-    console.log("password :", password);
-    console.log("password2:", confirmPassword);
+    console.log("Password:", password);
+    console.log("Confirm Password:", confirmPassword);
+    if (emailError == null) {
+      alert("유효한 이메일이 아닙니다.");
+      return;
+    }
     if (password !== confirmPassword) {
       alert("패스워드가 다릅니다.");
-      // 패스워드가 다를때 작동하지 않음
-    } else {
-      const user = {
-        nickname: nickname,
-        password: password,
-        email: email,
-        provider: "woute",
-      };
-      console.log("객체선언");
-      console.log("user" + user.email);
+      return; // 패스워드가 다를 때 함수 종료
+    }
 
-      axios
-        .post("/join", user, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((response) => {
-          console.log("서버 응답:", response.data);
-        })
-        .catch((error) => {
-          console.error("에러 발생:", error.message);
-        });
+    const user = {
+      nickname: nickname,
+      password: password,
+      email: email,
+      provider: "woute",
+    };
+    console.log("객체 선언");
+    console.log("user: " + user.email);
+
+    try {
+      const response = await axios.post("/join", user, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("서버 응답:", response.data);
       alert(nickname + "님의 가입이 완료되었습니다.");
       navigate("/login");
+    } catch (error) {
+      console.error("에러 발생:", error.message);
     }
   };
 
@@ -118,12 +144,31 @@ function Join() {
                 인증하기
               </button>
             </div>
-            <button className="email-button"></button>
+            <button
+              className="email-button"
+              style={{ transform: "translateY(32%)" }}
+            ></button>
           </div>
+          <span
+            style={{
+              color: "red",
+              marginLeft: "20px",
+              fontSize: "12px",
+            }}
+          >
+            {emailError}
+          </span>
           {showVerification && (
-            <div className="signup-input">
+            <div
+              className="signup-input"
+              style={{ paddingTop: ".1rem", paddingBottom: "1.5rem" }}
+            >
               <div className="email-position">
-                <input className="verify-input-email" type="text" />
+                <input
+                  className="verify-input-email"
+                  type="text"
+                  placeholder="인증번호를 입력하세요."
+                />
                 <button className="email-confirm" onClick={verfiyHandle}>
                   확인
                 </button>
@@ -131,7 +176,7 @@ function Join() {
             </div>
           )}
 
-          <div className="signup-input">
+          <div className="signup-input" style={{ paddingTop: "3px" }}>
             <input
               className="signup-input-nick"
               type="text"
@@ -160,12 +205,20 @@ function Join() {
               placeholder="비밀번호 확인"
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
-              style={{ marginBottom: "10px" }}
               autoComplete="new-password"
             />
-            <button className="pw-button2"></button>
+            <button
+              className="pw-button2"
+              style={{ transform: "translateY(-20%)" }}
+            ></button>
           </div>
-          <span style={{ color: "red", marginLeft: "20px", paddingTop: "3px" }}>
+          <span
+            style={{
+              color: "red",
+              marginLeft: "20px",
+              fontSize: "12px",
+            }}
+          >
             {passwordMatchError}
           </span>
           <div className="btn-position">
