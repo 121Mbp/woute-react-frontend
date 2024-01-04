@@ -13,7 +13,7 @@ import five from './../../assets/images/five.png'
 import { toast } from 'react-toastify'
 
 const { kakao } = window
-function CourseCreate({ type, feedData, setLoading }) {
+function CourseCreate({ type, wouteFeeds, setLoading }) {
     const navigate = useNavigate()
     const widthSize = useWindowSize()
     const mapRef = useRef()
@@ -378,6 +378,7 @@ function CourseCreate({ type, feedData, setLoading }) {
         let matches = (content.match(reg) || []).map(e => e.replace(content, '$1'))
         
         let feed = {
+            userId: 1,
             nickname: 'dominic',
             profileImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg',
             type: type,
@@ -424,7 +425,7 @@ function CourseCreate({ type, feedData, setLoading }) {
             await wouteAPI('/p', 'POST', formData)
             toast.success('피드 등록 완료')
             setLoading(false)
-            feedData()
+            wouteFeeds()
             navigate('/')
         } catch(err) {
             console.log('에러: ' + err)

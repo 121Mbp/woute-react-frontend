@@ -1,27 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from 'react-router-dom'
 import { wouteAPI } from "./../../api";
 import moment from "moment";
 import "moment/locale/ko";
+import Layer from "./../Layer"
+import { toast } from 'react-toastify'
 
 moment.locale("ko");
 
-function Reply({ feedData }) {
+function Reply({ feedData, id, wouteFeeds, setLoading }) {
+  const navigate = useNavigate()
+  const titleRef = useRef(null)
   const feedId = feedData.id;
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState({});
   const [content, setContent] = useState("");
   const [isActive, setIsActive] = useState(false);
   const [commentChanged, setCommentChanged] = useState(false);
+  const [layer, setLayer] = useState(false)
+  const [message, setMessage] = useState('')
+  const [method, setMethod] = useState('')
+  const [edit, setEdit] = useState(false)
+  const [title, setTitle] = useState('')
+  const [contents, setContents] = useState('')
+  const [tags, setTags] = useState([])
 
   const fetchData = async () => {
     try {
-      const commentsResponse = await wouteAPI(`/p/${feedId}/reply`, "GET");
+      const commentsResponse = await wouteAPI(`/p/${id}/reply`, "GET");
       // setComments(commentsResponse.data);
       const sortedComments = commentsResponse.data.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
       setComments(sortedComments);
-
+      setTitle(feedData.title)
+      setContents(feedData.content)
+      setTags(feedData.tags)
       const newLikes = commentsResponse.data.reduce(
         (acc, comment) => ({
           ...acc,
@@ -31,7 +45,7 @@ function Reply({ feedData }) {
       );
       setLikes(newLikes);
     } catch (error) {
-      console.error("데이터 불러오기 실패:", error);
+      // console.error("데이터 불러오기 실패:", error);
     }
   };
 
@@ -82,7 +96,6 @@ function Reply({ feedData }) {
   };
 
   const toggleLike = async (replyId, userId) => {
-    console.log(`feedId: ${feedId}, replyId: ${replyId}, userId: ${userId}`);
     try {
       const requestBody = {
         userId: userId,
@@ -102,8 +115,90 @@ function Reply({ feedData }) {
   };
 
   const handleSendComment = async () => {
+    if (content.trim() === "") {
+      toast.warn("내용을입력해주세요.");
+
+      return;
+    }
     await addComment();
   };
+
+  const handleEdit = () => {
+    setEdit(true)
+    setTimeout(() => {
+      titleRef.current.focus()
+    }, 600)
+  }
+
+  const handleCanceled = () => {
+    setEdit(false)
+    setTitle(feedData.title)
+    setContents(feedData.content)
+  }
+
+  const handleController = async confirm => {
+    setLayer(false)
+    console.log(method)
+    if(!confirm) {
+      return
+    }
+    if(method === 'delete') {
+      try {
+        await wouteAPI(`/p/${feedId}`, 'DELETE', null)
+        toast.success('피드가 삭제 되었습니다.')
+        setLoading(false)
+        wouteFeeds()
+        navigate('/')
+      } catch(err) {
+        console.log('에러: ' + err)
+      }
+    }   
+    if(method === 'save') {
+      if(title === '') {
+        toast.warn('제목을 입력해 주세요.')
+        return
+      }
+      if(contents === '') {
+          toast.warn('내용을 입력해 주세요.')
+          return
+      }
+      const formData = new FormData()
+      setTags([])
+      let reg = /#([\S]+)/igm
+      let matches = (contents.match(reg) || []).map(e => e.replace(contents, '$1'))
+      
+      let feed = {
+          title: title,
+          content: contents,
+      }
+
+      formData.append('feed', new Blob([JSON.stringify(feed)], {type: 'application/json'}))
+      formData.append('tags', new Blob([JSON.stringify(matches)], {type: 'application/json'}))
+      
+      try {
+        await wouteAPI(`/p/${feedId}`, 'PUT', formData)
+        toast.success('피드가 저장 되었습니다.')
+        setEdit(false)
+        wouteFeeds()
+      } catch (err) {
+        console.log('에러: ' + err)
+      }
+      
+    }     
+    setMethod('')
+  }
+
+  const handleLayer = (method, msg) => {
+    setMethod(method)
+    setMessage(msg)
+    setLayer(true)
+  }
+
+  const handleContent = e => {
+    let value = e.target.value
+    setContents(value)
+  }
+
   return (
     <>
       <div className="feedArea">
@@ -121,16 +216,46 @@ function Reply({ feedData }) {
             <i className="feedClose" onClick={handleClose}></i>
           </div>
           <div className="myfeedTitle">
-            <p>{feedData.title}</p>
+            <p>
+              {
+                edit ? (
+                  <>
+                  <input type='text' name='title' placeholder='타이틀을 입력하세요.' value={title} onChange={e=>setTitle(e.target.value)} ref={titleRef}/>
+                  <div>
+                      <button onClick={ handleCanceled }>취소</button>
+                      <button onClick={()=>handleLayer('save', '저장 하시겠습니까?') }>저장</button>
+                  </div>   
+                  </>
+                ) : (
+                  <>
+                    {title}
+                    <div>
+                      <button onClick={ handleEdit }>수정</button>
+                      <button onClick={()=>handleLayer('delete', '삭제 하시겠습니까?') }>삭제</button>
+                    </div>    
+                  </>
+                )
+              }
+            </p>
           </div>
           <div>
             <div className="myfeedContent">
-              <p>{feedData.content}</p>
+              <p>
+                {
+                  edit ? (
+                    <textarea name='content' placeholder='#을 이용하여 태그를 사용해 보세요.' value={contents} onChange={ handleContent }></textarea>
+                  ) : (
+                    <>{contents}</>
+                  )
+                }
+                </p>
               <p>
               {
-                  feedData?.tags?.map(item => (
+                  !edit && (
+                    tags?.map(item => (
                       <span key={ item.id }>{ item.words }</span>    
-                  ))
+                    ))
+                  )
               }
               </p>
             </div>
@@ -194,6 +319,9 @@ function Reply({ feedData }) {
           </div>
         </div>
       </div>
+      {
+        layer && <Layer handleController={ handleController } message={ message } />
+      }
     </>
   );
 }
