@@ -13,11 +13,7 @@
     "buffer": "^6.0.3",
     "express": "^4.18.2",
     "http": "^0.0.1-security",
-<<<<<<< HEAD
-    "jsonwebtoken": "^9.0.2",
-=======
     "moment": "^2.30.1",
->>>>>>> 2911c2f2e698a95e8400605972eafdcfcaf0722b
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-kakao-maps-sdk": "^1.1.24",
