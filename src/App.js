@@ -14,24 +14,79 @@ import Join from "./components/user/Join";
 import Logfooter from "./components/user/LogFooter";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 function App() {
+  const ACCESS_TOKEN = localStorage.getItem("accessToken");
   const limits = 4;
   const location = useLocation();
   const state = location.state && location.state.backgroundLocation;
   const [scrollY, setScrollY] = useState(0);
   const [data, setData] = useState([]);
+  const [user, setUser] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [scrollActive, setScrollActive] = useState(false);
-  const [token, setToken] = useState(false);
+  const [token, setToken] = useState();
   const navigate = useNavigate();
   const handleLogin = () => {
-    setToken(!token);
-    console.log("토큰 true");
     navigate("/", { replace: true });
     console.log(token);
   };
+
+  // token에서 id 빼오기
+  const decodeTokenAndExtractId = (ACCESS_TOKEN) => {
+    try {
+      const base64Url = ACCESS_TOKEN.split(".")[1];
+      const base64 = base64Url.replace("-", "+").replace("_", "/");
+      const decodedData = JSON.parse(atob(base64));
+      if (decodedData && decodedData.id) {
+        return decodedData.id;
+      } else {
+        console.error("토큰에 id 필드가 없습니다.");
+        return null;
+      }
+    } catch (error) {
+      console.error("토큰 디코드 오류:", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const ACCESS_TOKEN = localStorage.getItem("accessToken");
+
+      if (ACCESS_TOKEN) {
+        const userId = decodeTokenAndExtractId(ACCESS_TOKEN);
+        console.log("디코드된 토큰의 id:", userId);
+
+        if (userId) {
+          try {
+            const response = await axios.post("/userinfosave", null, {
+              headers: {
+                "Content-Type": "application/json",
+              },
+              params: {
+                id: userId,
+              },
+            });
+            console.log("데이터 :" + response.data);
+
+            setUser(JSON.stringify(response.data));
+          } catch (error) {
+            console.error("서버에 데이터 저장 중 오류 발생:", error);
+          }
+        } else {
+          console.log("토큰 디코드 실패 또는 id 필드가 없음");
+        }
+      } else {
+        console.warn("로컬 스토리지에 accessToken이 없습니다.");
+      }
+      return;
+    };
+
+    fetchData();
+  }, [ACCESS_TOKEN]);
 
   const wouteFeeds = async () => {
     try {
@@ -47,11 +102,20 @@ function App() {
   };
 
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-    }
-    wouteFeeds();
-  }, []);
+    const fetchData = async () => {
+      console.log(ACCESS_TOKEN);
+      if (ACCESS_TOKEN != null) {
+        setToken(true);
+      } else {
+        setToken(false);
+        navigate("/login");
+        return; // 여기서 중단하고 이후 로직을 실행하지 않도록 추가
+      }
+      await wouteFeeds(); // wouteFeeds가 비동기 작업이라면 await을 사용
+    };
+
+    fetchData();
+  }, [token]);
 
   const handleScroll = () => {
     window.pageYOffset < scrollY
@@ -99,7 +163,7 @@ function App() {
                   />
                 }
               />
-              <Route path="/course" element={<CourseList />} />
+              <Route path="/course" element={<CourseList user={user} />} />
               <Route path="/profile/*" element={<MyFeedMain />} />
               <Route path="/modifyProfile" element={<Modifyprofile />} />
             </Routes>
