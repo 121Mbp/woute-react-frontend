@@ -19,7 +19,7 @@ export default function MyFeedMain({user}) {
     const currentId = localStorage.getItem('id')
 
     const userFeeds = async () => {
-        const response = await wouteAPI(`/users/${currentId}`)
+        const response = await wouteAPI(`/users/${user.id}`)
         console.log(response.data);
         console.log(response.data.feeds);
         setUserInfo(response.data)

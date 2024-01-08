@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import NotiList from './NotiList'
 
-function Navigation() {
+function Navigation({ user }) {
     const location = useLocation()
     const navigate = useNavigate()
     const noticeRef = useRef()
@@ -14,26 +14,28 @@ function Navigation() {
     
 
     useEffect(() => {
-        const eventSource = new  EventSource(`http://localhost:8081/sub/${currentId}`)
+        if(user.id !== undefined) {
+            const eventSource = new EventSource(`http://localhost:8081/sub/${user.id}`)
     
-        eventSource.addEventListener('connect', e => {
-            console.log("data : " + e.data);
-            console.log(e.data);
-        })
-        eventSource.addEventListener('sse', e => {
-            console.log("sse : " + e.data);
-            console.log("알림 : " + e.data);
-            setNoti(e.data);
-            // toast.success(e.data.nickname + e.data.content)
-        })
-        eventSource.addEventListener("error", function (event) {
-            console.log(event.target.readyState);
-            if (event.target.readyState === EventSource.CLOSED) {
-              console.log("eventsource closed");
-            }
-            eventSource.close();
-        });
-    },[])
+            eventSource.addEventListener('connect', e => {
+                console.log("data : " + e.data);
+                // console.log(e.data);
+            })
+            eventSource.addEventListener('sse', e => {
+                console.log("sse : " + e.data);
+                console.log("알림 : " + e.data);
+                setNoti(e.data);
+                // toast.success(e.data.nickname + e.data.content)
+            })
+            eventSource.addEventListener("error", function (event) {
+                // console.log(event.target.readyState);
+                if (event.target.readyState === EventSource.CLOSED) {
+                console.log("eventsource closed");
+                }
+                eventSource.close();
+            });
+        }
+    },[user])
 
     
     useEffect(()=>{
@@ -81,8 +83,15 @@ function Navigation() {
                             <div className='redDot'></div>
                         </li>
                         <li className='chat'><NavLink to='/chat' state={{ backgroundLocation: location }}>채팅</NavLink></li>
-                        <li className='profile'><NavLink to={`/users/${currentId}`}>
-                            <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>프로필</NavLink>
+                        <li className='profile'><NavLink to={`/users/${user.id}`}>
+                            {
+                                user?.profileImage == null ? (
+                                    <i></i>
+                                ) : (
+                                    <i style={{backgroundImage: `url(${ user.profileImage })`}}></i>
+                                )
+                            }
+                            프로필</NavLink>
                         </li>
                     </ul>
                     <Outlet />
@@ -99,7 +108,7 @@ function Navigation() {
             </div>
             <div className="notification" ref={noticeRef}>
                 {/* <SearchList/> */}
-                <NotiList data={noti} />
+                <NotiList data={noti} user={user}/>
             </div>
         </div>
     )
