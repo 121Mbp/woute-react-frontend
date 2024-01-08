@@ -10,7 +10,7 @@ import imageCompression from "browser-image-compression";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify'
 
-function ModalAddFeed({ type, wouteFeeds, setLoading }) {
+function ModalAddFeed({ type, wouteFeeds, setLoading, user }) {
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
   const navigate = useNavigate();
@@ -83,14 +83,12 @@ function ModalAddFeed({ type, wouteFeeds, setLoading }) {
     }
     const formData = new FormData();
     let reg = /#([\S]+)/gim;
-    let matches = (content.match(reg) || []).map((e) =>
-      e.replace(content, "$1")
-    );
+    let matches = (content.match(reg) || [])
 
     let feed = {
-      nickname: "dominic",
-      profileImage:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg",
+      userId: user.id,
+      nickname: user.nickname,
+      profileImage: user.profileImage,
       type: type,
       title: title,
       content: content,

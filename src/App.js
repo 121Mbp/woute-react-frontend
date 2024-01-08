@@ -55,7 +55,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       const ACCESS_TOKEN = localStorage.getItem("accessToken");
-
+      
       if (ACCESS_TOKEN) {
         const userId = decodeTokenAndExtractId(ACCESS_TOKEN);
         console.log("디코드된 토큰의 id:", userId);
@@ -72,7 +72,7 @@ function App() {
             });
             console.log("데이터 :" + response.data);
 
-            setUser(JSON.stringify(response.data));
+            setUser(response.data);
           } catch (error) {
             console.error("서버에 데이터 저장 중 오류 발생:", error);
           }
@@ -160,6 +160,7 @@ function App() {
                     total={total}
                     wouteFeeds={wouteFeeds}
                     loading={loading}
+                    user={user}
                   />
                 }
               />
@@ -172,13 +173,13 @@ function App() {
                 <Route
                   path="create"
                   element={
-                    <Modal wouteFeeds={wouteFeeds} setLoading={setLoading} />
+                    <Modal wouteFeeds={wouteFeeds} setLoading={setLoading} user={user} />
                   }
                 />
                 <Route
                   path="p/:id"
                   element={
-                    <Modal wouteFeeds={wouteFeeds} setLoading={setLoading} />
+                    <Modal wouteFeeds={wouteFeeds} setLoading={setLoading} user={user} />
                   }
                 />
                 <Route path="chat" element={<Modal />} />
