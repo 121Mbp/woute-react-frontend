@@ -1,17 +1,35 @@
 import { useEffect,  useState } from 'react';
-import '../../assets/styles/_myFeedMain.scss';
-import { Link  } from 'react-router-dom';
+import '../../../assets/styles/_myFeedMain.scss';
+import { Link, useLocation  } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom'
-import Follower from '../follow/Follower';
-import Following from '../follow/Following';
-import MyFeeds from '../MyFeed/MyFeeds';
-import MyCourses from '../MyFeed/MyCourses';
-import MyLikes from '../MyFeed/MyLikes';
+import Follower from '../../follow/Follower';
+import Following from '../../follow/Following';
+import MyFeeds from '../MyFeeds';
+import MyCourses from '../MyCourses';
+import MyLikes from '../MyLikes';
+import { wouteAPI } from '../../../api';
 
 export default function UserFeed() {
+    const location = useLocation()
     const [feeds, setFeeds] = useState(true)
     const [courses, setCourses] = useState(false)
     const [likes, setLikes] = useState(false)
+    const [userInfo, setUserInfo] = useState([])
+    const [feedList, setFeedList] = useState([])
+    
+    const currentId = localStorage.getItem('id')
+    
+    const userFeeds = async () => {
+        const response = await wouteAPI(`${location.pathname}`, 'GET')
+        console.log(response.data);
+        console.log(response.data.feeds);
+        setUserInfo(response.data)
+        setFeedList(response.data.feeds.reverse())
+    }
+    useEffect(() => {
+        userFeeds()
+    },[])
+
     
     const tabClick = (e) => {
         const id = e.currentTarget.id
@@ -42,6 +60,45 @@ export default function UserFeed() {
         console.log('likes : ' + likes);
     },[likes])
     
+
+    const follow = async (e) => {
+        const id = e.target.value
+        const btn = e.target.classList
+        const unFolBtn = e.target.nextSibling.classList
+        console.log("id : " +id);
+        console.log(btn);
+        console.log(unFolBtn);
+        
+        try {
+            await wouteAPI("/follow","POST", {followingId : currentId,followerId : id})
+            console.log("팔로우 성공");
+            btn.add('d-none')
+            unFolBtn.remove('d-none')
+        } catch (error) {
+            console.error("팔로우 실패");
+        }
+    }
+
+    
+    const unFollow = async (e) => {
+        const id = e.target.value
+        console.log("id : " +id);
+        const btn = e.target.classList
+        console.log(btn);
+        const folBtn = e.target.previousSibling.classList
+        console.log(folBtn);
+        try {
+            await wouteAPI(`/follow/${id}`,"DELETE")
+            console.log("삭제 성공");
+            btn.add('d-none')
+            folBtn.remove('d-none')
+        } catch (error) {
+            console.error("삭제 실패");
+            
+        }
+    }
+
+
     return(
         <div className='MyFeed'>
             <section>
@@ -56,10 +113,25 @@ export default function UserFeed() {
                         <div className='profile-main'>
                             <div className='profile-edit mb20'>
                                 {/* 닉네임 */}
-                                <h2 className='nick'>mark_ju</h2>
+                                <h2 className='nick'>{userInfo.nickname}</h2>
+                                {/* <div className='com-btn'>
+                                    <button 
+                                    className={`follow-btn (${userInfo.hasFollowed} && d-none )`} 
+                                    onClick={follow}
+                                    >
+                                    팔로우
+                                    </button>
+                                    <button 
+                                    className={`follow-btn (!${userInfo.hasFollowed} && d-none )`} 
+                                    onClick={unFollow}
+                                    >
+                                        팔로잉
+                                    </button>
+                                    <Link to={`/chat/${id}`}><button className='msg-btn'>메시지 보내기</button></Link>
+                                </div> */}
                                 <div className='com-btn'>
                                     <button className='follow-btn'>팔로우</button>
-                                    <button className='msg-btn'>메시지 보내기</button>
+                                    <Link to={`/chat`}><button className='msg-btn'>메시지 보내기</button></Link>
                                 </div>
                                 {/* <div className='com-btn'>
                                     <button className='following-btn'>팔로잉</button>
@@ -68,35 +140,35 @@ export default function UserFeed() {
                             </div>
                             <ul className='fol-amount mb20'>
                                 {/* 게시글, 팔로우 카운트 */}
-                                <li>게시글<span>200</span></li>
-                                <li><Link to='follower'>팔로워<span>100</span></Link></li>
-                                <li><Link to='following'>팔로우<span>100</span></Link></li>
+                                <li>게시글<span>{userInfo.feedsCount}</span></li>
+                                <li><Link to='follower'>팔로워<span>{userInfo.followerCount}</span></Link></li>
+                                <li><Link to='following'>팔로우<span>{userInfo.followingCount}</span></Link></li>
                             </ul>
                             <Routes>
                                 <Route path='/follower' element={<Follower/>}/>
                                 <Route path='/following' element={<Following/>}/>
                             </Routes>
                             {/* 이름, 자기소개 */}
-                            <span style={{marginBottom:'10px', fontWeight:'bold', display:'block'}}>마크 저커버그</span>
-                            <h1 className='profile-intro'>자기소개</h1>
+                            {/* <span style={{marginBottom:'10px', fontWeight:'bold', display:'block'}}>마크 저커버그</span> */}
+                            <h1 className='profile-intro'>{userInfo.introduction}</h1>
                         </div>
                     </div>
                     <div className='feed-cate'>
-                        <Link to='/' className={`cate-btn ${feeds ? 'active' : ''}`} id='feeds' onClick={tabClick}>
+                        <Link to={`/users/${currentId}`} className={`cate-btn ${feeds ? 'active' : ''}`} id='feeds' onClick={tabClick}>
                             <div>게시물</div>
                         </Link>
-                        <Link to='courses' className={`cate-btn ${courses ? 'active' : ''}`} id='courses' onClick={tabClick}>
+                        <Link to='course' className={`cate-btn ${courses ? 'active' : ''}`} id='courses' onClick={tabClick}>
                             <div>코스</div>
                         </Link>
-                        <Link to='likes' className={`cate-btn ${likes ? 'active' : ''}`} id='likes' onClick={tabClick}>
+                        <Link to='like' className={`cate-btn ${likes ? 'active' : ''}`} id='likes' onClick={tabClick}>
                             <div>좋아요</div>
                         </Link>
                     </div>
                     <div className="myFeed-list">
                         <Routes>
-                            <Route path={`/`} element={<MyFeeds/>} ></Route>
-                            <Route path={`/courses`} element={<MyCourses/>}></Route>
-                            <Route path={`/likes`} element={<MyLikes/>}></Route>
+                            <Route path={`/`} element={<MyFeeds feeds={feedList} />} ></Route>
+                            <Route path={`/course`} element={<MyCourses/>}></Route>
+                            <Route path={`/like`} element={<MyLikes/>}></Route>
                         </Routes>
                     </div>
                 </div>

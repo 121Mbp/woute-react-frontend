@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { wouteAPI } from "../../api";
+import { Link, useLocation } from "react-router-dom";
 
 export default function MyLikes() {
     const [likes, setLikes] = useState([
@@ -25,17 +26,18 @@ export default function MyLikes() {
         },
     ])
     
+    const currentId = localStorage.getItem('id')
+    const location = useLocation()
 
+    const getLikes =  async () => {
+        const response = await wouteAPI(`/users/${currentId}/like`, 'GET')
+        console.log(response);
+        setLikes(response.data.reverse())
+    }
 
-    // const getLikes =  async () => {
-    //     const response = await wouteAPI('/users/{id}/likes', 'GET')
-    //     console.log(response);
-    //     setLikes(response.data)
-    // }
-
-    // useEffect(() => {
-    //     getLikes()
-    // },[])
+    useEffect(() => {
+        getLikes()
+    },[])
 
     const devidePosts = (data) => {
         const arr = [...data];
@@ -51,17 +53,16 @@ export default function MyLikes() {
         {devidePosts(likes).map((row,index) => (
             <article key={index}>
                 {[0,1,2].map((i) => 
-                row[i] ? (
-                    <a href='#1' key={i}>
-                        <img src={row[i].likeImg} key={row[i].id} />
-                        <div className='feedHover'>
-                            <ul className='prevInfo'>
-                                {/* 좋아요 댓글 카운트 */}
-                                <li>1000</li>
-                                <li>500</li>
-                            </ul>
-                        </div>
-                    </a>
+                row[i] && row[i].attaches && row[i].attaches.length > 0  ? (
+                <Link to={`/p/${row[i].id}`} state={{ backgroundLocation: location, type: row[i].type}} key={i}>
+                    <img src={`http://localhost:8081/file/${row[i].attaches[0].uuid}`} />
+                    <div className='feedHover'>
+                        <ul className='prevInfo'>
+                            <li>{row[i].heartCount}</li>
+                            <li>{row[i].replyCount}</li>
+                        </ul>
+                    </div>
+                </Link>
                 ) : (
                     <div className="none_image" key={i}></div>
                     )
