@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { wouteAPI } from "../../api";
+import { useLocation } from "react-router";
+import { Link } from "react-router-dom";
 
 export default function MyCourses() {
     const [courses, setCourses] = useState([
@@ -17,17 +19,18 @@ export default function MyCourses() {
         },
     ])
     
+    const currentId = localStorage.getItem('id')
+    const location = useLocation()
 
+    const getCourses =  async () => {
+        const response = await wouteAPI(`${location.pathname}`, 'GET')
+        console.log(response);
+        setCourses(response.data.reverse())
+    }
 
-    // const getCourses =  async () => {
-    //     const response = await wouteAPI('/users/{id}/courses', 'GET')
-    //     console.log(response);
-    //     setCourses(response.data)
-    // }
-
-    // useEffect(() => {
-    //     getCourses()
-    // },[])
+    useEffect(() => {
+        getCourses()
+    },[])
 
     const devidePosts = (data) => {
         const arr = [...data];
@@ -43,17 +46,16 @@ export default function MyCourses() {
         {devidePosts(courses).map((row,index) => (
             <article key={index}>
                 {[0,1,2].map((i) => 
-                row[i] ? (
-                    <a href='#1' key={i}>
-                        <img src={row[i].courseImg} key={row[i].id} />
+                row[i] && row[i].attaches && row[i].attaches.length > 0  ? (
+                    <Link to={`/p/${row[i].id}`} state={{ backgroundLocation: location, type: row[i].type}} key={i}>
+                        <img src={`http://localhost:8081/file/${row[i].attaches[0].uuid}`} />
                         <div className='feedHover'>
                             <ul className='prevInfo'>
-                                {/* 좋아요 댓글 카운트 */}
-                                <li>1000</li>
-                                <li>500</li>
+                                <li>{row[i].heartCount}</li>
+                                <li>{row[i].replyCount}</li>
                             </ul>
                         </div>
-                    </a>
+                    </Link>
                 ) : (
                     <div className="none_image" key={i}></div>
                     )
