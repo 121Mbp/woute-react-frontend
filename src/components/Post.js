@@ -14,16 +14,14 @@ function Post({ data, wouteFeeds, user }) {
     const location = useLocation()
     const [like, setLike] = useState(false)
     const [likeId, setLikeId] = useState()
-    const userId = user.id
 
     useEffect(() => {
-        const likedUsers = data.likes?.filter(user => user.id === userId)
+        const likedUsers = data.likes?.filter(me => me.id === user.id)
         setLike(likedUsers.length > 0)
         if (likedUsers.length > 0) setLikeId(likedUsers[0].id) 
-    }, [ data.likes, userId ])
+    }, [ data.likes, user ])
 
     const handleLike = async () => {
-        console.log(like)
         if(like) {
             try {
                 await wouteAPI(`${ path }/like/${ likeId }`, 'DELETE', null)
@@ -49,7 +47,15 @@ function Post({ data, wouteFeeds, user }) {
     return (
         <div className='post'>
             <div className='upper'>
-                <Link to='/' className='user'><i style={{backgroundImage: `url(${ data.profileImage })`}}></i>{ data.nickname }</Link>
+                <Link to='/' className='user'>
+                    {
+                        data?.profileImage == null ? (
+                            <i></i>
+                        ) : (
+                            <i style={{backgroundImage: `url(${ data.profileImage })`}}></i>
+                        )
+                    }
+                { data.nickname }</Link>
                 { data.type === 'courses' && <Link to={ path } state={{ backgroundLocation: location, type: data.type }}>코스보기</Link> }
             </div>
             <div className='middle'>
@@ -91,7 +97,15 @@ function Post({ data, wouteFeeds, user }) {
                     }
                 </div>
                 <Link to={ path } className='comment' state={{ backgroundLocation: location, type: data.type }}>
-                    <span className='user'><i style={{backgroundImage: `url(${ user.profileImage })`}}></i></span>
+                <span className='user'>
+                    {
+                        user?.profileImage == null ? (
+                            <i></i>
+                        ) : (
+                            <i style={{backgroundImage: `url(${ user.profileImage })`}}></i>
+                        )
+                    }
+                    </span>
                     <span>댓글쓰기</span>
                 </Link>
             </div>

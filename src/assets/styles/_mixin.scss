@@ -36,13 +36,15 @@ $widths: (
   display: inline-block;
   width: 24px;
   height: 24px;
-  background-color: $primary-black;
+  // background-color: $primary-white;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  background-image: _svg(default, #464646);
+  background-position: center;
   margin-right: 12px;
   border-radius: 50%;
-  box-shadow: 1px 1px 3px #000000;
+  box-shadow: 1px 1px 3px #464646;
   vertical-align: middle;
 }
 @mixin _swiper__navigation {
