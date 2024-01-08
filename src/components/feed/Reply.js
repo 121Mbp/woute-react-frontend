@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 
 moment.locale("ko");
 
-function Reply({ feedData, id, wouteFeeds, setLoading }) {
+function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
   const navigate = useNavigate()
   const titleRef = useRef(null)
   const feedId = feedData.id;
@@ -35,7 +35,11 @@ function Reply({ feedData, id, wouteFeeds, setLoading }) {
       setComments(sortedComments);
       setTitle(feedData.title)
       setContents(feedData.content)
-      setTags(feedData.tags)
+      let _tags = []
+      for(let tag of feedData.tags) {
+        _tags.push(tag.words)
+      }
+      setTags(_tags)
       const newLikes = commentsResponse.data.reduce(
         (acc, comment) => ({
           ...acc,
@@ -66,12 +70,13 @@ function Reply({ feedData, id, wouteFeeds, setLoading }) {
   };
 
   const addComment = async () => {
+    console.log(user)
     try {
       const response = await wouteAPI(`/p/${feedId}/reply`, "POST", {
         feed_id: feedId,
         content,
-        nickname: "dominic",
-        profileImage: "https://i.ytimg.com/vi/lSJ2Le7Ewdw/maxresdefault.jpg",
+        nickname: user.nickname,
+        profileImage: user.profileImage,
         heartCount: 0,
       });
       setComments((prevComments) => [...prevComments, response.data]);
@@ -127,7 +132,7 @@ function Reply({ feedData, id, wouteFeeds, setLoading }) {
     setEdit(true)
     setTimeout(() => {
       titleRef.current.focus()
-    }, 600)
+    }, 100)
   }
 
   const handleCanceled = () => {
@@ -138,7 +143,6 @@ function Reply({ feedData, id, wouteFeeds, setLoading }) {
 
   const handleController = async confirm => {
     setLayer(false)
-    console.log(method)
     if(!confirm) {
       return
     }
@@ -163,9 +167,8 @@ function Reply({ feedData, id, wouteFeeds, setLoading }) {
           return
       }
       const formData = new FormData()
-      setTags([])
       let reg = /#([\S]+)/igm
-      let matches = (contents.match(reg) || []).map(e => e.replace(contents, '$1'))
+      let matches = (contents.match(reg) || [])
       
       let feed = {
           title: title,
@@ -180,10 +183,10 @@ function Reply({ feedData, id, wouteFeeds, setLoading }) {
         toast.success('피드가 저장 되었습니다.')
         setEdit(false)
         wouteFeeds()
+        setTags(matches)
       } catch (err) {
         console.log('에러: ' + err)
       }
-      
     }     
     setMethod('')
   }
@@ -252,8 +255,8 @@ function Reply({ feedData, id, wouteFeeds, setLoading }) {
               <p>
               {
                   !edit && (
-                    tags?.map(item => (
-                      <span key={ item.id }>{ item.words }</span>    
+                    tags?.map((item, i) => (
+                      <span key={ i }>{ item }</span>    
                     ))
                   )
               }
@@ -301,10 +304,7 @@ function Reply({ feedData, id, wouteFeeds, setLoading }) {
         <div className="myMent">
           <div className=" feedProfile">
             <i
-              style={{
-                backgroundImage:
-                  "url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)",
-              }}
+              style={{backgroundImage: `url(${ user?.profileImage })`}}
             />
           </div>
           <input

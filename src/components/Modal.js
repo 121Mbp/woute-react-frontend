@@ -8,7 +8,7 @@ import ModalAddFeed from './feed/ModalAddFeed'
 import ModalFeed from './feed/ModalFeed'
 import ChatModal from './chatting/ChatModal'
 
-function Modal({ wouteFeeds, setLoading }) {
+function Modal({ wouteFeeds, setLoading, user }) {
     const location = useLocation()
     const { id } = useParams()
     const state = location.state && location.state?.backgroundLocation
@@ -26,16 +26,16 @@ function Modal({ wouteFeeds, setLoading }) {
             <div className='inner'>
                 {
                     location.pathname === '/create' ? (
-                        <><PostType type={ setType } />
-                        { type === 'course' ? <CourseCreate type={'courses'} wouteFeeds={ wouteFeeds } setLoading={ setLoading } /> 
-                        : type === 'feed' ? <ModalAddFeed type={'feeds'} wouteFeeds={ wouteFeeds } setLoading={ setLoading } /> : '' }</>
+                        <><PostType type={ setType } user={ user }/>
+                        { type === 'course' ? <CourseCreate type={'courses'} wouteFeeds={ wouteFeeds } setLoading={ setLoading } user={ user } /> 
+                        : type === 'feed' ? <ModalAddFeed type={'feeds'} wouteFeeds={ wouteFeeds } setLoading={ setLoading } user={ user } /> : '' }</>
                     ) : (
                         location.pathname === `/p/${ id }` ? (
-                            location.state.type === 'courses' ? <CourseView wouteFeeds={ wouteFeeds } setLoading={ setLoading } /> : (
-                                location.state.type === 'feeds' ? <ModalFeed wouteFeeds={ wouteFeeds } setLoading={ setLoading } /> : ''
+                            location.state.type === 'courses' ? <CourseView wouteFeeds={ wouteFeeds } setLoading={ setLoading } user={ user } /> : (
+                                location.state.type === 'feeds' ? <ModalFeed wouteFeeds={ wouteFeeds } setLoading={ setLoading } user={ user } /> : ''
                             ) 
                         ) : (
-                            location.pathname === `/chat` && (<ChatModal />)
+                            location.pathname === `/chat` && (<ChatModal user={ user } />)
                         )
                     )
                 }

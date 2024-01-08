@@ -9,7 +9,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { wouteAPI } from "../../api";
 
-function ModalFeed({ wouteFeeds, setLoading }) {
+function ModalFeed({ wouteFeeds, setLoading, user }) {
   const { id } = useParams();
   const feedId = id;
   const [feedData, setFeedData] = useState([]);
@@ -43,7 +43,7 @@ function ModalFeed({ wouteFeeds, setLoading }) {
           ))}
         </Swiper>
       </div>
-      <Reply feedData={feedData} id={feedId} wouteFeeds={ wouteFeeds } setLoading={ setLoading }/>
+      <Reply feedData={feedData} id={feedId} wouteFeeds={ wouteFeeds } setLoading={ setLoading } user={ user } />
     </div>
   );
 }

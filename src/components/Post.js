@@ -9,24 +9,25 @@ import { Pagination, Navigation } from 'swiper/modules'
 import Hearts from './Hearts'
 import FeedLike from './feed/FeedLike'
 
-function Post({ data, wouteFeeds }) {
+function Post({ data, wouteFeeds, user }) {
     const path = `/p/${ data.id }`
     const location = useLocation()
     const [like, setLike] = useState(false)
     const [likeId, setLikeId] = useState()
-    const userId = 'dominic'
+    const userId = user.id
 
     useEffect(() => {
-        const likedUsers = data.likes?.filter(user => user.nickname === userId)
+        const likedUsers = data.likes?.filter(user => user.id === userId)
         setLike(likedUsers.length > 0)
         if (likedUsers.length > 0) setLikeId(likedUsers[0].id) 
     }, [ data.likes, userId ])
 
     const handleLike = async () => {
+        console.log(like)
         if(like) {
             try {
                 await wouteAPI(`${ path }/like/${ likeId }`, 'DELETE', null)
-                setLike(false)
+                setLike(!like)
             } catch(err) {
                 console.log('에러: ' + err)
             }
@@ -37,7 +38,7 @@ function Post({ data, wouteFeeds }) {
             }
             try {
                 await wouteAPI(`${ path }/like`, 'PUT', params)
-                setLike(true)
+                setLike(!like)
             } catch(err) {
                 console.log('에러: ' + err)
             }
@@ -90,7 +91,7 @@ function Post({ data, wouteFeeds }) {
                     }
                 </div>
                 <Link to={ path } className='comment' state={{ backgroundLocation: location, type: data.type }}>
-                    <span className='user'><i style={{backgroundImage: `url(${ data.profileImage })`}}></i></span>
+                    <span className='user'><i style={{backgroundImage: `url(${ user.profileImage })`}}></i></span>
                     <span>댓글쓰기</span>
                 </Link>
             </div>
