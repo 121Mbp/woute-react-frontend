@@ -6,7 +6,7 @@ import Post from './Post'
 import './../assets/styles/_loader.scss'
 
 
-function Main({ data, limits, total, wouteFeeds, loading }) {
+function Main({ data, limits, total, wouteFeeds, loading, user }) {
     const target = useRef()
     const [offset, setOffset] = useState(1)
     const [end, setEnd] = useState(limits)
@@ -45,7 +45,7 @@ function Main({ data, limits, total, wouteFeeds, loading }) {
                             <>
                                 {
                                     data?.reverse().slice(0, end).map(item => (
-                                        <Post key={ item.id } data={ item } wouteFeeds={ wouteFeeds } />
+                                        <Post key={ item.id } data={ item } wouteFeeds={ wouteFeeds } user={ user } />
                                     ))
                                 }
                                 <div ref={ target } className='observer'>

@@ -16,7 +16,7 @@ import { wouteAPI } from './../../api'
 import Reply from './Reply'
 
 const { kakao } = window
-function CourseView({ wouteFeeds, setLoading }) {
+function CourseView({ wouteFeeds, setLoading, user }) {
     const { id } = useParams()
     const feedId = id
     const [feed, setFeed] = useState([])
@@ -156,7 +156,7 @@ function CourseView({ wouteFeeds, setLoading }) {
                     </div>
                 </div>
                 <div className='inform'>
-                    <Reply feedData={ feed } id={ feedId } wouteFeeds={ wouteFeeds } setLoading={ setLoading } />
+                    <Reply feedData={ feed } id={ feedId } wouteFeeds={ wouteFeeds } setLoading={ setLoading } user={ user } />
                 </div>
             </div>
         </div>
