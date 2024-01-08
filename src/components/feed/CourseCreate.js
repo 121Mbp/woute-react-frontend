@@ -13,7 +13,7 @@ import five from './../../assets/images/five.png'
 import { toast } from 'react-toastify'
 
 const { kakao } = window
-function CourseCreate({ type, wouteFeeds, setLoading }) {
+function CourseCreate({ type, wouteFeeds, setLoading, user }) {
     const navigate = useNavigate()
     const widthSize = useWindowSize()
     const mapRef = useRef()
@@ -362,7 +362,7 @@ function CourseCreate({ type, wouteFeeds, setLoading }) {
         let value = e.target.value
         setContent(value)
     }
-
+    
     const postSubmit = async (e) => {
         e.preventDefault()
         if(title === '') {
@@ -375,12 +375,12 @@ function CourseCreate({ type, wouteFeeds, setLoading }) {
         }
         const formData = new FormData()
         let reg = /#([\S]+)/igm
-        let matches = (content.match(reg) || []).map(e => e.replace(content, '$1'))
+        let matches = (content.match(reg) || [])
         
         let feed = {
-            userId: 1,
-            nickname: 'dominic',
-            profileImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg',
+            userId: user.id,
+            nickname: user.nickname,
+            profileImage: user.profileImage,
             type: type,
             title: title,
             content: content,
