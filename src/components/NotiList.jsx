@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react"
 import { wouteAPI } from "../api"
 import { Link } from "react-router-dom"
+import moment from "moment"
 
 export default function NotiList({data}) {
     const [notis, setNotis] = useState([])
+    const currentId = localStorage.getItem('id')
+    console.log('data : ' + data);
+    
     const getNoti = async () => {
-        const response = await wouteAPI('/noti/1', 'GET') 
+        const response = await wouteAPI(`/noti/${currentId}`, 'GET') 
         console.log(response.data);
         setNotis(response.data)
     }
@@ -32,7 +36,7 @@ export default function NotiList({data}) {
                                 <strong>{item.nickname}</strong>
                                 </Link>
                                 {item.content}
-                                <span>{item.createdAt}</span>
+                                <span>{moment(item.createdAt).fromNow()}</span>
                             </div>
                         </li>
                     )

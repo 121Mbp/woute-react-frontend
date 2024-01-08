@@ -139,6 +139,18 @@ $nav-medium-width: 240px;
                     &::before {@include icon(notice, $primary);}
                     &.active::before {background-image: _svg(notice, $primary-black);}
                 }
+                &.notice {
+                    position: relative;
+                    .redDot {
+                        width: 15px;
+                        height: 15px;
+                        left: 27px;
+                        top: 8px;
+                        position: absolute;
+                        background: rgb(255, 48, 64);
+                        border-radius: 50%;
+                    }
+                }
                 &.chat a {
                     &::before {@include icon(chat, $primary);}
                     &.active::before {background-image: _svg(chat, $primary-black);}
