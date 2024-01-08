@@ -1,49 +1,31 @@
-import axios from "axios";
+import { PostLogin } from "../../api";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 function Loginform({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-  const [localToken, setLocalToken] = useState(localStorage.getItem("token"));
+
   const emailHandle = (e) => {
     setEmail(e.currentTarget.value);
   };
   const passwordHandle = (e) => {
     setPassword(e.currentTarget.value);
   };
-  const handlesubmit = (e) => {
+  const handlesubmit = async (e) => {
     e.preventDefault();
     console.log({ email });
     console.log({ password });
+    try {
+      const response = await PostLogin({ email: email, password: password });
+      console.log("Login successful:", response);
 
-    const user = {
-      email: email,
-      password: password,
-    };
-    console.log("user : " + user.email, user.password);
-    axios
-      .post("/login", user, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        console.log("서버 응답 : ", response.data);
-        const newToken = response.data.token;
-        setLocalToken(newToken);
-        //header에 담아서
-        localStorage.setItem("id", response.data.id);
-        localStorage.setItem("token", newToken);
-        onLogin(newToken);
-        navigate("/");
-        console.log("서버 응답 : ", response.data);
-        console.log("토큰 값 : ", response.data.token);
-      })
-      .catch((error) => {
-        console.error("로그인 에러 : " + error);
-      });
+      // 로그인 성공 시 onLogin 호출
+      onLogin(localStorage.getItem("ACCESS_TOKEN"));
+    } catch (error) {
+      console.error("Login failed:", error);
+
+      // 에러 처리 로직 추가
+    }
   };
 
   return (
