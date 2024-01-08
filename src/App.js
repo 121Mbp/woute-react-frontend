@@ -15,6 +15,9 @@ import Logfooter from "./components/user/LogFooter";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import UserFeed from './components/MyFeed/UserFeed/UserFeed'
+import SearchResult from './components/searchResult/SearchResult'
+import ChatModal from "./components/chatting/ChatModal";
 
 function App() {
   const ACCESS_TOKEN = localStorage.getItem("accessToken");
@@ -148,7 +151,7 @@ function App() {
     <>
       {token ? (
         <div className={`App ${scrollActive ? "__active" : ""}`}>
-          <Navigation />
+          <Navigation user={user} />
           <div className="container">
             <Routes location={state || location}>
               <Route
@@ -164,9 +167,11 @@ function App() {
                   />
                 }
               />
-              <Route path="/course" element={<CourseList user={user} />} />
-              <Route path="/profile/*" element={<MyFeedMain />} />
+              <Route path="/p/courses" element={<CourseList />} />
+              <Route path={`/users/${user.id}/*`} element={<MyFeedMain user={user} />} />
+              <Route path={`/users/:id/*`} element={<UserFeed />} />
               <Route path="/modifyProfile" element={<Modifyprofile />} />
+              <Route path={'/search/tags/:id'} element={<SearchResult />} />
             </Routes>
             {state && (
               <Routes>
@@ -182,7 +187,7 @@ function App() {
                     <Modal wouteFeeds={wouteFeeds} setLoading={setLoading} user={user} />
                   }
                 />
-                <Route path="chat" element={<Modal />} />
+                <Route path="chat/*" element={<ChatModal />} />
                 <Route path="notice" element={<></>} />
               </Routes>
             )}

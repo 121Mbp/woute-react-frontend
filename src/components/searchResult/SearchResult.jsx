@@ -1,8 +1,10 @@
+import { Link, useLocation } from 'react-router-dom';
 import { wouteAPI } from '../../api';
 import '../../assets/styles/_searchResult.scss';
 import { useEffect, useState } from 'react';
 
-export default function _searchResult() {
+export default function SearchResult() {
+    const location = useLocation()
     const [results, setResults] = useState([
         {
             id:1,
@@ -64,8 +66,8 @@ export default function _searchResult() {
     }, [ scrollY ])
 
     // const getSearch =  async () => {
-    //     const response = await wouteAPI('/search/users/nick', 'POST', data)
-    //     console.log(response);
+    //     const response = await wouteAPI(`/search/tags/${tag_id}`, 'GET')
+    //     console.log(response.data);
     //     setResults(response.data)
     // }
 
@@ -103,10 +105,12 @@ export default function _searchResult() {
                             <div className='rsInfoWrap'>
                                 <div className='rsInfo'>
                                     <div className='keyword'>
+                                        {/* #태그명 */}
                                         <span>#검색어</span>
                                     </div>
                                     <div className='amount'>
                                         게시물
+                                        {/* 해당태그 게시글 */}
                                         <span>500만</span>
                                     </div>
                                 </div>
@@ -120,15 +124,15 @@ export default function _searchResult() {
                                 <article key={index}>
                                     {[0,1,2].map((i) => 
                                     row[i] ? (
-                                        <a href='#1' key={i}>
+                                        <Link to={`/p/${row[i].id}`} state={{ backgroundLocation: location, type: row[i].type}} key={i}>
                                             <img src={row[i].resultImg} key={row[i].id} />
                                             <div className='feedHover'>
                                                 <ul className='prevInfo'>
-                                                    <li>1000</li>
-                                                    <li>500</li>
+                                                    <li>{row[i].heartCount}</li>
+                                                    <li>{row[i].replyCount}</li>
                                                 </ul>
                                             </div>
-                                        </a>
+                                        </Link>
                                     ) : (
                                         <div className="none_image" key={i}></div>
                                         )
