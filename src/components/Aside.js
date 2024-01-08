@@ -20,7 +20,14 @@ function Aside({ data }) {
                             <li key={ item.id }>
                                 <Link to={ `/p/${ item.id }` } state={{ backgroundLocation: location, type: item.type }}>
                                     <div className='upper'>
-                                        <i style={{backgroundImage: `url(${ item.profileImage })`}}></i>{ item.nickname }
+                                    {
+                                        item?.profileImage == null ? (
+                                            <i></i>
+                                        ) : (
+                                            <i style={{backgroundImage: `url(${ item.profileImage })`}}></i>
+                                        )
+                                    }
+                                        { item.nickname }
                                     </div>
                                     <div className='middle'>
                                         <img src={ `http://localhost:8081/file/${item?.attaches[0].uuid}` } alt='' />
