@@ -9,13 +9,33 @@ function Join() {
   const [email, setEmail] = useState("");
   const [showVerification, setShowVerification] = useState(false);
   const [nickname, setNickname] = useState("");
-  const [isValidEmail, setIsValidEmail] = useState(true);
-  const [isValidPassword, setIsValidPassword] = useState(true);
+  const [isValidEmail, setIsValidEmail] = useState(false);
+  const [isValidPassword, setIsValidPassword] = useState(false);
+  const [nickNameMatchError, setNickNameMatchError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [verifyCode, setVerifyCode] = useState("");
+  const [codeMessage, setCodeMessage] = useState("");
+  const [confirmVerify, setConfirmVerify] = useState(false);
+  const [sendVerify, setSendVerify] = useState(false);
+  const [emailCode, setEmailCode] = useState("");
   const navigate = useNavigate();
+  // const mailAuthType = false;
+  const [ShowEmailVerificationButton, setShowEmailVerificationButton] =
+    useState(false);
+
   const verfiyHandle = (e) => {
     e.preventDefault();
-    alert("인증되었습니다.");
-    setShowVerification(false);
+    const veri = verifyCode;
+    console.log("내가친인증 : " + veri);
+
+    if (veri == emailCode) {
+      alert("인증되었습니다.");
+      setShowVerification(true);
+      setCodeMessage("");
+    } else {
+      setCodeMessage("인증코드가 일치하지 않습니다.");
+      setShowVerification(true);
+    }
   };
 
   // const [verificationText, setVerificationText] = useState("");
@@ -30,10 +50,33 @@ function Join() {
   //   // 새로운 인증 텍스트를 생성하는 함수
   //   return Math.random().toString(36).substring(7);
   // };
-  const handleVerificationButtonClick = (e) => {
+
+  //이메일 인증 axios
+  const handleVerificationButtonClick = async (e) => {
     e.preventDefault();
     console.log("handleVerificationButtonClick 호출");
     setShowVerification(true);
+
+    e.preventDefault();
+    const userEmail = email;
+    console.log("email : " + email);
+    try {
+      const response = await axios.post("/join/emailConfirm", userEmail, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response.data);
+      if (response.data != "") {
+        setEmailCode(response.data);
+        setSendVerify(true);
+        console.log("서버 응답: 성공");
+      } else {
+        console.log("서버 응답 : 실패");
+      }
+    } catch (error) {
+      console.error("에러 발생:", error.message);
+    }
   };
 
   const handlePasswordChange = (e) => {
@@ -42,6 +85,18 @@ function Join() {
     setPassword(newPassword);
     checkPasswordMatch(newPassword, confirmPassword);
   };
+  const handleConfirmPasswordChange = (e) => {
+    const newConfirmPassword = e.target.value;
+    setConfirmPassword(newConfirmPassword);
+    checkPasswordMatch(password, newConfirmPassword);
+  };
+  const verifyOnchange = (e) => {
+    setVerifyCode(e.target.value);
+    if (verifyCode != "") {
+      setConfirmVerify(true);
+    }
+  };
+
   //비밀번호 유효성 검사
   const passwordRuleCheck = (password) => {
     //영문,숫자,특문 1개씩, 6글자이상
@@ -49,11 +104,6 @@ function Join() {
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
     const isValid = PasswwordRegex.test(password);
     setIsValidPassword(isValid);
-  };
-  const handleConfirmPasswordChange = (e) => {
-    const newConfirmPassword = e.target.value;
-    setConfirmPassword(newConfirmPassword);
-    checkPasswordMatch(password, newConfirmPassword);
   };
   // 이메일 입력값 변경 시 호출되는 함수
   const handleEmailChange = (e) => {
@@ -71,33 +121,69 @@ function Join() {
       setEmailError("유효한 이메일이 아닙니다.");
     } else {
       setEmailError("");
-    }
-  };
-  const checkPasswordMatch = (pw, confirmPw) => {
-    if (pw === confirmPw || pw === "" || confirmPw === "") {
-      setPasswordMatchError("");
-    } else {
-      setPasswordMatchError("비밀번호가 일치하지 않습니다.");
+      setShowEmailVerificationButton("true");
     }
   };
 
   const handleNickChange = (e) => {
     setNickname(e.target.value);
+    if (nickname != "") {
+      setNickNameMatchError("");
+    }
   };
 
+  const checkPasswordMatch = (pw, confirmPw) => {
+    if (pw != confirmPw) {
+      setPasswordMatchError("비밀번호가 일치하지 않습니다.");
+    } else {
+      setPasswordMatchError("");
+      setPasswordError("");
+    }
+  };
   // 폼 제출 시 호출되는 함수
   const handleSubmit = async (e) => {
+    e.preventDefault();
     console.log("Email:", email);
     console.log("Nickname:", nickname);
     console.log("Password:", password);
     console.log("Confirm Password:", confirmPassword);
-    if (emailError == null) {
-      alert("유효한 이메일이 아닙니다.");
-      return;
+
+    //aaaaa
+    if (
+      email === "" ||
+      password === "" ||
+      nickname === "" ||
+      confirmPassword === ""
+    ) {
+      if (email === "") {
+        setEmailError("이메일을 입력해주세요.");
+      }
+      if (!isValidPassword) {
+        setPasswordMatchError(
+          "영문, 숫자, 특수문자 조합 6자 이상 입력해야합니다."
+        );
+      }
+      if (password === "") {
+        setPasswordError("비밀번호를 입력해주세요.");
+      }
+      if (nickname === "") {
+        setNickNameMatchError("닉네임이 입력되지 않았습니다.");
+      }
+      if (confirmPassword === "") {
+        setPasswordMatchError("비밀번호 확인을 입력해주세요.");
+      }
+
+      if (!isValidEmail) {
+        setEmailError("유효한 이메일이 아닙니다.");
+      }
+      if (!sendVerify) {
+        alert("이메일 인증을 해주세요.");
+      }
+      return false;
     }
-    if (password !== confirmPassword) {
-      alert("패스워드가 다릅니다.");
-      return; // 패스워드가 다를 때 함수 종료
+    if (!sendVerify) {
+      alert("이메일 인증을 해주세요.");
+      return false;
     }
 
     const user = {
@@ -115,7 +201,7 @@ function Join() {
           "Content-Type": "application/json",
         },
       });
-
+      console.log("ababa");
       console.log("서버 응답:", response.data);
       alert(nickname + "님의 가입이 완료되었습니다.");
       navigate("/login");
@@ -137,12 +223,19 @@ function Join() {
                 value={email}
                 onChange={handleEmailChange}
               />
-              <button
-                className="email-veri-button"
-                onClick={handleVerificationButtonClick}
-              >
-                인증하기
-              </button>
+
+              {ShowEmailVerificationButton ? (
+                <button
+                  className="email-veri-button"
+                  onClick={handleVerificationButtonClick}
+                >
+                  인증하기
+                </button>
+              ) : (
+                <button className="email-veri-button" disabled>
+                  인증하기
+                </button>
+              )}
             </div>
             <button
               className="email-button"
@@ -161,18 +254,40 @@ function Join() {
           {showVerification && (
             <div
               className="signup-input"
-              style={{ paddingTop: ".1rem", paddingBottom: "1.5rem" }}
+              style={{ paddingTop: ".1rem", marginBottom: ".5rem" }}
             >
               <div className="email-position">
                 <input
                   className="verify-input-email"
                   type="text"
                   placeholder="인증번호를 입력하세요."
+                  value={verifyCode}
+                  onChange={verifyOnchange}
                 />
-                <button className="email-confirm" onClick={verfiyHandle}>
-                  확인
-                </button>
+                {confirmVerify ? (
+                  <button className="email-confirm" onClick={verfiyHandle}>
+                    확인
+                  </button>
+                ) : (
+                  <button
+                    className="email-confirm"
+                    onClick={verfiyHandle}
+                    disabled
+                  >
+                    확인
+                  </button>
+                )}
               </div>
+              <span
+                style={{
+                  color: "red",
+                  marginLeft: "20px",
+                  fontSize: "12px",
+                  marginBottom: "10px",
+                }}
+              >
+                {codeMessage}
+              </span>
             </div>
           )}
 
@@ -187,7 +302,16 @@ function Join() {
             />
             <button className="nick-button"></button>
           </div>
-          <div className="signup-input">
+          <span
+            style={{
+              color: "red",
+              marginLeft: "20px",
+              fontSize: "12px",
+            }}
+          >
+            {nickNameMatchError}
+          </span>
+          <div className="signup-input" style={{ paddingTop: "3px" }}>
             <input
               className="signup-input-pw"
               type="password"
@@ -196,9 +320,21 @@ function Join() {
               onChange={handlePasswordChange}
               autoComplete="new-password"
             />
-            <button className="pw-button"></button>
+            <button
+              className="pw-button"
+              style={{ transform: "translateY(-50%)" }}
+            ></button>
           </div>
-          <div className="signup-input">
+          <span
+            style={{
+              color: "red",
+              marginLeft: "20px",
+              fontSize: "12px",
+            }}
+          >
+            {passwordError}
+          </span>
+          <div className="signup-input" style={{ paddingTop: "3px" }}>
             <input
               className="signup-input-check"
               type="password"
@@ -209,7 +345,7 @@ function Join() {
             />
             <button
               className="pw-button2"
-              style={{ transform: "translateY(-20%)" }}
+              style={{ transform: "translateY(-60%)" }}
             ></button>
           </div>
           <span
