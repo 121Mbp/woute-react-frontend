@@ -26,11 +26,10 @@ export default function MyLikes() {
         },
     ])
     
-    const currentId = localStorage.getItem('id')
     const location = useLocation()
 
     const getLikes =  async () => {
-        const response = await wouteAPI(`/users/${currentId}/like`, 'GET')
+        const response = await wouteAPI(`${location.pathname}`, 'GET')
         console.log(response);
         setLikes(response.data.reverse())
     }
@@ -55,7 +54,7 @@ export default function MyLikes() {
                 {[0,1,2].map((i) => 
                 row[i] && row[i].attaches && row[i].attaches.length > 0  ? (
                 <Link to={`/p/${row[i].id}`} state={{ backgroundLocation: location, type: row[i].type}} key={i}>
-                    <img src={`http://localhost:8081/file/${row[i].attaches[0].uuid}`} />
+                    <img src={`${process.env.REACT_APP_IMAGE_PATH}${row[i].attaches[0].uuid}`} />
                     <div className='feedHover'>
                         <ul className='prevInfo'>
                             <li>{row[i].heartCount}</li>

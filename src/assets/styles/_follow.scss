@@ -111,6 +111,9 @@
                             .del-btn {
                                 padding: 3px;
                                 margin-right: 5px;
+                                &.d-none {
+                                    display: none;
+                                }
                                 button {
                                     width: 60px;
                                     height: 32px;

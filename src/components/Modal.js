@@ -13,7 +13,7 @@ function Modal({ wouteFeeds, setLoading, user }) {
     const { id } = useParams()
     const state = location.state && location.state?.backgroundLocation
     const [type, setType] = useState('')
-    
+
     useEffect(() => {
         document.body.style.overflow = 'hidden';
         return () => {
