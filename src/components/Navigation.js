@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import NotiList from './NotiList'
+import { wouteAPI } from '../api'
+import { toast } from 'react-toastify'
 
-function Navigation({ user }) {
+function Navigation({ user, chatNoti }) {
     const location = useLocation()
     const navigate = useNavigate()
     const noticeRef = useRef()
-    const [prev, setPrev] = useState('/')
     const [active, setActive] = useState(false)
     const [noti, setNoti] = useState([])
-    const currentId = localStorage.getItem('id')
     const [redDot, setRedDot] = useState(false)
     
 
@@ -25,7 +25,7 @@ function Navigation({ user }) {
                 console.log("sse : " + e.data);
                 console.log("알림 : " + e.data);
                 setNoti(e.data);
-                // toast.success(e.data.nickname + e.data.content)
+                setRedDot(true)
             })
             eventSource.addEventListener("error", function (event) {
                 // console.log(event.target.readyState);
@@ -37,38 +37,39 @@ function Navigation({ user }) {
         }
     },[user])
 
-    
     useEffect(()=>{
-        if(location.pathname === '/notice') {
-            document.body.style.overflow = 'hidden';
-            setActive(true)
-            const handleFocus = e => {
-                if(noticeRef.current && !noticeRef.current.contains(e.target)) {
-                    document.body.style.overflow = 'unset';
-                    setPrev(location.pathname)
-                    navigate(prev)
-                    setActive(false)
-                }
+        const handleFocus = e => {
+            if(noticeRef.current && !noticeRef.current.contains(e.target)) {                
+                setActive(false)
             }
-            document.addEventListener('mouseup', handleFocus)
-            return () => { document.removeEventListener('mouseup', handleFocus) }
-        } else {
-            document.body.style.overflow = 'unset';
-            setActive(false)
         }
-    }, [ noticeRef, prev ])
+        document.addEventListener('mouseup', handleFocus)
+        return () => { document.removeEventListener('mouseup', handleFocus) }
+    }, [ noticeRef ])
 
-    const handleClick = e => {
-        if(location.pathname === '/notice') {
-            e.preventDefault()
-            navigate(prev)
+
+    const handleClick = async e => {
+        e.preventDefault()
+        if(active) {
+            document.body.style.overflow = 'hidden'
             setActive(false)
+            return
         }
-        setPrev(location.pathname)
+        document.body.style.overflow = 'unset'
         setActive(true)
         noticeRef.current?.scrollTo({ top: 0, hefavior: 'smooth' })
+        if(redDot) {
+            try {
+                await wouteAPI(`/noti`, 'POST', {myId : user.id})
+                console.log('읽음');
+                setRedDot(false)
+            } catch (error) {
+                console.log('읽음 실패');
+            }
+        }
     }
 
+    
     return (
         <div className={`navigation ${ active ? 'active' : '' }`}>
             <div className='inner'>
@@ -79,10 +80,15 @@ function Navigation({ user }) {
                         <li className='course'><NavLink to='/p/courses'>코스</NavLink></li>
                         <li className='create'><NavLink to='/create' state={{ backgroundLocation: location }}>만들기</NavLink></li>
                         <li className='notice'>
-                            <NavLink to='/notice' state={{ backgroundLocation: location }} onClick={ handleClick }>알림</NavLink>
-                            <div className='redDot'></div>
+                            <NavLink to='/notice' onClick={ handleClick }>알림</NavLink>
+                            <div className={`redDot ${redDot ? '' : 'd-none'}`}></div>
                         </li>
-                        <li className='chat'><NavLink to='/chat' state={{ backgroundLocation: location }}>채팅</NavLink></li>
+                        <li className='chat'>
+                            <NavLink to={`/chat/${user.id}`} state={{ backgroundLocation: location}}>채팅</NavLink>
+                            <div className={`redDot ${chatNoti ? '' : 'd-none'}`}></div>
+                            {/* <div className={`redDot`}></div> */}
+                        </li>
+
                         <li className='profile'><NavLink to={`/users/${user.id}`}>
                             {
                                 user?.profileImage == null ? (
@@ -107,8 +113,7 @@ function Navigation({ user }) {
                 </div>
             </div>
             <div className="notification" ref={noticeRef}>
-                {/* <SearchList/> */}
-                <NotiList data={noti} user={user}/>
+                <NotiList data={noti} user={user} setRedDot={setRedDot} active={setActive}/>
             </div>
         </div>
     )
