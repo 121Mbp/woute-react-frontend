@@ -21,13 +21,41 @@ function ModalAddFeed({ type, wouteFeeds, setLoading, user }) {
     let value = e.target.value;
     setContent(value);
   };
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const imageFiles = e.target.files;
-    if (imageFiles.length === 0) return;
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 600,
+    }
+    
+    try {
+      const compressedFiles = []
+      for (const file of imageFiles) {
+          const compressedBlob = await imageCompression(file, options)
+          const compressedFile = new File([compressedBlob], file.name, { type: file.type })
+          compressedFiles.push(compressedFile)
+          console.log(compressedFile)
+      }
+      if (imageFiles.length === 0) return;
+      const resolveAfter3Sec = new Promise(resolve => setTimeout(resolve, 1000));
+      toast.promise(
+          resolveAfter3Sec,
+          {
+          pending: '이미지 등록 중입니다.',
+          success: '이미지 등록이 완료되었습니다.',
+          error: '이미지 등록에 실패하였습니다.'
+          }
+      )
+      const newFiles = [...files, ...compressedFiles];
+      setFiles(newFiles);
+      setTimeout(() => {generatePreviews(compressedFiles)}, 600)
+      // generatePreviews(imageFiles);
+    } catch (error) {
+        console.log(error)
+    }
+    
 
-    const newFiles = [...files, ...imageFiles];
-    setFiles(newFiles);
-    generatePreviews(imageFiles);
+    
   };
 
   const generatePreviews = (imageFiles) => {
@@ -37,33 +65,12 @@ function ModalAddFeed({ type, wouteFeeds, setLoading, user }) {
     setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
   };
 
-  const compressImages = async () => {
-    const options = {
-      maxSizeMB: 0.2,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-    };
-
-    try {
-      const compressedImages = await Promise.all(
-        files.map((file) => imageCompression(file, options))
-      );
-      console.log("Compressed Images:", compressedImages);
-    } catch (error) {
-      console.error("Error compressing images:", error);
-    }
-  };
-
   const handleImgDelete = (idx) => {
     setPreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== idx));
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== idx));
     URL.revokeObjectURL(previews[idx]);
   };
 
-  const handlePostSubmit = async () => {
-    await compressImages();
-    alert("이미지가 압축되었습니다!");
-  };
 
   const isMaxImagesReached = previews.length >= 5;
 
