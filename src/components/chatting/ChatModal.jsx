@@ -179,7 +179,7 @@ let message = {
                 <div className="profile-wrap">
                   <div className="profileImg">
                     <img
-                      src={myInfo.profileImage}
+                      src={`${process.env.REACT_APP_IMAGE_PATH}${myInfo.profileImage}`}
                       alt="내 프로필"
                     />
                   </div>

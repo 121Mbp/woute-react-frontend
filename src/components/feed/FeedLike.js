@@ -23,7 +23,7 @@ function FeedLike({ likes }) {
                                     <div className='fol-tab' key={ item.id }>
                                         <div className='profileImg'>
                                             <Link to={`/users/${item.userId}`}>
-                                                <img src={ item.profileImage } alt='' />
+                                                <img src={ `${ process.env.REACT_APP_IMAGE_PATH }${ item.profileImage }` } alt='' />
                                             </Link>
                                         </div>
                                         <div className='tab-info'>

@@ -8,11 +8,10 @@ import { toast } from "react-toastify";
 
 moment.locale("ko");
 
-function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
+function Reply({ feedData, wouteFeeds, setLoading, user }) {
   const navigate = useNavigate();
   const titleRef = useRef(null);
   const feedId = feedData.id;
-  const userId = user.id;
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState({});
   const [content, setContent] = useState("");
@@ -27,18 +26,14 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
   const [tags, setTags] = useState([]);
 
   const fetchData = async () => {
-    console.log("유저", user);
-    console.log("피드데이타", feedData);
     try {
-      const commentsResponse = await wouteAPI(
-        `/p/${id}/reply?userId=${userId}`,
-        "GET"
-      );
+      const commentsResponse = await wouteAPI(`/p/${feedId}/reply?userId=${user.id}`, "GET");
       console.log("replys", commentsResponse.data);
       const sortedComments = commentsResponse.data.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
       setComments(sortedComments);
+      console.log(sortedComments)
       setTitle(feedData.title);
       setContents(feedData.content);
       let _tags = [];
@@ -48,7 +43,7 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
       setTags(_tags);
       const newLikes = {};
       sortedComments.forEach((comment) => {
-        newLikes[comment.reply_id] = comment.userLiked;
+        newLikes[comment.id] = comment.userLiked;
       });
       setLikes(newLikes);
     } catch (error) {
@@ -58,8 +53,8 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
   // console.log("d", feedData);
 
   const handleLike = async (replyId, userLiked) => {
+    console.log(replyId,userLiked)
     const requestBody = {
-      id: id,
       userId: user.id,
       replyId: replyId,
       nickname: user.nickname,
@@ -89,7 +84,9 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
   };
 
   useEffect(() => {
-    fetchData();
+    if(user.id !== undefined) {
+      fetchData();
+    }
   }, [feedId]);
   //  likes
   const handleInputChange = (e) => {
@@ -108,6 +105,7 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
     console.log("유저아이디", user);
     try {
       const response = await wouteAPI(`/p/${feedId}/reply`, "POST", {
+        user_id: user.id,
         feed_id: feedId,
         content,
         nickname: user.nickname,
@@ -129,6 +127,7 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
         prevComments.filter((comment) => comment.reply_id !== replyId)
       );
       setCommentChanged(!commentChanged);
+      fetchData()
     } catch (error) {
       console.error("댓글 삭제 실패:", error);
     }
@@ -233,12 +232,12 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
             ) : (
               <i
                 style={{
-                  backgroundImage: `url('${feedData.profileImage}')`,
+                  backgroundImage: `url('${process.env.REACT_APP_IMAGE_PATH}${feedData.profileImage}')`,
                 }}
               >
-                <p>{feedData.nickname}</p>
               </i>
             )}
+            <p>{feedData.nickname}</p>
             <i className="feedClose" onClick={handleClose}></i>
           </div>
           <div className="myfeedTitle">
@@ -305,7 +304,7 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
             </div>
             <div className="userComments">
               {comments.map((comment) => (
-                <div className="userComment" key={comment.reply_id}>
+                <div className="userComment" key={comment.id}>
                   <div className="feedProfiles">
                     <div className="feedProfile">
                       {comment?.profileImage == null ? (
@@ -313,7 +312,7 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
                       ) : (
                         <i
                           style={{
-                            backgroundImage: `url('${comment.profileImage}')`,
+                            backgroundImage: `url('${process.env.REACT_APP_IMAGE_PATH}${comment.profileImage}')`,
                           }}
                         />
                       )}
@@ -326,20 +325,24 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
                         {comment.heartCount > 0 && (
                           <span>좋아요{comment.heartCount}개</span>
                         )}{" "}
-                        <div
-                          className="deleteReply"
-                          onClick={() => deleteComment(comment.reply_id)}
-                        ></div>
+                        {
+                          comment.user_id === user.id && (
+                            <div
+                              className="deleteReply"
+                              onClick={() => deleteComment(comment.id)}
+                            ></div>
+                          )
+                        }
                       </div>
                     </div>
                   </div>
                   <div className="likeHearts">
                     <div
                       className={`likeHeart ${
-                        likes[comment.reply_id] ? "active" : ""
+                        likes[comment.id] ? "active" : ""
                       }`}
                       onClick={() =>
-                        handleLike(comment.reply_id, likes[comment.reply_id])
+                        handleLike(comment.id, likes[comment.id])
                       }
                     ></div>
                   </div>

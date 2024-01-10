@@ -109,7 +109,7 @@ export default function UserFeed({user}) {
                         <div className='profile-img'>
                             <div className='a mx-auto'>
                                 {/* 프로필 이미지 */}
-                                <img src={userInfo.profileImage} alt="" />
+                                <img src={`${process.env.REACT_APP_IMAGE_PATH}${userInfo.profileImage}`} alt="" />
                             </div>
                         </div>
                         <div className='profile-main'>

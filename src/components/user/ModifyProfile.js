@@ -4,8 +4,10 @@ import UserModal from "./UserModal";
 import Withdrawal from "./Withdrawal";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import imageCompression from 'browser-image-compression'
 
-function Modifyprofile({ user }) {
+function Modifyprofile({ user, fetchUserData, wouteFeeds }) {
   const [isEditing, setEditing] = useState(false);
   const [nickname, setNickname] = useState("");
   const [isInEditing, setInEditing] = useState(false);
@@ -40,47 +42,47 @@ function Modifyprofile({ user }) {
     // if (UUID) {
     //   fetchImage();
     // }
-    console.log("user" + user.profileImage);
+    // console.log("user" + user.profileImage);
     const imageUrl = user.profileImage;
-    console.log("유저 get :" + imageUrl);
+    // console.log("유저 get :" + imageUrl);
     setUserNo(user.id);
     setSelectedImage(imageUrl);
     setViewImage(true);
   }, [user]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.post(
-          `/users/uuid/${userNo}`,
-          {},
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const uuidObject = response.data;
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.post(
+  //         `/users/uuid/${userNo}`,
+  //         {},
+  //         {
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //         }
+  //       );
+  //       const uuidObject = response.data;
 
-        // 객체의 첫 번째 속성 값만 가져오기
-        const firstPropertyValue = Object.values(uuidObject)[0];
+  //       // 객체의 첫 번째 속성 값만 가져오기
+  //       const firstPropertyValue = Object.values(uuidObject)[0];
 
-        // 가져온 값을 문자열로 변환
-        const uuidString = String(firstPropertyValue);
-        console.log("리스폰" + response.data);
-        console.log("첫번째값", uuidString);
-        setUUID(uuidString);
-      } catch (error) {
-        console.error("Error fetching UUID:", error);
-        console.error(
-          "Error details:",
-          error.response || error.message || error
-        );
-      }
-    };
+  //       // 가져온 값을 문자열로 변환
+  //       const uuidString = String(firstPropertyValue);
+  //       // console.log("리스폰" + response.data);
+  //       // console.log("첫번째값", uuidString);
+  //       setUUID(uuidString);
+  //     } catch (error) {
+  //       console.error("Error fetching UUID:", error);
+  //       console.error(
+  //         "Error details:",
+  //         error.response || error.message || error
+  //       );
+  //     }
+  //   };
 
-    fetchData();
-  }, [UUID]);
+  //   fetchData();
+  // }, [UUID]);
 
   useEffect(() => {
     if (selectedImage !== null) {
@@ -93,7 +95,8 @@ function Modifyprofile({ user }) {
   };
 
   const handleNSaveClick = async () => {
-    alert(`닉네임이 수정되었습니다.`);
+    toast.success('닉네임이 수정되었습니다.')
+    // alert(`닉네임이 수정되었습니다.`);
     user.nickname = nickname;
     console.log(user.nickname);
     try {
@@ -124,7 +127,8 @@ function Modifyprofile({ user }) {
   };
 
   const handleInSaveClick = async () => {
-    alert(`자기소개가 수정되었습니다.`);
+    toast.success('자기소개가 수정되었습니다.')
+    //alert(`자기소개가 수정되었습니다.`);
     user.introduction = intro;
     console.log(user.introduction);
     try {
@@ -141,6 +145,7 @@ function Modifyprofile({ user }) {
       console.error(error);
     }
     setInEditing(false);
+    fetchUserData()
   };
 
   const handleInInputChange = (e) => {
@@ -169,31 +174,41 @@ function Modifyprofile({ user }) {
 
   const handleImageChange = async (e) => {
     const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-
-    if (selectedFile) {
-      setFile(selectedFile);
-      const imageUrl = URL.createObjectURL(selectedFile);
-      setSelectedImage(imageUrl);
-
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-
-      uploadProfileImage(formData);
+    const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 200,
     }
+
+    try{
+      const compressed = await imageCompression(selectedFile, options)
+      const compressedFile = new File([compressed], selectedFile.name, { type: selectedFile.type })
+      
+      if (compressedFile) {
+        setFile(compressedFile);
+        const imageUrl = URL.createObjectURL(compressedFile);
+        setSelectedImage(imageUrl);
+  
+        const formData = new FormData();
+        formData.append("file", compressedFile);
+  
+        uploadProfileImage(formData);
+      }
+    } catch(err) {
+      console.log(err)
+    }    
   };
 
   const inputRef = useRef(null);
 
   const handlePicButtonClick = () => {
     inputRef.current.click();
-    console.log(user.id);
+    // console.log(user.id);
   };
 
   const uploadProfileImage = async (formData) => {
     console.log(userNo);
     try {
-      console.log("폼데이터 : " + formData);
+      // console.log("폼데이터 : " + formData);
       const response = await axios.post(
         `/uploadprofileimage/${userNo}`,
         formData,
@@ -203,12 +218,14 @@ function Modifyprofile({ user }) {
           },
         }
       );
-      console.log("온 데이터", response.data);
+      // console.log("온 데이터", response.data);
 
       if (selectedImage) {
         URL.revokeObjectURL(selectedImage);
       }
-
+      toast.success('프로필 사진이 변경되었습니다.')
+      fetchUserData()
+      wouteFeeds()
       // 이미지가 업로드 성공 후 호출
     } catch (error) {
       console.error(error);
