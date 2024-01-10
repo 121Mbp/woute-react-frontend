@@ -53,7 +53,7 @@ function Post({ data, wouteFeeds, user }) {
                         data?.profileImage == null ? (
                             <i></i>
                         ) : (
-                            <i style={{backgroundImage: `url(${ data.profileImage })`}}></i>
+                            <i style={{backgroundImage: `url(${ process.env.REACT_APP_IMAGE_PATH }${ data.profileImage })`}}></i>
                         )
                     }
                 { data.nickname }</Link>

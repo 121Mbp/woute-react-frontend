@@ -31,7 +31,6 @@
   justify-content: space-between;
   .feedProfile {
     display: flex;
-    justify-content: space-between;
   }
   .feedClose {
     @include icon(arrow-right, #3e3a39, 25px, 25px);
@@ -93,13 +92,6 @@
     position: relative;
     @include _profile;
     // @include icon(userPlus, #dbdbdb, 30px, 30px);
-  }
-  p {
-    padding: 0 0 0 40px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
   }
 }
 
@@ -291,6 +283,7 @@
 @media screen and (max-width: 994px) {
   .feedClose {
     display: block !important;
+    margin-left: auto;
     cursor: pointer;
   }
 }
