@@ -1,62 +1,43 @@
 import { Link } from "react-router-dom";
 import '../assets/styles/_searchList.scss';
 
-export default function SearchList() {
+export default function SearchList({searchList, showList}) {
+    const users = searchList.users
+    const tags = searchList.tags
     return(
         <>
-        {/* <div className="searchList"> */}
+        <div className={`keywordList ${showList ? '' : 'd-none'}`}>
             <div className='title' >검색결과</div>
             <ul>
-                {/* {notis.map(item => {
+                {(users || []).map(item => {
                     return(
-                        <li key={item.id}>
-                            <div className='user'>
-                                <Link to={item.senderUrl}>
-                                    <i style={{backgroundImage: `url(${item.profileImg})`}}></i>
-                                </Link>
-                            </div>
-                            <div className='activity'>
-                                <Link to={item.senderUrl}>
-                                <strong>{item.nickname}</strong>
-                                </Link>
-                                {item.content}
-                                <span>{moment(item.createdAt).fromNow()}</span>
-                            </div>
-                        </li>
+                        <Link to={item.url}
+                        >
+                            <li key={item.id}>
+                                <div className='user'>
+                                    {/* <i style={{backgroundImage: `url(${item.profileImg})`}}></i> */}
+                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_DUd0CnKIWb4BZjZfw6vcfflkZZfuWgnvnw&usqp=CAU" alt="" />
+                                </div>
+                                <div className='activity'>
+                                    <strong>{item.nickName}</strong>
+                                </div>
+                            </li>
+                        </Link>
                     )
-                })} */}
-                <li>
-                    <Link>
-                        <div className='user'>
-                            <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                        </div>
-                        <div className='activity'>
-                            <strong>woute</strong>
-                        </div>
-                    </Link>
-                </li>
-                <li>
-                    <Link>
-                        <div className='user'>
-                            <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                        </div>
-                        <div className='activity'>
-                            <strong>woute</strong>님이 회원님을 팔로우하기 시작했습니다.<span>1일</span>
-                        </div>
-                    </Link>
-                </li>
-                <li>
-                    <Link>
-                        <div className='user'>
-                            <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                        </div>
-                        <div className='activity'>
-                            <strong>woute</strong>님이 회원님을 팔로우하기 시작했습니다.<span>1일</span>
-                        </div>
-                    </Link>
-                </li>
+                })}
+                {(tags || []).map(item => (
+                    <li className="tagList">
+                        <Link 
+                        to={`/search/tags/${item.words.replace('#', '')}`}
+                        >
+                            <div className='activity'>
+                                <strong>{item.words}</strong>
+                            </div>
+                        </Link>
+                    </li>
+                ))}
             </ul>
-        {/* </div> */}
+        </div>
         </>
     )
 }
