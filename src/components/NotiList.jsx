@@ -1,23 +1,29 @@
 import { useEffect, useState } from "react"
 import { wouteAPI } from "../api"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import moment from "moment"
 
-export default function NotiList({data}) {
+export default function NotiList({data, user, active, setRedDot}) {
     const [notis, setNotis] = useState([])
-    const currentId = localStorage.getItem('id')
-    console.log('data : ' + data);
+    const location = useLocation()
     
     const getNoti = async () => {
-        const response = await wouteAPI(`/noti/${currentId}`, 'GET') 
+        const response = await wouteAPI(`/noti/${user.id}`, 'GET') 
         console.log(response.data);
+        if(response.data[0] && !response.data[0].read) {
+            setRedDot(true)
+        }
         setNotis(response.data)
     }
-    
-
     useEffect(() => {
-        getNoti()
-    },[data])
+        if(user.id !== undefined) {
+            getNoti()
+        }
+    },[ user, data ])
+
+    const handleNavi = () => {
+        active(false)
+    }
 
     return (
             <>
@@ -25,136 +31,37 @@ export default function NotiList({data}) {
             <ul>
                 {notis.map(item => {
                     return(
-                        <li key={item.id}>
-                            <div className='user'>
-                                <Link to={item.senderUrl}>
+                        item.senderUrl.indexOf('/p') != -1 ? (
+                            <li key={item.id}>
+                                <Link to={item.senderUrl} state={{ backgroundLocation: location, type: item.type }} onClick={ handleNavi }> 
+                                <div className='user'>
                                     <i style={{backgroundImage: `url(${item.profileImg})`}}></i>
+                                </div>
+                                <div className='activity'>
+                                    <strong>{item.nickname}</strong>
+                                    {item.content}
+                                    <span>{moment(item.createdAt).fromNow()}</span>
+                                </div>
                                 </Link>
-                            </div>
-                            <div className='activity'>
-                                <Link to={item.senderUrl}>
-                                <strong>{item.nickname}</strong>
-                                </Link>
-                                {item.content}
-                                <span>{moment(item.createdAt).fromNow()}</span>
-                            </div>
-                        </li>
+                            </li>
+                        ) : (
+                            <li key={item.id}>
+                                <div className='user'>
+                                    <Link to={item.senderUrl} onClick={ handleNavi }>
+                                        <i style={{backgroundImage: `url(${item.profileImg})`}}></i>
+                                    </Link>
+                                </div>
+                                <div className='activity'>
+                                    <Link to={item.senderUrl} onClick={ handleNavi }>
+                                    <strong>{item.nickname}</strong>
+                                    </Link>
+                                    {item.content}
+                                    <span>{moment(item.createdAt).fromNow()}</span>
+                                </div>
+                            </li>
+                        )
                     )
                 })}
-                {/* <li key={item.id}>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>{item.content}<span>1일</span>
-                    </div>
-                    <button className='follow'>팔로우</button>
-                </li> */}
-                <li>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>님이 댓글을 남겼습니다: 맛있게 생겼네요🤭<span>1일</span>
-                    </div>
-                    <button className='follow' disabled={ true }>팔로잉</button>
-                </li>
-                {/* <li>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>님이 회원님을 팔로우하기 시작했습니다.<span>1일</span>
-                    </div>
-                </li>
-                <li>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>님이 댓글을 남겼습니다: 맛있게 생겼네요🤭<span>1일</span>
-                    </div>
-                </li>
-                <li>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>님이 회원님의 게시물을 좋아합니다.<span>1일</span>
-                    </div>
-                </li>
-                <li>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>님이 회원님을 팔로우하기 시작했습니다.<span>1일</span>
-                    </div>
-                </li>
-                <li>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>님이 댓글을 남겼습니다: 맛있게 생겼네요🤭<span>1일</span>
-                    </div>
-                </li>
-                <li>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>님이 회원님의 게시물을 좋아합니다.<span>1일</span>
-                    </div>
-                </li>
-                <li>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>님이 회원님을 팔로우하기 시작했습니다.<span>1일</span>
-                    </div>
-                </li>
-                <li>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>님이 댓글을 남겼습니다: 맛있게 생겼네요🤭<span>1일</span>
-                    </div>
-                </li>
-                <li>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>님이 회원님의 게시물을 좋아합니다.<span>1일</span>
-                    </div>
-                </li>
-                <li>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>님이 회원님을 팔로우하기 시작했습니다.<span>1일</span>
-                    </div>
-                </li>
-                <li>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>님이 댓글을 남겼습니다: 맛있게 생겼네요🤭<span>1일</span>
-                    </div>
-                </li>
-                <li>
-                    <div className='user'>
-                        <i style={{backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/255px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg)'}}></i>
-                    </div>
-                    <div className='activity'>
-                        <strong>woute</strong>님이 회원님의 게시물을 좋아합니다.<span>1일</span>
-                    </div>
-                </li> */}
             </ul>
         </>
     )
