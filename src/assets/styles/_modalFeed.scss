@@ -89,9 +89,17 @@
     background-position: center;
     display: flex;
     align-items: center;
+    margin-right: 5px !important;
+    position: relative;
+    @include _profile;
+    // @include icon(userPlus, #dbdbdb, 30px, 30px);
   }
   p {
     padding: 0 0 0 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 }
 
@@ -104,10 +112,10 @@
   padding: 10px 10px 10px 20px;
   > div {
     > button {
-      margin: 0 .3rem;
-      padding: .3rem .8rem;
-      background-color: #F0F0F0;
-      border-radius: .8rem;
+      margin: 0 0.3rem;
+      padding: 0.3rem 0.8rem;
+      background-color: #f0f0f0;
+      border-radius: 0.8rem;
       font-size: 1rem;
       font-weight: 600;
       color: #484848;
@@ -122,7 +130,7 @@
     font-size: 18px;
     font-weight: 900;
     &::placeholder {
-        color: #000000;
+      color: #000000;
     }
   }
 }
@@ -148,9 +156,9 @@
         margin-top: 6px;
         padding: 4px 6px 2px 6px;
         font-size: 12px;
-        background-color: #9FA0A0;
+        background-color: #9fa0a0;
         border-radius: 4px;
-        color: #FFFFFF;
+        color: #ffffff;
         cursor: pointer;
       }
     }
@@ -269,7 +277,8 @@
     bottom: 64px;
     width: 100%;
     border-radius: 16px 16px 0 0;
-    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3),
+      0 2px 6px 2px rgba(60, 64, 67, 0.15);
   }
 }
 @media screen and (max-width: 994px) {

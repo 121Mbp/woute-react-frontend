@@ -1,62 +1,97 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 import { wouteAPI } from "./../../api";
 import moment from "moment";
 import "moment/locale/ko";
-import Layer from "./../Layer"
-import { toast } from 'react-toastify'
+import Layer from "./../Layer";
+import { toast } from "react-toastify";
 
 moment.locale("ko");
 
 function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
-  const navigate = useNavigate()
-  const titleRef = useRef(null)
+  const navigate = useNavigate();
+  const titleRef = useRef(null);
   const feedId = feedData.id;
+  const userId = user.id;
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState({});
   const [content, setContent] = useState("");
   const [isActive, setIsActive] = useState(false);
   const [commentChanged, setCommentChanged] = useState(false);
-  const [layer, setLayer] = useState(false)
-  const [message, setMessage] = useState('')
-  const [method, setMethod] = useState('')
-  const [edit, setEdit] = useState(false)
-  const [title, setTitle] = useState('')
-  const [contents, setContents] = useState('')
-  const [tags, setTags] = useState([])
+  const [layer, setLayer] = useState(false);
+  const [message, setMessage] = useState("");
+  const [method, setMethod] = useState("");
+  const [edit, setEdit] = useState(false);
+  const [title, setTitle] = useState("");
+  const [contents, setContents] = useState("");
+  const [tags, setTags] = useState([]);
 
   const fetchData = async () => {
+    console.log("유저", user);
+    console.log("피드데이타", feedData);
     try {
-      const commentsResponse = await wouteAPI(`/p/${id}/reply`, "GET");
-      // setComments(commentsResponse.data);
+      const commentsResponse = await wouteAPI(
+        `/p/${id}/reply?userId=${userId}`,
+        "GET"
+      );
+      console.log("replys", commentsResponse.data);
       const sortedComments = commentsResponse.data.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
       setComments(sortedComments);
-      setTitle(feedData.title)
-      setContents(feedData.content)
-      let _tags = []
-      for(let tag of feedData.tags) {
-        _tags.push(tag.words)
+      setTitle(feedData.title);
+      setContents(feedData.content);
+      let _tags = [];
+      for (let tag of feedData.tags) {
+        _tags.push(tag.words);
       }
-      setTags(_tags)
-      const newLikes = commentsResponse.data.reduce(
-        (acc, comment) => ({
-          ...acc,
-          [comment.reply_id]: comment.heartCount || 0,
-        }),
-        {}
-      );
+      setTags(_tags);
+      const newLikes = {};
+      sortedComments.forEach((comment) => {
+        newLikes[comment.reply_id] = comment.userLiked;
+      });
       setLikes(newLikes);
     } catch (error) {
-      // console.error("데이터 불러오기 실패:", error);
+      console.error("에러");
+    }
+  };
+  // console.log("d", feedData);
+
+  const handleLike = async (replyId, userLiked) => {
+    const requestBody = {
+      id: id,
+      userId: user.id,
+      replyId: replyId,
+      nickname: user.nickname,
+      profileImage: user.profileImage,
+    };
+    if (userLiked) {
+      try {
+        await wouteAPI(
+          `/p/${feedId}/${replyId}/${user.id}/like`,
+          "DELETE",
+          null
+        );
+        setLikes((prevLikes) => ({ ...prevLikes, [replyId]: false }));
+        fetchData();
+      } catch (err) {
+        console.log("삭제 에러: " + err);
+      }
+    } else {
+      try {
+        await wouteAPI(`/p/${feedId}/${replyId}/like`, "PUT", requestBody);
+        setLikes((prevLikes) => ({ ...prevLikes, [replyId]: true }));
+        fetchData();
+      } catch (err) {
+        console.log("추가 에러: " + err);
+      }
     }
   };
 
   useEffect(() => {
     fetchData();
   }, [feedId]);
-
+  //  likes
   const handleInputChange = (e) => {
     setContent(e.target.value);
   };
@@ -70,9 +105,9 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
   };
 
   const addComment = async () => {
+    console.log("유저아이디", user);
     try {
       const response = await wouteAPI(`/p/${feedId}/reply`, "POST", {
-        userId: user.id,
         feed_id: feedId,
         content,
         nickname: user.nickname,
@@ -81,7 +116,6 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
       });
       setComments((prevComments) => [...prevComments, response.data]);
       setContent("");
-      // setCommentChanged(!commentChanged);
       fetchData();
     } catch (error) {
       console.error("댓글 추가 실패:", error);
@@ -100,25 +134,6 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
     }
   };
 
-  const toggleLike = async (replyId, userId) => {
-    try {
-      const requestBody = {
-        userId: userId,
-        replyId,
-      };
-      await wouteAPI(
-        `/p/${feedId}/${replyId}/like`,
-        likes[replyId] ? "DELETE" : "PUT",
-        requestBody
-      );
-      setLikes({ ...likes, [replyId]: !likes[replyId] });
-      setCommentChanged(!commentChanged);
-      fetchData();
-    } catch (error) {
-      console.error("좋아요 상태 변경 실패:", error);
-    }
-  };
-
   const handleSendComment = async () => {
     if (content.trim() === "") {
       toast.warn("내용을입력해주세요.");
@@ -129,145 +144,163 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
   };
 
   const handleEdit = () => {
-    setEdit(true)
+    setEdit(true);
     setTimeout(() => {
-      titleRef.current.focus()
-    }, 100)
-  }
+      titleRef.current.focus();
+    }, 100);
+  };
 
   const handleCanceled = () => {
-    setEdit(false)
-    setTitle(feedData.title)
-    setContents(feedData.content)
-  }
+    setEdit(false);
+    setTitle(feedData.title);
+    setContents(feedData.content);
+  };
 
-  const handleController = async confirm => {
-    setLayer(false)
-    if(!confirm) {
-      return
+  const handleController = async (confirm) => {
+    setLayer(false);
+    if (!confirm) {
+      return;
     }
-    if(method === 'delete') {
+    if (method === "delete") {
       try {
-        await wouteAPI(`/p/${feedId}`, 'DELETE', null)
-        toast.success('피드가 삭제 되었습니다.')
-        setLoading(false)
-        wouteFeeds()
-        navigate('/')
-      } catch(err) {
-        console.log('에러: ' + err)
-      }
-    }   
-    if(method === 'save') {
-      if(title === '') {
-        toast.warn('제목을 입력해 주세요.')
-        return
-      }
-      if(contents === '') {
-          toast.warn('내용을 입력해 주세요.')
-          return
-      }
-      const formData = new FormData()
-      let reg = /#([\S]+)/igm
-      let matches = (contents.match(reg) || [])
-      
-      let feed = {
-          title: title,
-          content: contents,
-      }
-
-      formData.append('feed', new Blob([JSON.stringify(feed)], {type: 'application/json'}))
-      formData.append('tags', new Blob([JSON.stringify(matches)], {type: 'application/json'}))
-      
-      try {
-        await wouteAPI(`/p/${feedId}`, 'PUT', formData)
-        toast.success('피드가 저장 되었습니다.')
-        setEdit(false)
-        wouteFeeds()
-        setTags(matches)
+        await wouteAPI(`/p/${feedId}`, "DELETE", null);
+        toast.success("피드가 삭제 되었습니다.");
+        setLoading(false);
+        wouteFeeds();
+        navigate("/");
       } catch (err) {
-        console.log('에러: ' + err)
+        console.log("에러: " + err);
       }
-    }     
-    setMethod('')
-  }
+    }
+    if (method === "save") {
+      if (title === "") {
+        toast.warn("제목을 입력해 주세요.");
+        return;
+      }
+      if (contents === "") {
+        toast.warn("내용을 입력해 주세요.");
+        return;
+      }
+      const formData = new FormData();
+      let reg = /#([\S]+)/gim;
+      let matches = contents.match(reg) || [];
+
+      let feed = {
+        title: title,
+        content: contents,
+      };
+
+      formData.append(
+        "feed",
+        new Blob([JSON.stringify(feed)], { type: "application/json" })
+      );
+      formData.append(
+        "tags",
+        new Blob([JSON.stringify(matches)], { type: "application/json" })
+      );
+
+      try {
+        await wouteAPI(`/p/${feedId}`, "PUT", formData);
+        toast.success("피드가 저장 되었습니다.");
+        setEdit(false);
+        wouteFeeds();
+        setTags(matches);
+      } catch (err) {
+        console.log("에러: " + err);
+      }
+    }
+    setMethod("");
+  };
 
   const handleLayer = (method, msg) => {
-    setMethod(method)
-    setMessage(msg)
-    setLayer(true)
-  }
+    setMethod(method);
+    setMessage(msg);
+    setLayer(true);
+  };
 
-  const handleContent = e => {
-    let value = e.target.value
-    setContents(value)
-  }
+  const handleContent = (e) => {
+    let value = e.target.value;
+    setContents(value);
+  };
 
   return (
     <>
       <div className="feedArea">
         <div className={`feedAreaInner ${isActive ? "focused" : ""}`}>
-          <div className="myName feedProfile">
-            <i
-              style={{
-                backgroundImage: feedData.profileImage
-                  ? `url('${feedData.profileImage}')`
-                  : "none",
-              }}
-            >
-              <p>{feedData.nickname}</p>
-            </i>
+          <div className="myName feedProfile" key={feedData.id}>
+            {feedData?.profileImage == null ? (
+              <i></i>
+            ) : (
+              <i
+                style={{
+                  backgroundImage: `url('${feedData.profileImage}')`,
+                }}
+              >
+                <p>{feedData.nickname}</p>
+              </i>
+            )}
             <i className="feedClose" onClick={handleClose}></i>
           </div>
           <div className="myfeedTitle">
             <p>
-              {
-                edit ? (
-                  <>
-                  <input type='text' name='title' placeholder='타이틀을 입력하세요.' value={title} onChange={e=>setTitle(e.target.value)} ref={titleRef}/>
-                  {
-                    feedData.userId === user.id && (
-                      <div>
-                          <button onClick={ handleCanceled }>취소</button>
-                          <button onClick={()=>handleLayer('save', '저장 하시겠습니까?') }>저장</button>
-                      </div>   
-                    )
-                  }
-                  </>
-                ) : (
-                  <>
-                    {title}
-                    {
-                      feedData.userId === user.id && (
-                        <div>
-                          <button onClick={ handleEdit }>수정</button>
-                          <button onClick={()=>handleLayer('delete', '삭제 하시겠습니까?') }>삭제</button>
-                        </div>    
-                      )
-                    }
-                  </>
-                )
-              }
+              {edit ? (
+                <>
+                  <input
+                    type="text"
+                    name="title"
+                    placeholder="타이틀을 입력하세요."
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    ref={titleRef}
+                  />
+                  {feedData.userId === user.id && (
+                    <div>
+                      <button onClick={handleCanceled}>취소</button>
+                      <button
+                        onClick={() =>
+                          handleLayer("save", "저장 하시겠습니까?")
+                        }
+                      >
+                        저장
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  {title}
+                  {feedData.userId === user.id && (
+                    <div>
+                      <button onClick={handleEdit}>수정</button>
+                      <button
+                        onClick={() =>
+                          handleLayer("delete", "삭제 하시겠습니까?")
+                        }
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
             </p>
           </div>
           <div>
             <div className="myfeedContent">
               <p>
-                {
-                  edit ? (
-                    <textarea name='content' placeholder='#을 이용하여 태그를 사용해 보세요.' value={contents} onChange={ handleContent }></textarea>
-                  ) : (
-                    <>{contents}</>
-                  )
-                }
-                </p>
+                {edit ? (
+                  <textarea
+                    name="content"
+                    placeholder="#을 이용하여 태그를 사용해 보세요."
+                    value={contents}
+                    onChange={handleContent}
+                  ></textarea>
+                ) : (
+                  <>{contents}</>
+                )}
+              </p>
               <p>
-              {
-                  !edit && (
-                    tags?.map((item, i) => (
-                      <span key={ i }>{ item }</span>    
-                    ))
-                  )
-              }
+                {!edit && tags?.map((item, i) => <span key={i}>{item}</span>)}
               </p>
             </div>
             <div className="userComments">
@@ -275,20 +308,24 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
                 <div className="userComment" key={comment.reply_id}>
                   <div className="feedProfiles">
                     <div className="feedProfile">
-                      <i
-                        style={{
-                          backgroundImage: comment.profileImage
-                            ? `url('${comment.profileImage}')`
-                            : "https://w7.pngwing.com/pngs/981/645/png-transparent-default-profile-united-states-computer-icons-desktop-free-high-quality-person-icon-miscellaneous-silhouette-symbol.png",
-                        }}
-                      />
+                      {comment?.profileImage == null ? (
+                        <i></i>
+                      ) : (
+                        <i
+                          style={{
+                            backgroundImage: `url('${comment.profileImage}')`,
+                          }}
+                        />
+                      )}
                     </div>
                     <div className="userNames">
                       <span className="userName">{comment.nickname}</span>
                       <span>{comment.content}</span>
                       <div className="replyPart">
                         <span>{moment(comment.createdAt).fromNow()}</span>
-                        <span>{comment.heartCount}개</span>
+                        {comment.heartCount > 0 && (
+                          <span>좋아요{comment.heartCount}개</span>
+                        )}{" "}
                         <div
                           className="deleteReply"
                           onClick={() => deleteComment(comment.reply_id)}
@@ -301,8 +338,10 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
                       className={`likeHeart ${
                         likes[comment.reply_id] ? "active" : ""
                       }`}
-                      onClick={() => toggleLike(comment.reply_id)}
-                    />
+                      onClick={() =>
+                        handleLike(comment.reply_id, likes[comment.reply_id])
+                      }
+                    ></div>
                   </div>
                 </div>
               ))}
@@ -311,9 +350,7 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
         </div>
         <div className="myMent">
           <div className=" feedProfile">
-            <i
-              style={{backgroundImage: `url(${ user?.profileImage })`}}
-            />
+            <i style={{ backgroundImage: `url(${user?.profileImage})` }} />
           </div>
           <input
             placeholder="댓글을 입력하세요"
@@ -327,9 +364,7 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
           </div>
         </div>
       </div>
-      {
-        layer && <Layer handleController={ handleController } message={ message } />
-      }
+      {layer && <Layer handleController={handleController} message={message} />}
     </>
   );
 }
