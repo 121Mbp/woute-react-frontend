@@ -70,9 +70,9 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
   };
 
   const addComment = async () => {
-    console.log(user)
     try {
       const response = await wouteAPI(`/p/${feedId}/reply`, "POST", {
+        userId: user.id,
         feed_id: feedId,
         content,
         nickname: user.nickname,
@@ -224,18 +224,26 @@ function Reply({ feedData, id, wouteFeeds, setLoading, user }) {
                 edit ? (
                   <>
                   <input type='text' name='title' placeholder='타이틀을 입력하세요.' value={title} onChange={e=>setTitle(e.target.value)} ref={titleRef}/>
-                  <div>
-                      <button onClick={ handleCanceled }>취소</button>
-                      <button onClick={()=>handleLayer('save', '저장 하시겠습니까?') }>저장</button>
-                  </div>   
+                  {
+                    feedData.userId === user.id && (
+                      <div>
+                          <button onClick={ handleCanceled }>취소</button>
+                          <button onClick={()=>handleLayer('save', '저장 하시겠습니까?') }>저장</button>
+                      </div>   
+                    )
+                  }
                   </>
                 ) : (
                   <>
                     {title}
-                    <div>
-                      <button onClick={ handleEdit }>수정</button>
-                      <button onClick={()=>handleLayer('delete', '삭제 하시겠습니까?') }>삭제</button>
-                    </div>    
+                    {
+                      feedData.userId === user.id && (
+                        <div>
+                          <button onClick={ handleEdit }>수정</button>
+                          <button onClick={()=>handleLayer('delete', '삭제 하시겠습니까?') }>삭제</button>
+                        </div>    
+                      )
+                    }
                   </>
                 )
               }

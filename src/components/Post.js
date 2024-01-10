@@ -16,7 +16,7 @@ function Post({ data, wouteFeeds, user }) {
     const [likeId, setLikeId] = useState()
 
     useEffect(() => {
-        const likedUsers = data.likes?.filter(me => me.id === user.id)
+        const likedUsers = data.likes?.filter(me => me.userId === user.id)
         setLike(likedUsers.length > 0)
         if (likedUsers.length > 0) setLikeId(likedUsers[0].id) 
     }, [ data.likes, user ])
@@ -25,18 +25,19 @@ function Post({ data, wouteFeeds, user }) {
         if(like) {
             try {
                 await wouteAPI(`${ path }/like/${ likeId }`, 'DELETE', null)
-                setLike(!like)
+                setLike(prev => !prev)
             } catch(err) {
                 console.log('에러: ' + err)
             }
         } else {
             const params = {
-                nickname: data.nickname,
-                profileImage: data.profileImage,
+                userId: user.id,
+                nickname: user.nickname,
+                profileImage: user.profileImage,
             }
             try {
                 await wouteAPI(`${ path }/like`, 'PUT', params)
-                setLike(!like)
+                setLike(prev => !prev)
             } catch(err) {
                 console.log('에러: ' + err)
             }
@@ -47,7 +48,7 @@ function Post({ data, wouteFeeds, user }) {
     return (
         <div className='post'>
             <div className='upper'>
-                <Link to='/' className='user'>
+                <Link to={`/users/${data.userId}`} className='user'>
                     {
                         data?.profileImage == null ? (
                             <i></i>
@@ -69,12 +70,12 @@ function Post({ data, wouteFeeds, user }) {
                         >   
                             {
                                 data.attaches?.map(item => (
-                                    <SwiperSlide key={ item.uuid }><img src={ `http://localhost:8081/file/${item.uuid}` } alt='' /></SwiperSlide>
+                                    <SwiperSlide key={ item.uuid }><img src={ `${process.env.REACT_APP_IMAGE_PATH}${item.uuid}` } alt='' /></SwiperSlide>
                                 ))
                             }
                         </Swiper>
                     ) : (
-                        <img src={ `http://localhost:8081/file/${data?.attaches[0].uuid}` } alt='' />
+                        <img src={ `${process.env.REACT_APP_IMAGE_PATH}${data?.attaches[0].uuid}` } alt='' />
                     )
                 }
             </div>

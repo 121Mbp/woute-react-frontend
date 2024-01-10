@@ -148,7 +148,7 @@ function CourseView({ wouteFeeds, setLoading, user }) {
                             >
                                 {
                                     feed?.attaches?.map(item => (
-                                        <SwiperSlide key={ item.uuid }><img src={ `http://localhost:8081/file/${item.uuid}` } alt='' /></SwiperSlide>
+                                        <SwiperSlide key={ item.uuid }><img src={ `${process.env.REACT_APP_IMAGE_PATH}${item.uuid}` } alt='' /></SwiperSlide>
                                     ))
                                 }
                             </Swiper>
