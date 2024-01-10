@@ -17,6 +17,7 @@ function Modifyprofile({ user }) {
   const [userNo, setUserNo] = useState("");
 
   useEffect(() => {
+    console.log("이메일 : " + user.email);
     // const fetchImage = async () => {
     //   try {
     //     const response = await axios.get(`/user/file/${UUID}`, {
@@ -40,9 +41,7 @@ function Modifyprofile({ user }) {
     //   fetchImage();
     // }
     console.log("user" + user.profileImage);
-    const imageUrl =
-      "https://woute-bucket.s3.ap-northeast-2.amazonaws.com/" +
-      user.profileImage;
+    const imageUrl = user.profileImage;
     console.log("유저 get :" + imageUrl);
     setUserNo(user.id);
     setSelectedImage(imageUrl);
@@ -98,7 +97,7 @@ function Modifyprofile({ user }) {
     user.nickname = nickname;
     console.log(user.nickname);
     try {
-      const response = await axios.put(`/modifyprofile/nickname/${user.id}`, {
+      const response = await axios.put(`/modifyprofile/nickname/${userNo}`, {
         nickname: user.nickname,
       });
       console.log(response.data);
@@ -130,7 +129,7 @@ function Modifyprofile({ user }) {
     console.log(user.introduction);
     try {
       const response = await axios.put(
-        `/modifyprofile/introduction/${user.id}`,
+        `/modifyprofile/introduction/${userNo}`,
         {
           introduction: user.introduction,
         }
@@ -222,7 +221,7 @@ function Modifyprofile({ user }) {
         <div className="modify-profile">
           <div className="modify-form">
             <div className="button-position">
-              <Link to={`/users/${user.id}`}>
+              <Link to={`/users/${userNo}`}>
                 <div></div>
                 <span>프로필</span>
               </Link>
