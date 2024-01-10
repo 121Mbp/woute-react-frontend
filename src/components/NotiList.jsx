@@ -35,7 +35,7 @@ export default function NotiList({data, user, active, setRedDot}) {
                             <li key={item.id}>
                                 <Link to={item.senderUrl} state={{ backgroundLocation: location, type: item.type }} onClick={ handleNavi }> 
                                 <div className='user'>
-                                    <i style={{backgroundImage: `url(${item.profileImg})`}}></i>
+                                    <i style={{backgroundImage: `url(${process.env.REACT_APP_IMAGE_PATH}${item.profileImg})`}}></i>
                                 </div>
                                 <div className='activity'>
                                     <strong>{item.nickname}</strong>
@@ -48,7 +48,7 @@ export default function NotiList({data, user, active, setRedDot}) {
                             <li key={item.id}>
                                 <div className='user'>
                                     <Link to={item.senderUrl} onClick={ handleNavi }>
-                                        <i style={{backgroundImage: `url(${item.profileImg})`}}></i>
+                                        <i style={{backgroundImage: `url(${process.env.REACT_APP_IMAGE_PATH}${item.profileImg})`}}></i>
                                     </Link>
                                 </div>
                                 <div className='activity'>

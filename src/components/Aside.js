@@ -24,7 +24,7 @@ function Aside({ data }) {
                                         item?.profileImage == null ? (
                                             <i></i>
                                         ) : (
-                                            <i style={{backgroundImage: `url(${ item.profileImage })`}}></i>
+                                            <i style={{backgroundImage: `url(${ process.env.REACT_APP_IMAGE_PATH }${ item.profileImage })`}}></i>
                                         )
                                     }
                                         { item.nickname }

@@ -156,7 +156,7 @@ function CourseView({ wouteFeeds, setLoading, user }) {
                     </div>
                 </div>
                 <div className='inform'>
-                    <Reply feedData={ feed } id={ feedId } wouteFeeds={ wouteFeeds } setLoading={ setLoading } user={ user } />
+                    <Reply feedData={ feed } wouteFeeds={ wouteFeeds } setLoading={ setLoading } user={ user } />
                 </div>
             </div>
         </div>

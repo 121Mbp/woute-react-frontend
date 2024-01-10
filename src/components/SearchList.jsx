@@ -16,7 +16,7 @@ export default function SearchList({searchList, showList}) {
                             <li key={item.id}>
                                 <div className='user'>
                                     {/* <i style={{backgroundImage: `url(${item.profileImg})`}}></i> */}
-                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_DUd0CnKIWb4BZjZfw6vcfflkZZfuWgnvnw&usqp=CAU" alt="" />
+                                    <img src={`${process.env.REACT_APP_IMAGE_PATH}${item.profileImg}`} alt="" />
                                 </div>
                                 <div className='activity'>
                                     <strong>{item.nickName}</strong>

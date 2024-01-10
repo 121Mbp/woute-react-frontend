@@ -43,7 +43,7 @@ function ModalFeed({ wouteFeeds, setLoading, user }) {
           ))}
         </Swiper>
       </div>
-      <Reply feedData={feedData} id={feedId} wouteFeeds={ wouteFeeds } setLoading={ setLoading } user={ user } />
+      <Reply feedData={feedData} wouteFeeds={ wouteFeeds } setLoading={ setLoading } user={ user } />
     </div>
   );
 }
