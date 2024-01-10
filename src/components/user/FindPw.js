@@ -1,13 +1,16 @@
 import { useState } from "react";
-import "../../assets/styles/_changepw.scss";
+import "../../assets/styles/_findpw.scss";
 import axios from "axios";
 
-function ChangePw({ onCloseModal, user }) {
+function FindPw({ onCloseModal, user }) {
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("이메일 인증을 해주세요.");
+  const [currentEmail, setCurrentEmail] = useState("");
+  const [emailCode, setEmailCode] = useState("");
   const [Lock, setLock] = useState(false);
+  const [code, setCode] = useState("");
+
   const handlePasswordChange = (e, setPassword1) => {
     const newPassword = e.target.value;
     setPassword1(newPassword);
@@ -23,6 +26,9 @@ function ChangePw({ onCloseModal, user }) {
       setErrorMessage("");
     }
   };
+  const handleCodeChange = (e) => {
+    setEmailCode(e.target.value);
+  };
 
   const handlePassword2Change = (e) => {
     const newPassword = e.target.value;
@@ -34,14 +40,22 @@ function ChangePw({ onCloseModal, user }) {
       setErrorMessage("");
     }
   };
-  const checkPass = async (e) => {
+  const checkCode = (e) => {
+    if (code === emailCode) {
+      console.log("인증이 완료되었습니다.");
+      setLock(true);
+      setErrorMessage("");
+    } else {
+      console.log("인증번호가 다릅니다.");
+    }
+  };
+  const checkEmail = async (e) => {
     e.preventDefault();
-    console.log("확인 보내는 pw:" + currentPassword);
-    console.log("id" + user.id);
+    console.log("보내는 이메일:" + currentEmail);
     try {
       const response = await axios.post(
-        `/modifyprofile/checkPw/${user.id}`,
-        { password: currentPassword },
+        `/login/findEmail`,
+        { email: currentEmail },
         {
           headers: {
             "Content-Type": "application/json",
@@ -50,12 +64,11 @@ function ChangePw({ onCloseModal, user }) {
       );
 
       console.log(response.data);
-      if (response.data === "Y") {
-        alert("비밀번호가 확인되었습니다.");
-        setLock(true);
+      if (response.data !== "") {
+        setCode(response.data);
+        alert("인증번호가 발급되었습니다.");
       } else {
-        alert("비밀번호가 틀립니다.");
-        setLock(false);
+        alert("가입되어 있는 이메일이 아닙니다.");
       }
     } catch (error) {
       console.error("Error during password check:", error);
@@ -67,8 +80,9 @@ function ChangePw({ onCloseModal, user }) {
     if ((errorMessage = "")) {
       try {
         const response = await axios.put(
-          `/modifyprofile/changePw/${user.id}`,
+          `/login/changePw`,
           { password: password1 },
+          { email: currentEmail },
           {
             headers: {
               "Content-Type": "application/json",
@@ -76,7 +90,7 @@ function ChangePw({ onCloseModal, user }) {
           }
         );
         console.log(response.data);
-        if (response.data === "Y") {
+        if (response.data !== "") {
           alert("비밀번호가 변경되었습니다.");
         } else {
           alert("비밀번호 변경오류");
@@ -97,8 +111,8 @@ function ChangePw({ onCloseModal, user }) {
         <div className="changepw-header">
           <span className="changepw-icon"></span>
           <div>
-            <h2>비밀번호변경</h2>
-            <h3>안전한 비밀번호로 내 정보를 보호하세요.</h3>
+            <h2>비밀번호 찾기</h2>
+            <h3>이메일 인증 후 새비밀번호로 변경하세요.</h3>
           </div>
         </div>
         <div
@@ -109,14 +123,32 @@ function ChangePw({ onCloseModal, user }) {
           }}
         >
           <input
-            className="current-pw"
-            type="password"
-            placeholder="현재 비밀번호"
-            value={currentPassword}
-            onChange={(e) => handlePasswordChange(e, setCurrentPassword)}
+            className="current-email"
+            type="text"
+            placeholder="본인의 이메일을 입력하세요."
+            value={currentEmail}
+            onChange={(e) => handlePasswordChange(e, setCurrentEmail)}
           />
-          <button className="passwordCheck" onClick={checkPass}>
-            확인
+          <button className="passwordCheck" onClick={checkEmail}>
+            인증하기
+          </button>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <input
+            className="email-code-input"
+            type="text"
+            placeholder="인증번호를 입력하세요."
+            value={emailCode}
+            onChange={(e) => handleCodeChange(e, setEmailCode)}
+          />
+          <button className="code-check" onClick={checkCode}>
+            확인하기
           </button>
         </div>
         <input
@@ -158,4 +190,4 @@ function ChangePw({ onCloseModal, user }) {
     </>
   );
 }
-export default ChangePw;
+export default FindPw;

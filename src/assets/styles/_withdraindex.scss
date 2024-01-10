@@ -11,6 +11,18 @@
     @include icon(withdrawal, #464646, 40px, 47px);
     margin-right: 15px;
   }
+  .passwordCheck {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #fff;
+    background: #898989;
+    padding: 11px 30px;
+    border-radius: 50px;
+    transition: 0.2s ease-in-out;
+  }
+  .passwordCheck:hover {
+    background: #464646;
+  }
   h2 {
     font-size: 18pt;
     font-weight: bold;
@@ -30,7 +42,7 @@
   }
   .change-pw {
     margin-top: 15px;
-    width: 100%;
+    width: 83%;
     border: 1px solid #646464;
     border-radius: 40px;
     padding: 10px 15px;
@@ -50,7 +62,7 @@
     justify-content: center;
     position: relative;
     z-index: 1;
-    button {
+    .button {
       font-weight: bold;
       color: #fff;
       background: #898989;
@@ -58,7 +70,15 @@
       border-radius: 50px;
       transition: 0.2s ease-in-out;
     }
-    button:hover {
+    .button2 {
+      font-weight: bold;
+      color: #fff;
+      background: #898989;
+      padding: 15px 40px;
+      border-radius: 50px;
+      transition: 0.2s ease-in-out;
+    }
+    .button:hover {
       background: #464646;
     }
   }
