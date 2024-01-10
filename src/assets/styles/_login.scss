@@ -132,7 +132,7 @@
 }
 
 .btn-position {
-  padding-top: 1.5rem;
+  padding-top: 4rem;
   display: flex;
   justify-content: center;
   .log-btn {
@@ -158,16 +158,29 @@
 }
 
 .log-find {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
   display: flex;
   justify-content: center;
-  li:first-child {
-    border-right: 1px solid #222;
+  .find-btn {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: #464646;
+    width: 287.96px;
+    height: 48.37px;
+    border-radius: 100px;
+    color: #fff;
+    transition: 0.2s ease-in-out;
   }
-  li {
+  .find-btn:hover {
+    background-color: #000;
+  }
+  p {
+    color: #000;
     padding-left: 40px;
     padding-right: 40px;
+    transition: 0.3s ease-in-out;
+  }
+  p:hover {
+    opacity: 0.5;
   }
 }
 .log-sns {
