@@ -58,43 +58,41 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const ACCESS_TOKEN = localStorage.getItem("accessToken");
+  const fetchUserData = async () => {
+    const ACCESS_TOKEN = localStorage.getItem("accessToken");
 
-      if (ACCESS_TOKEN) {
-        const userId = decodeTokenAndExtractId(ACCESS_TOKEN);
-        console.log("디코드된 토큰의 id:", userId);
+    if (ACCESS_TOKEN) {
+      const userId = decodeTokenAndExtractId(ACCESS_TOKEN);
+      console.log("디코드된 토큰의 id:", userId);
 
-        if (userId) {
-          try {
-            const response = await axios.post("/userinfosave", null, {
-              headers: {
-                "Content-Type": "application/json",
-              },
-              params: {
-                id: userId,
-              },
-            });
-            console.log("데이터 :" + response.data);
-            response.data.profileImage =
-              "https://woute-bucket.s3.ap-northeast-2.amazonaws.com/" +
-              response.data.profileImage;
-            setUser(response.data);
-            console.log("setUser : " + user);
-          } catch (error) {
-            console.error("서버에 데이터 저장 중 오류 발생:", error);
-          }
-        } else {
-          console.log("토큰 디코드 실패 또는 id 필드가 없음");
+      if (userId) {
+        try {
+          const response = await axios.post("/userinfosave", null, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            params: {
+              id: userId,
+            },
+          });
+          console.log("데이터 :" + response.data);
+          response.data.profileImage = `${process.env.REACT_APP_IMAGE_PATH}${response.data.profileImage}`;
+          setUser(response.data);
+          console.log("setUser : " + user);
+        } catch (error) {
+          console.error("서버에 데이터 저장 중 오류 발생:", error);
         }
       } else {
-        console.warn("로컬 스토리지에 accessToken이 없습니다.");
+        console.log("토큰 디코드 실패 또는 id 필드가 없음");
       }
-      return;
-    };
+    } else {
+      console.warn("로컬 스토리지에 accessToken이 없습니다.");
+    }
+    return;
+  };
 
-    fetchData();
+  useEffect(() => {
+    fetchUserData();
   }, [ACCESS_TOKEN]);
 
   const wouteFeeds = async () => {
@@ -184,7 +182,13 @@ function App() {
               />
               <Route
                 path="/modifyProfile"
-                element={<Modifyprofile user={user} />}
+                element={
+                  <Modifyprofile 
+                    user={user} 
+                    fetchUserData={fetchUserData}
+                    wouteFeeds={wouteFeeds}
+                    />
+                  }
               />
               <Route
                 path={"/search/tags/:keyword"}
