@@ -7,11 +7,7 @@ function FeedLike({ likes }) {
     const back = () => {
         navigate(-1)
     }
-
-    useEffect(() => {
-        console.log(likes)
-    }, [])
-
+    
     return (
         <div className='minModal'>
             <div className='inner'>
@@ -26,13 +22,13 @@ function FeedLike({ likes }) {
                                 likes?.map(item => (
                                     <div className='fol-tab' key={ item.id }>
                                         <div className='profileImg'>
-                                            <Link to='/'>
+                                            <Link to={`/users/${item.userId}`}>
                                                 <img src={ item.profileImage } alt='' />
                                             </Link>
                                         </div>
                                         <div className='tab-info'>
                                             <div className='tab-name'>
-                                                <Link to='./'>
+                                                <Link to={`/users/${item.userId}`}>
                                                     <h2>{ item.nickname }</h2>
                                                 </Link>
                                             </div>

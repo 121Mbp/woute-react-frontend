@@ -38,7 +38,7 @@ function ModalFeed({ wouteFeeds, setLoading, user }) {
         >
           {feedData?.attaches?.map((item) => (
             <SwiperSlide key={item.uuid}>
-              <img src={ `http://localhost:8081/file/${item.uuid}` } alt='' />
+              <img src={ `${process.env.REACT_APP_IMAGE_PATH}${item.uuid}` } alt='' />
             </SwiperSlide>
           ))}
         </Swiper>

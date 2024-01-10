@@ -11,6 +11,7 @@ import three from './../../assets/images/three.png'
 import four from './../../assets/images/four.png'
 import five from './../../assets/images/five.png'
 import { toast } from 'react-toastify'
+import imageCompression from 'browser-image-compression'
 
 const { kakao } = window
 function CourseCreate({ type, wouteFeeds, setLoading, user }) {
@@ -303,26 +304,35 @@ function CourseCreate({ type, wouteFeeds, setLoading, user }) {
 
     const handleFile = async e => {
         const imageFiles = e.target.files
-        
-        if(imageFiles.length > 0) {   
-            setFiles([ ...files, ...imageFiles ])
-        } else {
-            setFiles([])
+        const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 600,
         }
-
-        // const options = {
-        //     maxSizeMB: 0.2,
-        //     maxWidthOrHeight: 800,
-        //     useWebWorker: true,
-        // }
-    
-        // try {
-        //     console.log(imageFiles)
-        //     const compressdFile = await imageCompression(imageFiles, options)
-        //     console.log(compressdFile)
-        // } catch (error) {
-        //     console.log(error)
-        // }
+        try {
+            const compressedFiles = []
+            for (const file of imageFiles) {
+                const compressedBlob = await imageCompression(file, options)
+                const compressedFile = new File([compressedBlob], file.name, { type: file.type })
+                compressedFiles.push(compressedFile)
+                console.log(compressedFile)
+            }
+            if(imageFiles.length > 0) {   
+                setFiles([ ...files, ...compressedFiles ])
+                const resolveAfter3Sec = new Promise(resolve => setTimeout(resolve, 1000));
+                toast.promise(
+                    resolveAfter3Sec,
+                    {
+                    pending: '이미지 등록 중입니다.',
+                    success: '이미지 등록이 완료되었습니다.',
+                    error: '이미지 등록에 실패하였습니다.'
+                    }
+                )
+            } else {
+                setFiles([])
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     useEffect(()=>{
@@ -347,7 +357,7 @@ function CourseCreate({ type, wouteFeeds, setLoading, user }) {
         }
 
         if (files.length > -1) {
-            generatePreviews()
+            setTimeout(() => {generatePreviews()}, 600)
         }
     }, [ files ])
 
@@ -396,7 +406,7 @@ function CourseCreate({ type, wouteFeeds, setLoading, user }) {
         for (let file of files) {
             formData.append('attaches', file)
         }
-
+        
         formData.append('feed', new Blob([JSON.stringify(feed)], {type: 'application/json'}))
         formData.append('tags', new Blob([JSON.stringify(matches)], {type: 'application/json'}))
 
