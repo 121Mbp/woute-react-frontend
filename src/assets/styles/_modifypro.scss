@@ -26,14 +26,13 @@ $feed-sidebar-width: 320px;
   flex-direction: column;
   max-width: 630px;
   width: 100%;
-  margin: 20px 0;
+  margin: 68px 0;
   .pw-change {
     color: #fff;
     margin-top: 10px;
     padding-top: 10px;
     padding-bottom: 10px;
-    padding-left: 25px;
-    padding-right: 25px;
+    width: 151px;
     background-color: #898989;
     border-radius: 3px;
     transition: 0.2s ease-in-out;
@@ -46,13 +45,25 @@ $feed-sidebar-width: 320px;
     margin-top: 10px;
     padding-top: 10px;
     padding-bottom: 10px;
-    padding-left: 40px;
-    padding-right: 40px;
+    width: 151px;
     background-color: #898989;
     border-radius: 3px;
     transition: 0.2s ease-in-out;
   }
   .withdrawal:hover {
+    background-color: #464646;
+  }
+  .logout {
+    color: #fff;
+    margin-top: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 151px;
+    background-color: #898989;
+    border-radius: 3px;
+    transition: 0.2s ease-in-out;
+  }
+  .logout:hover {
     background-color: #464646;
   }
   .back-profile {
@@ -74,17 +85,19 @@ $feed-sidebar-width: 320px;
     }
     .button-position {
       width: 70%;
-      height: 20px;
+      height: 30px;
       display: flex;
       align-items: center;
       justify-content: start;
       margin-bottom: 30px;
-      transition: 0.2s ease-in-out;
+      transition: 0.3s ease-in-out;
       div {
-        @include icon(leftarrow, #646464, 8px, 13px);
+        position: relative;
+        @include icon(arrow-right, #646464, 23.99px, 23.99px);
+        transform: scaleX(-1) translateY(20%);
       }
       span {
-        margin-left: 8px;
+        margin-left: 5px;
         font-weight: bolder;
         font-size: 13pt;
       }

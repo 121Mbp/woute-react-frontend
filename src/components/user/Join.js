@@ -70,8 +70,10 @@ function Join() {
       if (response.data != "") {
         setEmailCode(response.data);
         setSendVerify(true);
+        alert("인증메일이 발송 되었습니다.");
         console.log("서버 응답: 성공");
       } else {
+        alert("이미 존재하는 아이디입니다.");
         console.log("서버 응답 : 실패");
       }
     } catch (error) {
@@ -364,11 +366,6 @@ function Join() {
           </div>
         </form>
       </div>
-      <ul className="signup-sns">
-        <li></li>
-        <li></li>
-        <li></li>
-      </ul>
     </>
   );
 }
