@@ -30,7 +30,7 @@ function Aside({ data }) {
                                         { item.nickname }
                                     </div>
                                     <div className='middle'>
-                                        <img src={ `http://localhost:8081/file/${item?.attaches[0].uuid}` } alt='' />
+                                        <img src={ `${process.env.REACT_APP_IMAGE_PATH}${item?.attaches[0].uuid}` } alt='' />
                                         <div className='description'>
                                             <p>{ item.title }</p>
                                             {
