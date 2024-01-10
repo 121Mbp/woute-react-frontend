@@ -1,10 +1,16 @@
 import { PostLogin } from "../../api";
 import { useState } from "react";
-
+import FindPwModal from "./FindPwModal";
 function Loginform({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [isOpen, setIsOpen] = useState(false);
+  const openModalHandler = () => {
+    setIsOpen(!isOpen);
+  };
+  const closeModalHandler = () => {
+    setIsOpen(false);
+  };
   const emailHandle = (e) => {
     setEmail(e.currentTarget.value);
   };
@@ -59,15 +65,12 @@ function Loginform({ onLogin }) {
           </div>
         </form>
       </div>
-      <ul className="log-find">
-        <li>아이디 찾기</li>
-        <li>비밀번호 찾기</li>
-      </ul>
-      <ul className="log-sns">
-        <li></li>
-        <li></li>
-        <li></li>
-      </ul>
+      <div className="log-find">
+        <button className="find-btn" onClick={openModalHandler}>
+          비밀번호 찾기
+        </button>
+        {isOpen ? <FindPwModal closeModal={closeModalHandler} /> : null}
+      </div>
     </>
   );
 }

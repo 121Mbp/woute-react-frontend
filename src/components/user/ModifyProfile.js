@@ -1,81 +1,238 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../../assets/styles/_modifypro.scss";
 import UserModal from "./UserModal";
 import Withdrawal from "./Withdrawal";
-function Modifyprofile() {
+import axios from "axios";
+import { Link } from "react-router-dom";
+
+function Modifyprofile({ user }) {
   const [isEditing, setEditing] = useState(false);
-  const [nickname, setNickname] = useState("mark_ju");
+  const [nickname, setNickname] = useState("");
   const [isInEditing, setInEditing] = useState(false);
-  const [intro, setIntro] = useState("서울 wouter 마크주커버그입니다.");
-  // 닉네임수정
+  const [intro, setIntro] = useState("");
+  const [file, setFile] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [UUID, setUUID] = useState(null);
+  const [viewImage, setViewImage] = useState(true);
+  const [userNo, setUserNo] = useState("");
+
+  useEffect(() => {
+    console.log("이메일 : " + user.email);
+    // const fetchImage = async () => {
+    //   try {
+    //     const response = await axios.get(`/user/file/${UUID}`, {
+    //       responseType: "arraybuffer",
+    //     });
+
+    //     if (response.data) {
+    //       const blob = new Blob([response.data], {
+    //         type: response.headers["content-type"],
+    //       });
+
+    //       // const imageUrl = URL.createObjectURL(blob);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching image:", error);
+    //     setViewImage(false);
+    //   }
+    // };
+
+    // if (UUID) {
+    //   fetchImage();
+    // }
+    console.log("user" + user.profileImage);
+    const imageUrl = user.profileImage;
+    console.log("유저 get :" + imageUrl);
+    setUserNo(user.id);
+    setSelectedImage(imageUrl);
+    setViewImage(true);
+  }, [user]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(
+          `/users/uuid/${userNo}`,
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const uuidObject = response.data;
+
+        // 객체의 첫 번째 속성 값만 가져오기
+        const firstPropertyValue = Object.values(uuidObject)[0];
+
+        // 가져온 값을 문자열로 변환
+        const uuidString = String(firstPropertyValue);
+        console.log("리스폰" + response.data);
+        console.log("첫번째값", uuidString);
+        setUUID(uuidString);
+      } catch (error) {
+        console.error("Error fetching UUID:", error);
+        console.error(
+          "Error details:",
+          error.response || error.message || error
+        );
+      }
+    };
+
+    fetchData();
+  }, [UUID]);
+
+  useEffect(() => {
+    if (selectedImage !== null) {
+      setViewImage(true);
+    }
+  }, [UUID]);
+
   const handleNEditClick = () => {
     setEditing(true);
   };
-  const handleNSaveClick = () => {
-    alert(`닉네임이 ${nickname}으로 수정되었습니다.`);
+
+  const handleNSaveClick = async () => {
+    alert(`닉네임이 수정되었습니다.`);
+    user.nickname = nickname;
+    console.log(user.nickname);
+    try {
+      const response = await axios.put(`/modifyprofile/nickname/${userNo}`, {
+        nickname: user.nickname,
+      });
+      console.log(response.data);
+      setEditing(false);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
     setEditing(false);
   };
+
+  const logoutHandler = (e) => {
+    alert("로그아웃되었습니다.");
+    localStorage.clear();
+    window.location.reload();
+  };
+
   const handleNInputChange = (e) => {
     setNickname(e.target.value);
   };
-  //소개내용
+
   const handleInEditClick = () => {
     setInEditing(true);
   };
-  const handleInSaveClick = () => {
+
+  const handleInSaveClick = async () => {
     alert(`자기소개가 수정되었습니다.`);
+    user.introduction = intro;
+    console.log(user.introduction);
+    try {
+      const response = await axios.put(
+        `/modifyprofile/introduction/${userNo}`,
+        {
+          introduction: user.introduction,
+        }
+      );
+      console.log(response.data);
+      setInEditing(false);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
     setInEditing(false);
   };
+
   const handleInInputChange = (e) => {
     setIntro(e.target.value);
   };
+
   const [isOpen, setIsOpen] = useState(false);
+
   const openModalHandler = () => {
     setIsOpen(!isOpen);
   };
+
   const closeModalHandler = () => {
     setIsOpen(false);
   };
+
   const [isOpen2, setIsOpen2] = useState(false);
+
   const openModalHandler2 = () => {
-    setIsOpen2(!isOpen);
+    setIsOpen2(!isOpen2);
   };
+
   const closeModalHandler2 = () => {
     setIsOpen2(false);
   };
-  //프로필 이미지 교체
-  //파일 저장 로직 구현 필요
-  const [selectedImage, setSelectedImage] = useState(null);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = async (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
 
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
+    if (selectedFile) {
+      setFile(selectedFile);
+      const imageUrl = URL.createObjectURL(selectedFile);
       setSelectedImage(imageUrl);
+
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      uploadProfileImage(formData);
     }
   };
+
   const inputRef = useRef(null);
 
   const handlePicButtonClick = () => {
     inputRef.current.click();
+    console.log(user.id);
   };
+
+  const uploadProfileImage = async (formData) => {
+    console.log(userNo);
+    try {
+      console.log("폼데이터 : " + formData);
+      const response = await axios.post(
+        `/uploadprofileimage/${userNo}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("온 데이터", response.data);
+
+      if (selectedImage) {
+        URL.revokeObjectURL(selectedImage);
+      }
+
+      // 이미지가 업로드 성공 후 호출
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <div className="modify-main">
         <div className="modify-profile">
           <div className="modify-form">
             <div className="button-position">
-              <div></div>
-              <span>프로필</span>
+              <Link to={`/users/${userNo}`}>
+                <div></div>
+                <span>프로필</span>
+              </Link>
             </div>
             <div className="edit-picture">
               <div
                 className="picture"
                 style={{
-                  backgroundImage: selectedImage
-                    ? `url(${selectedImage}`
-                    : "none",
+                  backgroundImage: viewImage
+                    ? `url(${selectedImage})`
+                    : `url(null)`,
                 }}
               ></div>
               <input
@@ -96,7 +253,7 @@ function Modifyprofile() {
               <span className="email-icon"></span>e-mail
             </li>
             <div className="modify-input-position">
-              <span className="email-input">mark_ju123@wouter.com</span>
+              <span className="email-input">{user.email}</span>
             </div>
 
             <li>
@@ -108,6 +265,7 @@ function Modifyprofile() {
                   <input
                     className="nick-input-edit"
                     value={nickname}
+                    placeholder={user.nickname}
                     onChange={handleNInputChange}
                   />
                   <button className="save-button" onClick={handleNSaveClick}>
@@ -116,7 +274,7 @@ function Modifyprofile() {
                 </>
               ) : (
                 <>
-                  <span className="nick-input">{nickname}</span>
+                  <span className="nick-input">{user.nickname}</span>
                   <button className="edit-button" onClick={handleNEditClick}>
                     수정
                   </button>
@@ -133,6 +291,7 @@ function Modifyprofile() {
                   <input
                     className="intro-input-edit"
                     value={intro}
+                    placeholder={user.introduction}
                     onChange={handleInInputChange}
                   />
                   <button className="save-button" onClick={handleInSaveClick}>
@@ -141,7 +300,7 @@ function Modifyprofile() {
                 </>
               ) : (
                 <>
-                  <span className="intro-input">{intro}</span>
+                  <span className="intro-input">{user.introduction}</span>
                   <button className="edit-button" onClick={handleInEditClick}>
                     수정
                   </button>
@@ -152,11 +311,18 @@ function Modifyprofile() {
           <button className="pw-change" onClick={openModalHandler}>
             비밀번호 변경
           </button>
-          {isOpen ? <UserModal closeModal={closeModalHandler} /> : null}
+          {isOpen ? (
+            <UserModal closeModal={closeModalHandler} user={user} />
+          ) : null}
           <button className="withdrawal" onClick={openModalHandler2}>
             회원탈퇴
           </button>
-          {isOpen2 ? <Withdrawal closeModal={closeModalHandler2} /> : null}
+          {isOpen2 ? (
+            <Withdrawal closeModal={closeModalHandler2} user={user} />
+          ) : null}
+          <button className="logout" onClick={logoutHandler}>
+            로그아웃
+          </button>
         </div>
       </div>
     </>
