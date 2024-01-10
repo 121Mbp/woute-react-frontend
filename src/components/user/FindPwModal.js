@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import "../../assets/styles/_usermodal.scss";
-import ChangePw from "./../user/ChangePw";
-function UserModal({ closeModal, user }) {
+import "../../assets/styles/_findpwmodal.scss";
+import FindPw from "./FindPw";
+function FindPwModal({ closeModal }) {
   const handleClose = () => {
     closeModal(); // 모달 닫기 함수 호출
   };
@@ -18,10 +18,10 @@ function UserModal({ closeModal, user }) {
         <button className="close" onClick={handleClose}>
           닫기
         </button>
-        <ChangePw onCloseModal={closeModal} user={user} />
+        <FindPw onCloseModal={closeModal} />
       </div>
     </div>
   );
 }
 
-export default UserModal;
+export default FindPwModal;

@@ -15,8 +15,8 @@ import Logfooter from "./components/user/LogFooter";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import UserFeed from './components/MyFeed/UserFeed/UserFeed'
-import SearchResult from './components/searchResult/SearchResult'
+import UserFeed from "./components/MyFeed/UserFeed/UserFeed";
+import SearchResult from "./components/searchResult/SearchResult";
 import ChatModal from "./components/chatting/ChatModal";
 import ChatRoom from "./components/chatting/ChatRoom";
 
@@ -32,7 +32,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [scrollActive, setScrollActive] = useState(false);
   const [token, setToken] = useState();
-  const [chatNoti, setChatNoti] = useState(false)
+  const [chatNoti, setChatNoti] = useState(false);
 
   const navigate = useNavigate();
   const handleLogin = () => {
@@ -61,7 +61,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       const ACCESS_TOKEN = localStorage.getItem("accessToken");
-      
+
       if (ACCESS_TOKEN) {
         const userId = decodeTokenAndExtractId(ACCESS_TOKEN);
         console.log("디코드된 토큰의 id:", userId);
@@ -77,8 +77,11 @@ function App() {
               },
             });
             console.log("데이터 :" + response.data);
-
+            response.data.profileImage =
+              "https://woute-bucket.s3.ap-northeast-2.amazonaws.com/" +
+              response.data.profileImage;
             setUser(response.data);
+            console.log("setUser : " + user);
           } catch (error) {
             console.error("서버에 데이터 저장 중 오류 발생:", error);
           }
@@ -171,29 +174,55 @@ function App() {
                 }
               />
               <Route path="/p/courses" element={<CourseList />} />
-              <Route path={`/users/${user.id}/*`} element={<MyFeedMain user={user} />} />
-              <Route path={`/users/:toUserId/*`} element={<UserFeed user={user}/>} />
-              <Route path="/modifyProfile" element={<Modifyprofile />} />
-              <Route path={'/search/tags/:keyword'} element={<SearchResult />} />
-              <Route path={'/p/:id'} element={<Modal />} />
+              <Route
+                path={`/users/${user.id}/*`}
+                element={<MyFeedMain user={user} />}
+              />
+              <Route
+                path={`/users/:toUserId/*`}
+                element={<UserFeed user={user} />}
+              />
+              <Route
+                path="/modifyProfile"
+                element={<Modifyprofile user={user} />}
+              />
+              <Route
+                path={"/search/tags/:keyword"}
+                element={<SearchResult />}
+              />
+              <Route path={"/p/:id"} element={<Modal />} />
             </Routes>
             {state && (
               <Routes>
                 <Route
                   path="create"
                   element={
-                    <Modal wouteFeeds={wouteFeeds} setLoading={setLoading} user={user} />
+                    <Modal
+                      wouteFeeds={wouteFeeds}
+                      setLoading={setLoading}
+                      user={user}
+                    />
                   }
                 />
                 <Route
                   path="p/:id"
                   element={
-                    <Modal wouteFeeds={wouteFeeds} setLoading={setLoading} user={user} />
+                    <Modal
+                      wouteFeeds={wouteFeeds}
+                      setLoading={setLoading}
+                      user={user}
+                    />
                   }
                 />
                 {/* <Route path="chat/:id/m/:userid" element={<ChatModal user={user} />} /> */}
-                <Route path="chat/*" element={<ChatModal setChatNoti={setChatNoti} user={user}/>}>
-                  <Route path={`${user.id}/*`} element={ <ChatRoom user={user}/>}/>
+                <Route
+                  path="chat/*"
+                  element={<ChatModal setChatNoti={setChatNoti} user={user} />}
+                >
+                  <Route
+                    path={`${user.id}/*`}
+                    element={<ChatRoom user={user} />}
+                  />
                 </Route>
                 <Route path="notice" element={<></>} />
               </Routes>
