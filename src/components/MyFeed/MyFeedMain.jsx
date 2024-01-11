@@ -22,8 +22,7 @@ export default function MyFeedMain({user}) {
         const response = await wouteAPI(`/users/${user.id}`)
         // console.log(response.data);
         // console.log(response.data.feeds);
-        // setUserInfo(response.data)
-        
+        setUserInfo(response.data)
         setFeedList(response.data.feeds.reverse())
     }
     useEffect(() => {
@@ -68,7 +67,7 @@ export default function MyFeedMain({user}) {
                         <div className='profile-img'>
                             <div className='a mx-auto'>
                                 {/* 프로필 이미지 */}
-                                <img src={userInfo.profileImage} alt='' />
+                                <img src={user.profileImage} alt='' />
                             </div>
                         </div>
                         <div className='profile-main'>

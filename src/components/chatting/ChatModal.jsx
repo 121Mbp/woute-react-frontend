@@ -250,7 +250,7 @@ let message = {
                     <input type="text" className="userId" value={item.toUserId} hidden readOnly />
                     <input type="text" className="roomId" value={item.roomId} hidden readOnly />
                     <div className="profileImg">
-                      <img src={`${item.toUserImg}`}/>
+                      <img src={`${process.env.REACT_APP_IMAGE_PATH}${item.toUserImg}`}/>
                     </div>
                     <div className="profileInfo">
                       <div className="tab-nick">
