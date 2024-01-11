@@ -43,7 +43,7 @@ export default function ChatRoom({user}) {
               <div className="msg-wrap">
                 <div className="msg-box">
                   <div className="profileImg">
-                    <img src={item.profileImg} alt="" />
+                    <img src={`${process.env.REACT_APP_IMAGE_PATH}${item.profileImg}`} alt="" />
                   </div>
                   <div className="msg">
                     <div>{item.content}</div>

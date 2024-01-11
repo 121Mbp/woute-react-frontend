@@ -20,6 +20,7 @@ export default function UserFeed({user}) {
     const state = location.state && location.state?.backgroundLocation
 
     const userFeeds = async () => {
+        console.log('myid : ' + user.id);
         const response = await wouteAPI(`/users/${toUserId}`, 'POST', {myId : user.id})
         console.log(response.data);
         setUserInfo(response.data)
@@ -28,7 +29,7 @@ export default function UserFeed({user}) {
     useEffect(() => {
         userFeeds()
 
-    },[toUserId])
+    },[toUserId, user])
 
     
     const tabClick = (e) => {
