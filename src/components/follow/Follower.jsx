@@ -157,7 +157,7 @@ export default function Follower({user, pageUserId}) {
                                             to={`/users/${item.followerId}`}
                                             >
                                                 <img
-                                                src={item.followerImg}
+                                                src={`${process.env.REACT_APP_IMAGE_PATH}${item.followerImg}`}
                                                 alt="상대 프로필"
                                                 />
                                             </Link>
