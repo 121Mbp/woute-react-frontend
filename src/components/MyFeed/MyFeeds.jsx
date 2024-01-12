@@ -4,7 +4,6 @@ import { Link, useLocation } from "react-router-dom";
 
 export default function MyFeeds({feeds}) {
     const location = useLocation()
-    console.log(feeds);
     
     const devidePosts = (data) => {
         const arr = [...data];

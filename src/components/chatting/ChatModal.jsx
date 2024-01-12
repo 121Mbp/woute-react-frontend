@@ -19,7 +19,7 @@ export default function ChatModal({user, setChatNoti}) {
   const [myInfo, setMyInfo] = useState('')
   const [messageInput, setMessageInput] = useState([])
   const [currentUserId, setCurrentUserId] = useState('')
-  const [currentRoomId, setCurrentRoomId] = useState([])
+  const [currentRoomId, setCurrentRoomId] = useState('')
   const location = useLocation()
   
   const state = location.state && location.state?.backgroundLocation
@@ -29,19 +29,12 @@ export default function ChatModal({user, setChatNoti}) {
   const stompClient = useRef({});
   const url = 'http://localhost:8081/ws'
 
+
   let fromPageRoomId = null;
-  if(location.state.userId != null) {
-    fromPageRoomId =  user.id.toString() + location.state.userId.toString()
+  if (location.state.userId != undefined && user.id != null) {
+    // fromPageRoomId = user.id.toString() + location.state.userId.toString()
+    fromPageRoomId = location.state.roomId
   }
-  // console.log('from ro : ' + fromPageRoomId);
-  // console.log('userid : ' + location.state.userId);
-  // console.log('check : ' + checkId);
-  
-  // useEffect(() => {
-  //   if(location.state.userId && connected) {
-  //     stompClient.current.disconnect()
-  //   }
-  // },[])
   
   useEffect(() => {
     const socket = new SockJS(url)
@@ -50,27 +43,27 @@ export default function ChatModal({user, setChatNoti}) {
       stompClient.current.connect({}, () => {
         console.log('connect 성공');
         setConnected(true)
+          // 해당 채팅방 구독
+          stompClient.current.subscribe(
+            `/sub/chat/m/${fromPageRoomId != null && currentRoomId == '' ?
+            fromPageRoomId : currentRoomId}`,
+            (frame) => {
+              let msg = JSON.parse(frame.body)
+              console.log(msg);
+              setReceiveMessage(msg)},
+            {},
+          );
+        // }
 
-        // 해당 채팅방 구독
-        stompClient.current.subscribe(
-          `/sub/chat/m/${fromPageRoomId != null && currentRoomId == '' ?
-            fromPageRoomId : currentRoomId
-          }`,
-          (frame) => {
-            console.log(frame.body);
-            let msg = JSON.parse(frame.body)
-            console.log(msg);
-            setReceiveMessage(msg)},
-          {},
-        );
       })
       return () => {
         stompClient.current.disconnect()
         setConnected(false)
       }
-  },[receiveMessage, location.pathname])
+  },[location.pathname])
+  // receiveMessage
 
-
+  // 안읽은 채팅방 읽음처리
   const readNoti = async(id) => {
     try {
       await wouteAPI(`/chat/${user.id}/read`, 'POST', {roomId:id})
@@ -78,6 +71,12 @@ export default function ChatModal({user, setChatNoti}) {
       
     }
   }
+
+  useEffect(() => {
+    if(stompClient.current.connected) {
+      readNoti(fromPageRoomId || currentRoomId)
+    }
+  },[receiveMessage])
 
   // 채팅방 선택 
   const selectRoom = (e) => {
@@ -93,11 +92,10 @@ export default function ChatModal({user, setChatNoti}) {
   }
 
   
-    // 메시지 전송 데이터
 
   // 메시지 전송
   const sendMessage = () => {
-  // stompClient.current.publish({destination: `/pub/chat/${currentId}/m`, body: JSON.stringify({vData
+    // 유저페이지에서 메시지 보내기로 왔을때
   if(location.state.userId == checkId) {
     console.log('보낼때 id :' +location.state.userId);
     console.log('보낼때 roomId :' + fromPageRoomId);
@@ -116,6 +114,7 @@ export default function ChatModal({user, setChatNoti}) {
   setMessageInput('')
 };
 
+// 전송할 메시지
 let message = {
   myId: user.id,
   toUserId: currentUserId,
@@ -132,16 +131,13 @@ let message = {
   // 채팅방 리스트 조회
   const chatInfo = async () => {
     const response = await wouteAPI(`/chat/${user.id}`, 'GET');
-    console.log(response.data.myUser); 
-    console.log('myinfo : ' + response.data.myUser);
-    console.log(response.data.rooms); 
-    console.log('rooms : ' + response.data.rooms); 
+    // console.log(response.data.myUser); 
+    // console.log(response.data.rooms); 
     setMyInfo(response.data.myUser)
     setChatList(response.data.rooms)
   }
-  // const unReadCount = chatList.filter(room => !room.isRead)
+  // 안읽은 채팅방 개수
   const unReadCount =  chatList.reduce((count, room) => count + (room.isRead ? 0 : 1), 0);
-  console.log(unReadCount);
   if(unReadCount > 0) {
     setChatNoti(true)
   } else {
@@ -186,7 +182,7 @@ let message = {
                 </div>
                 <h2>{myInfo.nickname}</h2>
               </div>
-              <div className="chat-header">
+              {/* <div className="chat-header">
                 <div className="name">
                   <span>메시지</span>
                 </div>
@@ -198,7 +194,7 @@ let message = {
                     </div>
                 </div>
                 <button className="user-btn"></button>
-              </div>
+              </div> */}
                 <div className={`search-list-wrap ${!searchListVisible ? 'd-none': ''}`}>
                     <div className="search-list-box">
                         <div className="list-header-wrap">
@@ -279,10 +275,14 @@ let message = {
                 <div className="chat-room">
                   <div className="chat-receiver">
                     <div className="profileImg">
+                      {currentRoomId == '' ? (
+                      <img src={`${process.env.REACT_APP_IMAGE_PATH}${location.state.profileImg}`} />
+                      ) : (
                       <img
-                        src={location.state.profileImg ? location.state.profileImg : roomProfileImg}
+                        src={roomProfileImg}
                         alt="상대 프로필"
                       />
+                      )}
                     </div>
                     <div className="nick">
                       <h2>{location.state.nickName ? location.state.nickName : roomNick}</h2>
@@ -294,7 +294,7 @@ let message = {
                           {/* <Routes>
                             <Route path={`/chat/${user.id}/m/${currentUserId}`}  element={<ChatRoom user={user} data={receiveMessage}/>}/> 
                           </Routes> */}
-                          <Outlet context={{receiveMessage, fromPageRoomId}} />
+                          <Outlet context={{receiveMessage, fromPageRoomId, sendMessage}} />
                       </div>
                     </div>
                     <div className="chat-submit">
