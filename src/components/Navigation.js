@@ -15,7 +15,7 @@ function Navigation({ user, chatNoti }) {
 
     useEffect(() => {
         if(user.id !== undefined) {
-            const eventSource = new EventSource(`http://localhost:8081/sub/${user.id}`)
+            const eventSource = new EventSource(`${process.env.REACT_APP_BASE_URL}/sub/${user.id}`)
     
             eventSource.addEventListener('connect', e => {
                 console.log("data : " + e.data);
