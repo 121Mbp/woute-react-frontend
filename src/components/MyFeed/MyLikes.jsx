@@ -3,34 +3,12 @@ import { wouteAPI } from "../../api";
 import { Link, useLocation } from "react-router-dom";
 
 export default function MyLikes() {
-    const [likes, setLikes] = useState([
-        {
-            id:1,
-            likeImg :'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_DUd0CnKIWb4BZjZfw6vcfflkZZfuWgnvnw&usqp=CAU'
-        },
-        {
-            id:2,
-            likeImg :'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScwhlluLohGUusaZ0RoqQF1CMRxzerX0V3bZfWeFBlD1vWG_qe2zyH3B4u5tAf0KEAF0k&usqp=CAU'
-        },
-        {
-            id:3,
-            likeImg :'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2e83jzb8qUMzjKZHralrLTOYhoeOhPmtSFg&usqp=CAU'
-        },
-        {
-            id:4,
-            likeImg :'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcLINDNYhIBBa5PN91341XLTOcXlMRoFO6ZA&usqp=CAU'
-        },
-        {
-            id:5,
-            likeImg :'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcLINDNYhIBBa5PN91341XLTOcXlMRoFO6ZA&usqp=CAU'
-        },
-    ])
+    const [likes, setLikes] = useState([])
     
     const location = useLocation()
 
     const getLikes =  async () => {
         const response = await wouteAPI(`${location.pathname}`, 'GET')
-        console.log(response);
         setLikes(response.data.reverse())
     }
 

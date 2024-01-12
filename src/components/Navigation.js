@@ -19,16 +19,12 @@ function Navigation({ user, chatNoti }) {
     
             eventSource.addEventListener('connect', e => {
                 console.log("data : " + e.data);
-                // console.log(e.data);
             })
             eventSource.addEventListener('sse', e => {
-                console.log("sse : " + e.data);
-                console.log("알림 : " + e.data);
                 setNoti(e.data);
                 setRedDot(true)
             })
             eventSource.addEventListener("error", function (event) {
-                // console.log(event.target.readyState);
                 if (event.target.readyState === EventSource.CLOSED) {
                 console.log("eventsource closed");
                 }
@@ -61,10 +57,8 @@ function Navigation({ user, chatNoti }) {
         if(redDot) {
             try {
                 await wouteAPI(`/noti`, 'POST', {myId : user.id})
-                console.log('읽음');
                 setRedDot(false)
             } catch (error) {
-                console.log('읽음 실패');
             }
         }
     }

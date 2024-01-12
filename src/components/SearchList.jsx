@@ -4,6 +4,15 @@ import '../assets/styles/_searchList.scss';
 export default function SearchList({searchList, showList}) {
     const users = searchList.users
     const tags = searchList.tags
+    const ditinctTags = tags?.reduce((acc, current) => {
+        const x = acc.find(item => item.yourProperty === current.yourProperty);
+        if (!x) {
+            return acc.concat([current]);
+        } else {
+            return acc;
+        }
+    }, []);
+    console.log(ditinctTags);
     return(
         <>
         <div className={`keywordList ${showList ? '' : 'd-none'}`}>
@@ -25,7 +34,7 @@ export default function SearchList({searchList, showList}) {
                         </Link>
                     )
                 })}
-                {(tags || []).map(item => (
+                {(ditinctTags || []).map(item => (
                     <li className="tagList">
                         <Link 
                         to={`/search/tags/${item.words.replace('#', '')}`}

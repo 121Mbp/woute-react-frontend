@@ -19,14 +19,13 @@ export default function MyFeedMain({user}) {
     const state = location.state && location.state?.backgroundLocation
 
     const userFeeds = async () => {
-        const response = await wouteAPI(`/users/${user.id}`)
+        const response = await wouteAPI(`/users/${user.id}`, 'GET')
         // console.log(response.data);
         // console.log(response.data.feeds);
         setUserInfo(response.data)
         setFeedList(response.data.feeds.reverse())
     }
     useEffect(() => {
-        setUserInfo(user)
         userFeeds()
     },[user])
     
@@ -49,15 +48,12 @@ export default function MyFeedMain({user}) {
             setLikes(true)
         }
     }
-    useEffect(() => {
-        console.log('feeds : ' + feeds);
-    },[feeds])
-    useEffect(() => {
-        console.log('courses : ' + courses);
-    },[courses])
-    useEffect(() => {
-        console.log('likes : ' + likes);
-    },[likes])
+    // useEffect(() => {
+    // },[feeds])
+    // useEffect(() => {
+    // },[courses])
+    // useEffect(() => {
+    // },[likes])
     
     return(
         <div className='MyFeed'>

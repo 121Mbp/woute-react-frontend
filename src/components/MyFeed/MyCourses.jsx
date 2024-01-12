@@ -4,26 +4,12 @@ import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 
 export default function MyCourses() {
-    const [courses, setCourses] = useState([
-        {
-            id:1,
-            courseImg :'https://news.nateimg.co.kr/orgImg/iz/2021/11/07/2cdx4f1SaIOm637718401281006314.jpg'
-        },
-        {
-            id:2,
-            courseImg :'https://mblogthumb-phinf.pstatic.net/MjAyMzA0MTVfMjA0/MDAxNjgxNTMxOTUwNjY5.3aFBdZfQySJSo2TH5mUuRGg8riRIxNMY3P_W9vLHo0Qg.T_gDjf-V2-PyCmm0zklwtcOihGTBR-pA1bCbi6KEBGwg.JPEG.johtaa27/resized_img_3347(1).jpg?type=w800'
-        },
-        {
-            id:3,
-            courseImg :'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpA7Ei_T3tgcOgdKGGRSTJftDKfKRLy_q9sg&usqp=CAU'
-        },
-    ])
+    const [courses, setCourses] = useState([])
     
     const location = useLocation()
 
     const getCourses =  async () => {
         const response = await wouteAPI(`${location.pathname}`, 'GET')
-        console.log(response);
         setCourses(response.data.reverse())
     }
 
