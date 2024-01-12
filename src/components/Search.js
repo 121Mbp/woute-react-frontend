@@ -17,17 +17,13 @@ function Search() {
             setShowList(true)
             try {
                 const response = await wouteAPI('/search', 'POST', {keyword:searchInput.current.value})
-                console.log(response.data);
+                // console.log(response.data);
                 setSearchList(response.data)
-                console.log('검색성공');
             } catch (error) {
-                console.log('검색실패');
                 
             }
         }
     }
-    
-
     
   const sendEnter = (e) => {
     if(e.key === 'Enter') {
