@@ -20,7 +20,6 @@ export default function UserFeed({user}) {
     const state = location.state && location.state?.backgroundLocation
 
     const userFeeds = async () => {
-        console.log('myid : ' + user.id);
         const response = await wouteAPI(`/users/${toUserId}`, 'POST', {myId : user.id})
         console.log(response.data);
         setUserInfo(response.data)
@@ -51,15 +50,12 @@ export default function UserFeed({user}) {
             setLikes(true)
         }
     }
-    useEffect(() => {
-        console.log('feeds : ' + feeds);
-    },[feeds])
-    useEffect(() => {
-        console.log('courses : ' + courses);
-    },[courses])
-    useEffect(() => {
-        console.log('likes : ' + likes);
-    },[likes])
+    // useEffect(() => {
+    // },[feeds])
+    // useEffect(() => {
+    // },[courses])
+    // useEffect(() => {
+    // },[likes])
     
 
     const follow = async (e) => {
@@ -137,7 +133,8 @@ export default function UserFeed({user}) {
                                     state={{ backgroundLocation: location, 
                                         userId : userInfo.id,
                                         nickName : userInfo.nickname, 
-                                        profileImg : userInfo.profileImage
+                                        profileImg : userInfo.profileImage,
+                                        roomId : userInfo.roomId
                                      }}
                                     >
                                         <button className='msg-btn'>메시지 보내기</button>

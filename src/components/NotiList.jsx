@@ -9,7 +9,6 @@ export default function NotiList({data, user, active, setRedDot}) {
     
     const getNoti = async () => {
         const response = await wouteAPI(`/noti/${user.id}`, 'GET') 
-        console.log(response.data);
         if(response.data[0] && !response.data[0].read) {
             setRedDot(true)
         }
