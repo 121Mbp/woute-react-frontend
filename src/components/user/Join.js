@@ -26,9 +26,9 @@ function Join() {
   const verfiyHandle = (e) => {
     e.preventDefault();
     const veri = verifyCode;
-    console.log("내가친인증 : " + veri);
-
-    if (veri == emailCode) {
+    if (veri === emailCode) {
+      console.log("내가친인증 : " + veri);
+      console.log("이메일코드 : " + emailCode);
       alert("인증되었습니다.");
       setShowVerification(true);
       setCodeMessage("");
@@ -67,7 +67,7 @@ function Join() {
         },
       });
       console.log(response.data);
-      if (response.data != "") {
+      if (response.data !== "") {
         setEmailCode(response.data);
         setSendVerify(true);
         alert("인증메일이 발송 되었습니다.");
@@ -94,7 +94,7 @@ function Join() {
   };
   const verifyOnchange = (e) => {
     setVerifyCode(e.target.value);
-    if (verifyCode != "") {
+    if (verifyCode !== "") {
       setConfirmVerify(true);
     }
   };
@@ -129,13 +129,13 @@ function Join() {
 
   const handleNickChange = (e) => {
     setNickname(e.target.value);
-    if (nickname != "") {
+    if (nickname !== "") {
       setNickNameMatchError("");
     }
   };
 
   const checkPasswordMatch = (pw, confirmPw) => {
-    if (pw != confirmPw) {
+    if (pw !== confirmPw) {
       setPasswordMatchError("비밀번호가 일치하지 않습니다.");
     } else {
       setPasswordMatchError("");
@@ -271,11 +271,7 @@ function Join() {
                     확인
                   </button>
                 ) : (
-                  <button
-                    className="email-confirm"
-                    onClick={verfiyHandle}
-                    disabled
-                  >
+                  <button className="email-confirm" onClick={verfiyHandle}>
                     확인
                   </button>
                 )}
@@ -285,7 +281,7 @@ function Join() {
                   color: "red",
                   marginLeft: "20px",
                   fontSize: "12px",
-                  marginBottom: "10px",
+                  marginBottom: "8px",
                 }}
               >
                 {codeMessage}

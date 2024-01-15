@@ -27,7 +27,7 @@ export default function ChatModal({user, setChatNoti}) {
   const checkId = location.pathname.substring(idx + 1)
   
   const stompClient = useRef({});
-  const url = 'http://localhost:8081/ws'
+  const url = `${process.env.REACT_APP_BASE_URL}/ws`
 
 
   let fromPageRoomId = null;

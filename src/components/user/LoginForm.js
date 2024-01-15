@@ -1,10 +1,12 @@
 import { PostLogin } from "../../api";
 import { useState } from "react";
 import FindPwModal from "./FindPwModal";
+import { useNavigate } from "react-router-dom";
 function Loginform({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
   const openModalHandler = () => {
     setIsOpen(!isOpen);
   };

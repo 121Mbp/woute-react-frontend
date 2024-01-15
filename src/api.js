@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = process.env.REACT_APP_BASE_URL
+const baseURL = process.env.REACT_APP_BASE_URL;
 const accessToken = localStorage.getItem("accessToken");
 
 const axiosInstance = axios.create({
@@ -46,6 +46,8 @@ export const PostLogin = async (data) => {
     }
   } catch (error) {
     console.error("로그인 요청 실패:", error);
+    alert("아이디 혹은 비밀번호가 틀립니다.");
+    window.location.href = "/login";
     // 로그인 요청 실패에 대한 처리 추가
   }
 };
