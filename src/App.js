@@ -67,7 +67,7 @@ function App() {
 
       if (userId) {
         try {
-          const response = await axios.post("/userinfosave", null, {
+          const response = await axios.post(`/userinfosave/${userId}`, null, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -183,12 +183,12 @@ function App() {
               <Route
                 path="/modifyProfile"
                 element={
-                  <Modifyprofile 
-                    user={user} 
+                  <Modifyprofile
+                    user={user}
                     fetchUserData={fetchUserData}
                     wouteFeeds={wouteFeeds}
-                    />
-                  }
+                  />
+                }
               />
               <Route
                 path={"/search/tags/:keyword"}
