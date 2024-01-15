@@ -40,7 +40,7 @@ function ChangePw({ onCloseModal, user }) {
     console.log("id" + user.id);
     try {
       const response = await axios.post(
-        `/modifyprofile/checkPw/${user.id}`,
+        `${process.env.REACT_APP_BASE_URL}/modifyprofile/checkPw/${user.id}`,
         { password: currentPassword },
         {
           headers: {
@@ -67,7 +67,7 @@ function ChangePw({ onCloseModal, user }) {
     if ((errorMessage = "")) {
       try {
         const response = await axios.put(
-          `/modifyprofile/changePw/${user.id}`,
+          `${process.env.REACT_APP_BASE_URL}/modifyprofile/changePw/${user.id}`,
           { password: password1 },
           {
             headers: {
