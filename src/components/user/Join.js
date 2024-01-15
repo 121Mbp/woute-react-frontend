@@ -134,10 +134,17 @@ function Join() {
   };
 
   const checkPasswordMatch = (pw, confirmPw) => {
-    if (pw !== confirmPw) {
+    if (confirmPw == "") {
+      setPasswordMatchError("");
+    } else if (pw !== confirmPw) {
       setPasswordMatchError("비밀번호가 일치하지 않습니다.");
     } else {
       setPasswordMatchError("");
+      setPasswordError("");
+    }
+    if (!isValidPassword) {
+      setPasswordError("영문, 숫자, 특수문자 조합 6자 이상 입력해야합니다.");
+    } else {
       setPasswordError("");
     }
   };
@@ -185,8 +192,11 @@ function Join() {
       setPasswordMatchError(
         "영문, 숫자, 특수문자 조합 6자 이상 입력해야합니다."
       );
+    } else {
+      setPasswordError("");
     }
-    if (passwordMatchError != null) {
+    if (passwordMatchError != "") {
+      console.log("여기서 걸림");
       return false;
     }
 
