@@ -30,8 +30,6 @@ function Loginform({ onLogin }) {
       // 로그인 성공 시 onLogin 호출
       onLogin(localStorage.getItem("ACCESS_TOKEN"));
     } catch (error) {
-      alert("아이디 혹은 비밀번호가 틀립니다.");
-      navigate("/login");
       console.error("Login failed:", error);
 
       // 에러 처리 로직 추가
