@@ -98,7 +98,7 @@ function App() {
   const wouteFeeds = async () => {
     try {
       const feedList = await wouteAPI("/p", "GET", null);
-      setData(feedList.data);
+      setData(feedList.data.reverse());
       setTotal(feedList.data.length / limits);
       console.log(feedList.data)
       setTimeout(() => {
