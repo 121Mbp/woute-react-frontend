@@ -43,9 +43,11 @@ function FindPw({ onCloseModal, user }) {
   const checkCode = (e) => {
     if (code === emailCode) {
       console.log("인증이 완료되었습니다.");
+      alert("인증이 완료되었습니다.");
       setLock(true);
       setErrorMessage("");
     } else {
+      alert("인증번호가 다릅니다.");
       console.log("인증번호가 다릅니다.");
     }
   };

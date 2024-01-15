@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 function Join() {
@@ -15,7 +15,7 @@ function Join() {
   const [passwordError, setPasswordError] = useState("");
   const [verifyCode, setVerifyCode] = useState("");
   const [codeMessage, setCodeMessage] = useState("");
-  const [confirmVerify, setConfirmVerify] = useState(false);
+  const [confirmVerify, setConfirmVerify] = useState(true);
   const [sendVerify, setSendVerify] = useState(false);
   const [emailCode, setEmailCode] = useState("");
   const navigate = useNavigate();
@@ -23,18 +23,19 @@ function Join() {
   const [ShowEmailVerificationButton, setShowEmailVerificationButton] =
     useState(false);
 
+  const verifyOnchange = (e) => {
+    setVerifyCode(e.target.value);
+  };
+
   const verfiyHandle = (e) => {
     e.preventDefault();
-    const veri = verifyCode;
-    if (veri === emailCode) {
-      console.log("내가친인증 : " + veri);
-      console.log("이메일코드 : " + emailCode);
-      alert("인증되었습니다.");
-      setShowVerification(true);
-      setCodeMessage("");
+    console.log("친코드 : " + verifyCode);
+    console.log("인증코드 : " + emailCode);
+    if (verifyCode == emailCode) {
+      alert("이메일 인증이 완료되었습니다.");
+      setConfirmVerify(false);
     } else {
-      setCodeMessage("인증코드가 일치하지 않습니다.");
-      setShowVerification(true);
+      alert("인증코드가 다릅니다.");
     }
   };
 
@@ -61,11 +62,15 @@ function Join() {
     const userEmail = email;
     console.log("email : " + email);
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/join/emailConfirm`, userEmail, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/join/emailConfirm`,
+        userEmail,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       console.log(response.data);
       if (response.data !== "") {
         setEmailCode(response.data);
@@ -91,12 +96,6 @@ function Join() {
     const newConfirmPassword = e.target.value;
     setConfirmPassword(newConfirmPassword);
     checkPasswordMatch(password, newConfirmPassword);
-  };
-  const verifyOnchange = (e) => {
-    setVerifyCode(e.target.value);
-    if (verifyCode !== "") {
-      setConfirmVerify(true);
-    }
   };
 
   //비밀번호 유효성 검사
@@ -160,11 +159,6 @@ function Join() {
       if (email === "") {
         setEmailError("이메일을 입력해주세요.");
       }
-      if (!isValidPassword) {
-        setPasswordMatchError(
-          "영문, 숫자, 특수문자 조합 6자 이상 입력해야합니다."
-        );
-      }
       if (password === "") {
         setPasswordError("비밀번호를 입력해주세요.");
       }
@@ -187,6 +181,14 @@ function Join() {
       alert("이메일 인증을 해주세요.");
       return false;
     }
+    if (!isValidPassword) {
+      setPasswordMatchError(
+        "영문, 숫자, 특수문자 조합 6자 이상 입력해야합니다."
+      );
+    }
+    if (passwordMatchError != null) {
+      return false;
+    }
 
     const user = {
       nickname: nickname,
@@ -198,11 +200,15 @@ function Join() {
     console.log("user: " + user.email);
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/join`, user, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/join`,
+        user,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       console.log("ababa");
       console.log("서버 응답:", response.data);
       alert(nickname + "님의 가입이 완료되었습니다.");
@@ -271,8 +277,13 @@ function Join() {
                     확인
                   </button>
                 ) : (
-                  <button className="email-confirm" onClick={verfiyHandle}>
-                    확인
+                  <button
+                    className="email-confirm"
+                    onClick={verfiyHandle}
+                    disabled
+                    style={{ color: "gray" }}
+                  >
+                    완료
                   </button>
                 )}
               </div>
