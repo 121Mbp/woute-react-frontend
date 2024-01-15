@@ -54,7 +54,7 @@ function FindPw({ onCloseModal, user }) {
     console.log("보내는 이메일:" + currentEmail);
     try {
       const response = await axios.post(
-        `/login/findEmail`,
+        `${process.env.REACT_APP_BASE_URL}/login/findEmail`,
         { email: currentEmail },
         {
           headers: {
@@ -80,7 +80,7 @@ function FindPw({ onCloseModal, user }) {
     if ((errorMessage = "")) {
       try {
         const response = await axios.put(
-          `/login/changePw`,
+          `${process.env.REACT_APP_BASE_URL}/login/changePw`,
           { password: password1 },
           { email: currentEmail },
           {
