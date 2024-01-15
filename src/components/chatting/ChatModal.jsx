@@ -5,7 +5,6 @@ import { CompatClient, Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { Link, NavLink, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { wouteAPI } from "../../api";
-import CourseList from '../courseList/CourseList'
 
 export default function ChatModal({user, setChatNoti}) {
   const [chatList, setChatList] = useState([])
@@ -27,13 +26,16 @@ export default function ChatModal({user, setChatNoti}) {
   const checkId = location.pathname.substring(idx + 1)
   
   const stompClient = useRef({});
-  const url = `${process.env.REACT_APP_BASE_URL}/ws`
-
+  // const url = 'http://localhost:8081/ws'
+  const url = 'http://3.36.219.193:8081/ws'
 
   let fromPageRoomId = null;
   if (location.state.userId != undefined && user.id != null) {
-    // fromPageRoomId = user.id.toString() + location.state.userId.toString()
-    fromPageRoomId = location.state.roomId
+    if(location.state.roomId == null) {
+      fromPageRoomId = user.id.toString() + location.state.userId.toString()
+    } else {
+      fromPageRoomId = location.state.roomId
+    }
   }
   
   useEffect(() => {
@@ -60,8 +62,7 @@ export default function ChatModal({user, setChatNoti}) {
         stompClient.current.disconnect()
         setConnected(false)
       }
-  },[location.pathname])
-  // receiveMessage
+  },[location.pathname, receiveMessage])
 
   // 안읽은 채팅방 읽음처리
   const readNoti = async(id) => {
@@ -134,7 +135,7 @@ let message = {
     // console.log(response.data.myUser); 
     // console.log(response.data.rooms); 
     setMyInfo(response.data.myUser)
-    setChatList(response.data.rooms)
+    setChatList(response.data.rooms.reverse())
   }
   // 안읽은 채팅방 개수
   const unReadCount =  chatList.reduce((count, room) => count + (room.isRead ? 0 : 1), 0);
@@ -294,7 +295,7 @@ let message = {
                           {/* <Routes>
                             <Route path={`/chat/${user.id}/m/${currentUserId}`}  element={<ChatRoom user={user} data={receiveMessage}/>}/> 
                           </Routes> */}
-                          <Outlet context={{receiveMessage, fromPageRoomId, sendMessage}} />
+                          <Outlet context={{receiveMessage, fromPageRoomId, sendMessage, setMessageInput, messageInput}} />
                       </div>
                     </div>
                     <div className="chat-submit">
