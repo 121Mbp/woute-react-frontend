@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useOutletContext } from "react-router";
 
 export default function ChatRoom({user}) {
-  const {receiveMessage, fromPageRoomId, sendMessage} = useOutletContext()
+  const {receiveMessage, fromPageRoomId, sendMessage, setMessageInput, messageInput} = useOutletContext()
   const location = useLocation()
   const currentRoomId = location.state.roomId 
   const [chatLog, setChatLog] = useState([])
@@ -21,7 +21,7 @@ export default function ChatRoom({user}) {
  
   useEffect(() => {
     messageLog()
-  },[receiveMessage, currentRoomId, sendMessage])
+  },[receiveMessage, currentRoomId, sendMessage, messageInput, setMessageInput])
   
   return (
     <div className="logList">
