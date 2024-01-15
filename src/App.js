@@ -139,7 +139,7 @@ function App() {
       scrollListener();
       return () => window.removeEventListener("scroll", handleScroll);
     }
-  }, [scrollY, token]);
+  }, [scrollY]);
 
   const LogLayout = ({ children }) => (
     <>
