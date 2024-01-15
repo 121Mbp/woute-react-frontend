@@ -271,11 +271,7 @@ function Join() {
                     확인
                   </button>
                 ) : (
-                  <button
-                    className="email-confirm"
-                    onClick={verfiyHandle}
-                    disabled
-                  >
+                  <button className="email-confirm" onClick={verfiyHandle}>
                     확인
                   </button>
                 )}
@@ -285,7 +281,7 @@ function Join() {
                   color: "red",
                   marginLeft: "20px",
                   fontSize: "12px",
-                  marginBottom: "10px",
+                  marginBottom: "8px",
                 }}
               >
                 {codeMessage}
