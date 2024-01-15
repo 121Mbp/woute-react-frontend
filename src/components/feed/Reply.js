@@ -330,7 +330,9 @@ function Reply({ feedData, wouteFeeds, setLoading, user }) {
                         )}
                       </div>
                       <div className="userNames">
-                        <span className="userName">{comment.nickname}</span>
+                        <Link to={`/users/${comment.user_id}`}>
+                          <span className="userName">{comment.nickname}</span>
+                        </Link>
                         <span>{comment.content}</span>
                         <div className="replyPart">
                           <span>{moment(comment.createdAt).fromNow()}</span>

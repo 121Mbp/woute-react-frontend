@@ -61,7 +61,7 @@ function Join() {
     const userEmail = email;
     console.log("email : " + email);
     try {
-      const response = await axios.post("/join/emailConfirm", userEmail, {
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/join/emailConfirm`, userEmail, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -198,7 +198,7 @@ function Join() {
     console.log("user: " + user.email);
 
     try {
-      const response = await axios.post("/join", user, {
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/join`, user, {
         headers: {
           "Content-Type": "application/json",
         },

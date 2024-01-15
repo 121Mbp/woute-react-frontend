@@ -136,6 +136,11 @@ $feed-sidebar-width: 320px;
   padding-top: 25px;
   padding-bottom: 25px;
   width: 430px;
+  @include size(sm) {
+    width: calc(100% - 68px);
+    padding: 0;
+    margin: 0 auto;
+  }
   .modify-input-position {
     display: flex;
     justify-content: space-between;
