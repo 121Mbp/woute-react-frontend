@@ -44,7 +44,7 @@ function Main({ data, limits, total, wouteFeeds, loading, user }) {
                         loading ? (
                             <>
                                 {
-                                    data?.reverse().slice(0, end).map(item => (
+                                    data?.slice(0, end).map(item => (
                                         <Post key={ item.id } data={ item } wouteFeeds={ wouteFeeds } user={ user } />
                                     ))
                                 }

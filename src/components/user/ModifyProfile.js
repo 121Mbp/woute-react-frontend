@@ -100,7 +100,7 @@ function Modifyprofile({ user, fetchUserData, wouteFeeds }) {
     user.nickname = nickname;
     console.log(user.nickname);
     try {
-      const response = await axios.put(`/modifyprofile/nickname/${userNo}`, {
+      const response = await axios.put(`${process.env.REACT_APP_BASE_URL}/modifyprofile/nickname/${userNo}`, {
         nickname: user.nickname,
       });
       console.log(response.data);
@@ -133,7 +133,7 @@ function Modifyprofile({ user, fetchUserData, wouteFeeds }) {
     console.log(user.introduction);
     try {
       const response = await axios.put(
-        `/modifyprofile/introduction/${userNo}`,
+        `${process.env.REACT_APP_BASE_URL}/modifyprofile/introduction/${userNo}`,
         {
           introduction: user.introduction,
         }
@@ -210,7 +210,7 @@ function Modifyprofile({ user, fetchUserData, wouteFeeds }) {
     try {
       // console.log("폼데이터 : " + formData);
       const response = await axios.post(
-        `/uploadprofileimage/${userNo}`,
+        `${process.env.REACT_APP_BASE_URL}/uploadprofileimage/${userNo}`,
         formData,
         {
           headers: {

@@ -227,9 +227,6 @@ input:autofill, input:autofill:hover, input:autofill:focus, input:autofill:activ
     transition: transform 0.5s;
     z-index: 10;
   }
-  .__active .navigation .inner .logo {
-    transform: translateY(-60px);
-  }
 }
 .navigation .inner .logo a {
   display: block;
@@ -413,9 +410,6 @@ input:autofill, input:autofill:hover, input:autofill:focus, input:autofill:activ
     transform: translateY(0);
     transition: transform 0.5s;
     z-index: 10;
-  }
-  .__active .navigation .inner .gnb li.chat {
-    transform: translateY(-60px);
   }
   .navigation .inner .gnb li.chat a:hover {
     background-color: transparent;
@@ -613,9 +607,9 @@ input:autofill, input:autofill:hover, input:autofill:focus, input:autofill:activ
 }
 .main .search .keywordList {
   position: absolute;
-  left: 5px;
-  top: 45px;
-  width: 100%;
+  left: 8px;
+  top: 52px;
+  right: 8px;
   max-height: 400px;
   padding-top: 10px;
   background-color: #FFFFFF;
@@ -844,6 +838,8 @@ input:autofill, input:autofill:hover, input:autofill:focus, input:autofill:activ
   .main .feeds .post .middle {
     width: 100vw;
     height: auto;
+    padding: 0;
+    margin: 20px 0;
     aspect-ratio: 3/4;
     border-radius: 0;
   }
