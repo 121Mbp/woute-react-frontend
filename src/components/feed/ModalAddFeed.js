@@ -1,226 +1,386 @@
-import React, { useState, useEffect } from "react";
-import "./../../assets/styles/_modalAddFeed.scss";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import { Pagination, Navigation } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
+import React, { useState, useEffect, useRef } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { wouteAPI } from "./../../api";
-import imageCompression from "browser-image-compression";
-import { useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify'
+import moment from "moment";
+import "moment/locale/ko";
+import Layer from "./../Layer";
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
-function ModalAddFeed({ type, wouteFeeds, setLoading, user }) {
-  const [files, setFiles] = useState([]);
-  const [previews, setPreviews] = useState([]);
+moment.locale("ko");
+
+function Reply({ feedData, wouteFeeds, setLoading, user }) {
   const navigate = useNavigate();
+  const titleRef = useRef(null);
+  const feedId = feedData.id;
+  const [comments, setComments] = useState([]);
+  const [likes, setLikes] = useState({});
   const [content, setContent] = useState("");
+  const [isActive, setIsActive] = useState(false);
+  const [commentChanged, setCommentChanged] = useState(false);
+  const [layer, setLayer] = useState(false);
+  const [message, setMessage] = useState("");
+  const [method, setMethod] = useState("");
+  const [edit, setEdit] = useState(false);
   const [title, setTitle] = useState("");
-  const [spot, setSpot] = useState([]);
-  const handleContent = (e) => {
-    let value = e.target.value;
-    setContent(value);
-  };
-  const handleFileChange = async (e) => {
-    const imageFiles = e.target.files;
-    const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 600,
-    }
-    
+  const [contents, setContents] = useState("");
+  const [tags, setTags] = useState([]);
+
+  const fetchData = async () => {
+    console.log("피드아이디", feedData.id);
     try {
-      const compressedFiles = []
-      for (const file of imageFiles) {
-          const compressedBlob = await imageCompression(file, options)
-          const compressedFile = new File([compressedBlob], file.name, { type: file.type })
-          compressedFiles.push(compressedFile)
-          console.log(compressedFile)
+      const commentsResponse = await wouteAPI(
+        `/p/${feedId}/reply?userId=${user.id}`,
+        "GET"
+      );
+      console.log("replys", commentsResponse.data);
+      const sortedComments = commentsResponse.data.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      setComments(sortedComments);
+      console.log(sortedComments);
+      setTitle(feedData.title);
+      setContents(feedData.content);
+      let _tags = [];
+      for (let tag of feedData.tags) {
+        _tags.push(tag.words);
       }
-      if (imageFiles.length === 0) return;
-      const resolveAfter3Sec = new Promise(resolve => setTimeout(resolve, 1000));
-      toast.promise(
-          resolveAfter3Sec,
-          {
-          pending: '이미지 등록 중입니다.',
-          success: '이미지 등록이 완료되었습니다.',
-          error: '이미지 등록에 실패하였습니다.'
-          }
-      )
-      const newFiles = [...files, ...compressedFiles];
-      setFiles(newFiles);
-      setTimeout(() => {generatePreviews(compressedFiles)}, 600)
-      // generatePreviews(imageFiles);
+      setTags(_tags);
+      const newLikes = {};
+      sortedComments.forEach((comment) => {
+        newLikes[comment.id] = comment.userLiked;
+      });
+      setLikes(newLikes);
     } catch (error) {
-        console.log(error)
+      console.error("에러");
     }
-    
-
-    
   };
+  // console.log("d", feedData);
 
-  const generatePreviews = (imageFiles) => {
-    const newPreviews = Array.from(imageFiles).map((imageFile) =>
-      URL.createObjectURL(imageFile)
-    );
-    setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
-  };
-
-  const handleImgDelete = (idx) => {
-    setPreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== idx));
-    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== idx));
-    URL.revokeObjectURL(previews[idx]);
-  };
-
-
-  const isMaxImagesReached = previews.length >= 5;
-
-  const postSubmit = async (e) => {
-    e.preventDefault();
-    if (files.length === 0) {
-      toast.warn("사진을올려주세요.");
-      return;
-    }
-    if (!title.trim()) {
-      toast.warn("제목을입력해주세요.");
-      return;
-    }
-    if (!content.trim()) {
-      toast.warn("내용을입력해주세요.");
-      return;
-    }
-    const formData = new FormData();
-    let reg = /#([\S]+)/gim;
-    let matches = (content.match(reg) || [])
-
-    let feed = {
+  const handleLike = async (replyId, userLiked) => {
+    console.log(replyId, userLiked);
+    const requestBody = {
       userId: user.id,
+      replyId: replyId,
       nickname: user.nickname,
       profileImage: user.profileImage,
-      type: type,
-      title: title,
-      content: content,
-      hashtag: "",
-      heartCount: 0,
     };
-
-    for (let file of files) {
-      formData.append("attaches", file);
+    if (userLiked) {
+      try {
+        await wouteAPI(
+          `/p/${feedId}/${replyId}/${user.id}/like`,
+          "DELETE",
+          null
+        );
+        setLikes((prevLikes) => ({ ...prevLikes, [replyId]: false }));
+        fetchData();
+      } catch (err) {
+        console.log("삭제 에러: " + err);
+      }
+    } else {
+      try {
+        await wouteAPI(`/p/${feedId}/${replyId}/like`, "PUT", requestBody);
+        setLikes((prevLikes) => ({ ...prevLikes, [replyId]: true }));
+        fetchData();
+      } catch (err) {
+        console.log("추가 에러: " + err);
+      }
     }
+  };
 
-    formData.append(
-      "feed",
-      new Blob([JSON.stringify(feed)], { type: "application/json" })
-    );
-    formData.append(
-      "tags",
-      new Blob([JSON.stringify(matches)], { type: "application/json" })
-    );
-
-    let coursesData = [];
-    for (let s of spot) {
-      coursesData.push({
-        code: s.id,
-        store: s.place_name,
-        address: s.road_address_name,
-        phone: s.phone,
-        homepage: s.place_url,
-        category: s.category_group_name,
-        latitude: s.y,
-        longitude: s.x,
-      });
+  useEffect(() => {
+    if (user.id !== undefined) {
+      fetchData();
     }
+  }, [feedId]);
+  //  likes
+  const handleInputChange = (e) => {
+    setContent(e.target.value);
+  };
 
-    formData.append(
-      "courses",
-      new Blob([JSON.stringify(coursesData)], { type: "application/json" })
-    );
+  const handleFocus = () => {
+    setIsActive(true);
+  };
 
+  const handleClose = () => {
+    setIsActive(false);
+  };
+
+  const addComment = async () => {
+    console.log("유저아이디", user);
     try {
-      await wouteAPI("/p", "POST", formData);
-      toast.success('피드 등록 완료')
-      setLoading(false)
-      wouteFeeds()
-      navigate("/");
-    } catch (error) {}
+      const response = await wouteAPI(`/p/${feedId}/reply`, "POST", {
+        user_id: user.id,
+        feed_id: feedId,
+        content,
+        nickname: user.nickname,
+        profileImage: user.profileImage,
+        heartCount: 0,
+      });
+      setComments((prevComments) => [...prevComments, response.data]);
+      setContent("");
+      fetchData();
+    } catch (error) {
+      console.error("댓글 추가 실패:", error);
+    }
+  };
+
+  const deleteComment = async (replyId) => {
+    try {
+      await wouteAPI(`/p/${feedId}/${replyId}`, "DELETE");
+      setComments((prevComments) =>
+        prevComments.filter((comment) => comment.reply_id !== replyId)
+      );
+      setCommentChanged(!commentChanged);
+      fetchData();
+    } catch (error) {
+      console.error("댓글 삭제 실패:", error);
+    }
+  };
+
+  const handleSendComment = async () => {
+    if (content.trim() === "") {
+      toast.warn("내용을입력해주세요.");
+
+      return;
+    }
+    await addComment();
+  };
+
+  const handleEdit = () => {
+    setEdit(true);
+    setTimeout(() => {
+      titleRef.current.focus();
+    }, 100);
+  };
+
+  const handleCanceled = () => {
+    setEdit(false);
+    setTitle(feedData.title);
+    setContents(feedData.content);
+  };
+
+  const handleController = async (confirm) => {
+    setLayer(false);
+    if (!confirm) {
+      return;
+    }
+    if (method === "delete") {
+      try {
+        await wouteAPI(`/p/${feedId}`, "DELETE", null);
+        toast.success("피드가 삭제 되었습니다.");
+        setLoading(false);
+        wouteFeeds();
+        navigate("/");
+      } catch (err) {
+        console.log("에러: " + err);
+      }
+    }
+    if (method === "save") {
+      if (title === "") {
+        toast.warn("제목을 입력해 주세요.");
+        return;
+      }
+      if (contents === "") {
+        toast.warn("내용을 입력해 주세요.");
+        return;
+      }
+      const formData = new FormData();
+      let reg = /#([\S]+)/gim;
+      let matches = contents.match(reg) || [];
+
+      let feed = {
+        title: title,
+        content: contents,
+      };
+
+      formData.append(
+        "feed",
+        new Blob([JSON.stringify(feed)], { type: "application/json" })
+      );
+      formData.append(
+        "tags",
+        new Blob([JSON.stringify(matches)], { type: "application/json" })
+      );
+
+      try {
+        await wouteAPI(`/p/${feedId}`, "PUT", formData);
+        toast.success("피드가 저장 되었습니다.");
+        setEdit(false);
+        wouteFeeds();
+        setTags(matches);
+      } catch (err) {
+        console.log("에러: " + err);
+      }
+    }
+    setMethod("");
+  };
+
+  const handleLayer = (method, msg) => {
+    setMethod(method);
+    setMessage(msg);
+    setLayer(true);
+  };
+
+  const handleContent = (e) => {
+    let value = e.target.value;
+    setContents(value);
   };
 
   return (
-    <div className="addFeed">
-      <div className="feedImg">
-        <Swiper
-          navigation={true}
-          pagination={{ dynamicBullets: true }}
-          modules={[Pagination, Navigation]}
-        >
-          {previews.map((src, i) => (
-            <SwiperSlide key={i}>
-              <img
-                src={src}
-                alt={`Slide Preview ${i}`}
+    <>
+      <div className="feedArea">
+        <div className={`feedAreaInner ${isActive ? "focused" : ""}`}>
+          <div className="myName feedProfile" key={feedData.id}>
+            {feedData?.profileImage == null ? (
+              <i></i>
+            ) : (
+              <i
                 style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
+                  backgroundImage: `url('${process.env.REACT_APP_IMAGE_PATH}${feedData.profileImage}')`,
                 }}
-              />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
-      <div className="feedRecord">
-        <div className="feedRecordinner">
-          <div className="recordImg">
-            {previews.length > 0 && (
-              <ul style={{ display: "flex" }}>
-                {previews.map((src, i) => (
-                  <li key={i}>
-                    <img src={src} alt={`Preview ${i}`} />
-                    <i onClick={() => handleImgDelete(i)}></i>
-                  </li>
-                ))}
-              </ul>
+              ></i>
             )}
-            {!isMaxImagesReached && (
-              <div
-                className="addIcon"
-                onClick={() => document.getElementById("fileInput").click()}
-              >
-                <input
-                  id="fileInput"
-                  type="file"
-                  name="image"
-                  accept="image/*"
-                  multiple
-                  onChange={handleFileChange}
-                  style={{ display: "none" }}
-                />
-              </div>
-            )}
+            <Link to={`/users/${feedData.userId}`}>
+              <p>{feedData.nickname}</p>
+            </Link>
+            <i className="feedClose" onClick={handleClose}></i>
           </div>
-          <div className="feedTitle">
-            <input
-              name="title"
-              placeholder="타이틀을 입력하세요"
-              onChange={(e) => setTitle(e.target.value)}
-            ></input>
+          <div className="myfeedTitle">
+            <p>
+              {edit ? (
+                <>
+                  <input
+                    type="text"
+                    name="title"
+                    placeholder="타이틀을 입력하세요."
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    ref={titleRef}
+                  />
+                  {feedData.userId === user.id && (
+                    <div>
+                      <button onClick={handleCanceled}>취소</button>
+                      <button
+                        onClick={() =>
+                          handleLayer("save", "저장 하시겠습니까?")
+                        }
+                      >
+                        저장
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  {title}
+                  {feedData.userId === user.id && (
+                    <div>
+                      <button onClick={handleEdit}>수정</button>
+                      <button
+                        onClick={() =>
+                          handleLayer("delete", "삭제 하시겠습니까?")
+                        }
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </p>
           </div>
-          <div className="feedContent">
-            <textarea
-              name="content"
-              placeholder="#을이용하여태그를이용해보세요"
-              onChange={handleContent}
-            ></textarea>
+          <div>
+            <div className="myfeedContent">
+              <p>
+                {edit ? (
+                  <textarea
+                    name="content"
+                    placeholder="#을 이용하여 태그를 사용해 보세요."
+                    value={contents}
+                    onChange={handleContent}
+                  ></textarea>
+                ) : (
+                  <>{contents}</>
+                )}
+              </p>
+              <p>
+                {!edit && tags?.map((item, i) => <span key={i}>{item}</span>)}
+              </p>
+            </div>
+            <div className="userComments">
+              {comments.length === 0 ? (
+                <div className="noComment">
+                  <h1>댓글이 아직 없습니다.</h1>
+                  <p>댓글을 입력하세요.</p>
+                </div>
+              ) : (
+                comments.map((comment) => (
+                  <div className="userComment" key={comment.id}>
+                    <div className="feedProfiles">
+                      <div className="feedProfile">
+                        {comment?.profileImage == null ? (
+                          <i></i>
+                        ) : (
+                          <i
+                            style={{
+                              backgroundImage: `url('${process.env.REACT_APP_IMAGE_PATH}${comment.profileImage}')`,
+                            }}
+                          />
+                        )}
+                      </div>
+                      <div className="userNames">
+                        <span className="userName">{comment.nickname}</span>
+                        <span>{comment.content}</span>
+                        <div className="replyPart">
+                          <span>{moment(comment.createdAt).fromNow()}</span>
+                          {comment.heartCount > 0 && (
+                            <span>좋아요{comment.heartCount}개</span>
+                          )}{" "}
+                          {comment.user_id === user.id && (
+                            <div
+                              className="deleteReply"
+                              onClick={() => deleteComment(comment.id)}
+                            ></div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="likeHearts">
+                      <div
+                        className={`likeHeart ${
+                          likes[comment.id] ? "active" : ""
+                        }`}
+                        onClick={() =>
+                          handleLike(comment.id, likes[comment.id])
+                        }
+                      ></div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-
-          <div className="feedBtn">
-            <button type="submit" onClick={postSubmit}>
-              피드기록하기
-            </button>
+        </div>
+        <div className="myMent">
+          <div className=" feedProfile">
+            <i style={{ backgroundImage: `url(${user?.profileImage})` }} />
+          </div>
+          <input
+            placeholder="댓글을 입력하세요"
+            onFocus={handleFocus}
+            value={content}
+            onChange={handleInputChange}
+          />
+          <input type="hidden" value={feedId} name="feedId" />
+          <div className="submitBtn">
+            <button type="button" onClick={handleSendComment}></button>
           </div>
         </div>
       </div>
-    </div>
+      {layer && <Layer handleController={handleController} message={message} />}
+    </>
   );
 }
 
-export default ModalAddFeed;
+export default Reply;
