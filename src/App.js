@@ -67,7 +67,7 @@ function App() {
 
       if (userId) {
         try {
-          const response = await axios.post(`/userinfosave/${userId}`, null, {
+          const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/userinfosave/${userId}`, null, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -98,8 +98,9 @@ function App() {
   const wouteFeeds = async () => {
     try {
       const feedList = await wouteAPI("/p", "GET", null);
-      setData(feedList.data.reverse());
+      setData(feedList.data);
       setTotal(feedList.data.length / limits);
+      console.log(feedList.data)
       setTimeout(() => {
         setLoading(true);
       }, 600);
@@ -113,12 +114,12 @@ function App() {
       console.log(ACCESS_TOKEN);
       if (ACCESS_TOKEN != null) {
         setToken(true);
+        await wouteFeeds(); // wouteFeeds가 비동기 작업이라면 await을 사용
       } else {
         setToken(false);
         navigate("/login");
         return; // 여기서 중단하고 이후 로직을 실행하지 않도록 추가
       }
-      await wouteFeeds(); // wouteFeeds가 비동기 작업이라면 await을 사용
     };
 
     fetchData();

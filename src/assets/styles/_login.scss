@@ -103,6 +103,13 @@
       font-size: 15px;
       color: #898989;
     }
+    @include size(sm) {
+      width: 300px;
+      margin: 0 auto;
+      & + .email-button {
+        top: 48%;
+      }
+    }
   }
   .pw-button {
     position: absolute;
@@ -121,6 +128,10 @@
     &::placeholder {
       font-size: 15px;
       color: #898989;
+    }
+    @include size(sm) {
+      width: 300px;
+      margin: 0 auto;
     }
   }
   input:hover {
@@ -261,6 +272,9 @@
 // signup
 .email-position {
   display: flex;
+  @include size(sm) {
+    margin: 0 auto;
+  }
   .verify-input-email {
     border: 1px solid #c9caca;
     padding: 15px 20px;
@@ -323,6 +337,9 @@
       font-size: 15px;
       color: #898989;
     }
+    @include size(sm) {
+      width: 240px;
+    }
   }
   .nick-button {
     position: absolute;
@@ -358,6 +375,10 @@
       font-size: 15px;
       color: #898989;
     }
+    @include size(sm) {
+      margin: 0 auto;
+      width: 336px;
+    }
   }
   .signup-input-nick {
     border: 1px solid #c9caca;
@@ -369,6 +390,10 @@
       font-size: 15px;
       color: #898989;
     }
+    @include size(sm) {
+      margin: 0 auto;
+      width: 336px;
+    }
   }
   .signup-input-check {
     border: 1px solid #c9caca;
@@ -379,6 +404,10 @@
     &::placeholder {
       font-size: 15px;
       color: #898989;
+    }
+    @include size(sm) {
+      margin: 0 auto;
+      width: 336px;
     }
   }
   input:hover {
