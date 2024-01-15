@@ -12,7 +12,6 @@ export default function SearchList({searchList, showList}) {
             return acc;
         }
     }, []);
-    console.log(ditinctTags);
     return(
         <>
         <div className={`keywordList ${showList ? '' : 'd-none'}`}>
