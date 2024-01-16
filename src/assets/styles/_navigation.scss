@@ -63,12 +63,7 @@ $nav-medium-width: 240px;
                 align-items: center;
                 margin: 0;
                 width: 56px;
-                transform: translateY(0);
-                transition: transform .5s;
                 z-index: 10;
-                .__active & {
-                    transform: translateY(-60px);
-                }
             }
             a { 
                 display: block;
@@ -188,12 +183,7 @@ $nav-medium-width: 240px;
                         display: flex;
                         align-items: center;
                         margin: 0;
-                        transform: translateY(0);
-                        transition: transform .5s;
                         z-index: 10;
-                        .__active & {
-                            transform: translateY(-60px);
-                        }
                         a:hover {
                             background-color: transparent;
                             

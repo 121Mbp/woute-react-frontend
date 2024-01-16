@@ -43,9 +43,11 @@ function FindPw({ onCloseModal, user }) {
   const checkCode = (e) => {
     if (code === emailCode) {
       console.log("인증이 완료되었습니다.");
+      alert("인증이 완료되었습니다.");
       setLock(true);
       setErrorMessage("");
     } else {
+      alert("인증번호가 다릅니다.");
       console.log("인증번호가 다릅니다.");
     }
   };
@@ -54,7 +56,7 @@ function FindPw({ onCloseModal, user }) {
     console.log("보내는 이메일:" + currentEmail);
     try {
       const response = await axios.post(
-        `/login/findEmail`,
+        `${process.env.REACT_APP_BASE_URL}/login/findEmail`,
         { email: currentEmail },
         {
           headers: {
@@ -80,7 +82,7 @@ function FindPw({ onCloseModal, user }) {
     if ((errorMessage = "")) {
       try {
         const response = await axios.put(
-          `/login/changePw`,
+          `${process.env.REACT_APP_BASE_URL}/login/changePw`,
           { password: password1 },
           { email: currentEmail },
           {

@@ -28,7 +28,7 @@ export default function ChatModal({user, setChatNoti}) {
   
   const stompClient = useRef({});
   // const url = 'http://localhost:8081/ws'
-  const url = 'http://3.36.219.193:8081/ws'
+  const url = `${process.env.REACT_APP_BASE_URL}/ws`
 
   let fromPageRoomId = null;
   if (location.state.userId != undefined && user.id != null) {
@@ -39,6 +39,13 @@ export default function ChatModal({user, setChatNoti}) {
     }
   }
   
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   useEffect(() => {
     const socket = new SockJS(url)
     stompClient.current = Stomp.over(socket)  
@@ -317,7 +324,7 @@ let message = {
                     <div className="chat-log">
                       <div className="logList-wrap">
                           {/* <Routes>
-                            <Route path={`/chat/${user.id}/m/${currentUserId}`}  element={<ChatRoom user={user} data={receiveMessage}/>}/> 
+                          <Route path={`/chat/${user.id}/m/${currentUserId}`}  element={<ChatRoom user={user} data={receiveMessage}/>}/> 
                           </Routes> */}
                           <Outlet context={{receiveMessage, fromPageRoomId, sendMessage, setMessageInput, messageInput}} />
                       </div>
