@@ -47,8 +47,7 @@ $border-color: rgb(219, 219, 219);
       display: flex;
       align-items: center;
       width: 100%;
-      padding: 0 6px;
-      justify-content: space-around;
+      padding-left: 10px;
       color: rgb(115, 115, 115);
       margin-bottom: 10px;
       position: relative;
@@ -63,6 +62,7 @@ $border-color: rgb(219, 219, 219);
       .search-wrap {
          .user-search {
               .search-input {
+                width: 100%;
                 margin-left: 5px;
                 padding: 4px 6px;
                 border-radius: 16px;
@@ -73,11 +73,6 @@ $border-color: rgb(219, 219, 219);
                 }
               }
         }
-      }
-      .user-btn {
-        width: 100%;
-        margin-left: 10px;
-        @include icon(userPlus, white);
       }
     }
 
