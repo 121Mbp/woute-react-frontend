@@ -312,3 +312,27 @@
     transform: rotate(90deg);
   }
 }
+.lower {
+  display: flex;
+  flex-direction: column;
+  @include size(sm) {
+      padding: 0 12px;
+  }
+  .likes {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .heart {
+          position: relative;
+          margin-left: 4px;
+          cursor: pointer;
+          z-index: 2;
+          @include icon(heart, #464646, 24px, 24px);
+          & + a {
+              font-size: 14px;
+              font-weight: 900;
+              cursor: pointer;
+          }
+      }
+  }
+}
