@@ -411,9 +411,6 @@ $border-color: rgb(219, 219, 219);
       
       .chatRoom-list {
         width: 100%;
-        @include size(sm) {
-          padding-top: 56px;
-        }
         .chat-tab {
           width: 100%;
           @include size(sm) {
