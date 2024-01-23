@@ -60,6 +60,9 @@ function Loginform({ onLogin }) {
             />
             <button className="pw-button"></button>
           </div>
+          <p className="guest">
+            이메일: guest@woute.com<br />비밀번호: guest42!
+          </p>
           <div className="btn-position">
             <button className="log-btn" type="submit">
               로그인
